@@ -2,9 +2,11 @@ package com.mdms.backend.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class AddUserRequest {
 
     @NotBlank(message = "username is required")
@@ -16,4 +18,7 @@ public class AddUserRequest {
 
     @NotBlank(message = "password is required")
     private String password;
+
+    @NotNull(message = "service id is required")
+    private Long serviceId;
 }

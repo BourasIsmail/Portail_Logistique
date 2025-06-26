@@ -57,7 +57,7 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            System.out.println("Validate");
+            System.out.println("Token Validated in JwtUtils" + authToken);
             Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
                     .build().parseSignedClaims(authToken);
             return true;
