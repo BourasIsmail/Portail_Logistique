@@ -3,6 +3,7 @@ package com.mdms.backend.security.jwt;
 import com.mdms.backend.security.service.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -34,6 +35,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         try {
             String jwt = jwtUtils.getJwtFromHeader(request);
+            if(jwt == null){
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if ("jwt".equals(cookie.getName())) {
+                            jwt = cookie.getValue();
+                            break;
+                        }
+                    }
+                }
+            }
             logger.debug("AuthTokenFilter.java: {}", jwt);
 
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {

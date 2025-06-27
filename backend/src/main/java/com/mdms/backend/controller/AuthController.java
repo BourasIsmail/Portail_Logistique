@@ -5,10 +5,10 @@ import com.mdms.backend.respository.UserRepository;
 import com.mdms.backend.security.jwt.JwtUtils;
 import com.mdms.backend.security.service.UserDetailsImp;
 import com.mdms.backend.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,16 +63,35 @@ public class AuthController {
         UserDetailsImp userDetails = (UserDetailsImp) authentication.getPrincipal();
 
         String jwtToken = jwtUtils.generateToken(userDetails);
-        // TODO : Add To Cookie
+        ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .sameSite("Lax")
+//                .secure(true)
+                .build();
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Login successful!");
-        response.put("token", jwtToken);
+//        response.put("token", jwtToken);
         response.put("username", userDetails.getUsername());
         response.put("email", userDetails.getEmail());
-        response.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority));
+        response.put("role", userDetails.getAuthorities().stream().toList().get(0).getAuthority());
 
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserDetails(@AuthenticationPrincipal UserDetailsImp userDetails) {
+        if(userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", userDetails.getUsername());
+        response.put("email", userDetails.getUsername());
+        response.put("role", userDetails.getAuthorities().stream().toList().get(0).getAuthority());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
