@@ -6,29 +6,75 @@ import LoginPage from "./vues/LoginPage";
 import MainPage from "./vues/MainPage";
 import DashboardPage from "./vues/DashboardPage";
 import ProtectedRoute from "./utils/ProtectedRoute";
-import { useAuth } from "./utils/AuthProvider";
-import { loadUserDetails } from "./utils/AuthProvider";
+import AdminDashboardPage from "./vues/AdminDashboardPage";
+import {
+  useAuth,
+  getInfoFromToken,
+  getTokenFromCookie,
+} from "./utils/AuthProvider";
+import TicketsPage from "./vues/TicketsPage";
+import CreateTicketPage from "./vues/CreateTicketPage";
 
 function App() {
-  const { userDetails, login, logout } = useAuth();
+  const { userDetails, login } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (userDetails == null) {
-      loadUserDetails(login, logout);
+    if (userDetails === null) {
+      const userInfo = getInfoFromToken(getTokenFromCookie());
+      if (userInfo) {
+        console.log("updating user info from App.jsx");
+        console.log(userInfo);
+        login(userInfo);
+      }
     }
+
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Dashboard routes for admin */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute role={["ROLE_ADMIN"]}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Dashboard routes for users */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute roles={["ROLE_ADMIN"]}>
+              <ProtectedRoute role={["ROLE_USER"]}>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/tickets"
+            element={
+              <ProtectedRoute role={["ROLE_USER"]}>
+                <TicketsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/create-ticket"
+            element={
+              <ProtectedRoute role={["ROLE_USER"]}>
+                <CreateTicketPage />
               </ProtectedRoute>
             }
           />

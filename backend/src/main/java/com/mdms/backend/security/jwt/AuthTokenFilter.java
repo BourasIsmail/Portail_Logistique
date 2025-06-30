@@ -1,6 +1,7 @@
 package com.mdms.backend.security.jwt;
 
 import com.mdms.backend.security.service.UserDetailsServiceImp;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -9,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,10 +67,20 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
-        }
+        } catch (ExpiredJwtException e){
+            logger.error("JWT token is expired: {}", e.getMessage());
 
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            ResponseCookie deleteCookie = ResponseCookie.from("jwt", "")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+        } catch (Exception e) {
+            logger.error("Cannot set user authentication: {} ", e.getMessage() + " of cause " + e.getCause());
+
+        }
         filterChain.doFilter(request, response);
     }
 }

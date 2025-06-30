@@ -2,44 +2,29 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 
-const ProtectedRoute = ({ children, roles }) => {
-  const [destination, setDestination] = useState(<></>);
-  const [autorized, setAuthorized] = useState(false);
+const ProtectedRoute = ({ children, role }) => {
   const navigate = useNavigate();
   const { userDetails } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let authorized = true;
-
     if (userDetails == null) {
-      authorized = false;
-      setDestination({});
+      console.log("redirecting to login page from ProtectedRoute");
       return navigate("/login");
     }
 
-    try {
-      if (roles && !roles.includes(userDetails.role)) {
-        authorized = false;
-        setDestination({});
-        return navigate("/notfound", { state: { from: "ProtectedRoute" } });
-      }
-    } catch (e) {
-      console.warn(e);
-
-      authorized = false;
-      setDestination({});
-      return navigate("/login");
+    if (!role.includes(userDetails.role)) {
+      return navigate("/notfound", { state: { from: "ProtectedRoute" } });
     }
 
-    if (authorized) {
-      setAuthorized(authorized);
-      setDestination(<>{children}</>);
-    }
+    setLoading(false);
   }, []);
 
-  if (autorized) {
-    return destination;
+  if (loading) {
+    return null;
   }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

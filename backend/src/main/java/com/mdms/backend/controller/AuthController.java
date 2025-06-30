@@ -1,9 +1,11 @@
 package com.mdms.backend.controller;
 
+import com.mdms.backend.entity.Ticket;
 import com.mdms.backend.request.AuthRequest;
 import com.mdms.backend.respository.UserRepository;
 import com.mdms.backend.security.jwt.JwtUtils;
 import com.mdms.backend.security.service.UserDetailsImp;
+import com.mdms.backend.service.TicketService;
 import com.mdms.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,6 +45,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TicketService ticketService;
 
 
     @PostMapping("/login")
@@ -64,7 +70,7 @@ public class AuthController {
 
         String jwtToken = jwtUtils.generateToken(userDetails);
         ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-                .httpOnly(true)
+//                .httpOnly(true)
                 .path("/")
                 .maxAge(Duration.ofDays(1))
                 .sameSite("Lax")
@@ -72,7 +78,7 @@ public class AuthController {
                 .build();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login successful!");
+//        response.put("message", "Login successful!");
 //        response.put("token", jwtToken);
         response.put("username", userDetails.getUsername());
         response.put("email", userDetails.getEmail());
@@ -94,4 +100,7 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+
+
 }

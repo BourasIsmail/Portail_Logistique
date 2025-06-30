@@ -50,4 +50,8 @@ public class TicketService {
 
         return ticketRepository.save(ticket);
     }
+
+    public List<Ticket> getTickets() {
+        return ticketRepository.findAll();
+    }
 }

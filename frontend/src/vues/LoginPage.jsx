@@ -3,11 +3,10 @@ import api from "../utils/api";
 import { LoginForm } from "@/components/login-form";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/utils/AuthProvider";
-import { loadUserDetails } from "@/utils/AuthProvider";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { userDetails, login, logout } = useAuth();
+  const { userDetails, login } = useAuth();
   const [loading, setLoading] = useState(true);
   const [userInfo, updateUserInfo] = useState({
     email: "",
@@ -15,18 +14,14 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    const redirect = async () => {
-      let loggedIn = await loadUserDetails(login, logout);
-      if (loggedIn) {
-        return navigate("/dashboard", { replace: true });
-      } else {
-        setLoading(false);
-      }
-    };
-
-    if (userDetails == null) {
-      redirect();
+    if (userDetails !== null) {
+      console.log(
+        "userDetails is not null, redirecting to dashboard from login page"
+      );
+      return navigate("/dashboard", { replace: true });
     }
+
+    setLoading(false);
   }, []);
 
   const handleChange = (e) => {
@@ -45,7 +40,13 @@ export default function LoginPage() {
       let userDetail = res.data;
 
       login(userDetail);
+      console.log(
+        "redirecting to dashboard from LoginPage after login was successful"
+      );
 
+      if (userDetail.role === "ROLE_ADMIN") {
+        return navigate("/admin/dashboard", { replace: true });
+      }
       return navigate("/dashboard", { replace: true });
     } catch (error) {
       console.warn(error);
