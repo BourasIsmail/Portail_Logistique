@@ -49,6 +49,12 @@ public class Ticket {
     @JsonIgnoreProperties({"ticket"})
     private List<Needs> needs = new ArrayList<>();
 
+    @Column(name = "note")
+    private String note = "";
+
+    @Column(name = "is_archived")
+    private boolean isArchived = false;
+
     public Ticket(String ticketDescription, User user, CategoryMat categoryMat, List<Needs> needs) {
         this.ticketDescription = ticketDescription;
         this.user = user;

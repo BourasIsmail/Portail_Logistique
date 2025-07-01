@@ -7,6 +7,7 @@ import MainPage from "./vues/MainPage";
 import DashboardPage from "./vues/DashboardPage";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminDashboardPage from "./vues/AdminDashboardPage";
+import AdminTicketsPage from "./vues/AdminTicketsPage";
 import {
   useAuth,
   getInfoFromToken,
@@ -14,6 +15,7 @@ import {
 } from "./utils/AuthProvider";
 import TicketsPage from "./vues/TicketsPage";
 import CreateTicketPage from "./vues/CreateTicketPage";
+import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
 
 function App() {
   const { userDetails, login } = useAuth();
@@ -49,6 +51,22 @@ function App() {
             element={
               <ProtectedRoute role={["ROLE_ADMIN"]}>
                 <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard/tickets"
+            element={
+              <ProtectedRoute role={["ROLE_ADMIN"]}>
+                <AdminTicketsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard/archive"
+            element={
+              <ProtectedRoute role={["ROLE_ADMIN"]}>
+                <ArchiveDashboardPage />
               </ProtectedRoute>
             }
           />

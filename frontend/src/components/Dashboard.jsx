@@ -21,6 +21,7 @@ const data = {
       icon: TicketPlusIcon,
     },
   ],
+  navSecondary: [],
 };
 
 export default function Dashboard({ children, ...props }) {

@@ -85,6 +85,7 @@ public class UserController {
             tk.setDate(new SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedDate()));
             tk.setCategory(ticket.getCategoryMat().getCtgrName());
             tk.setTicketStatus(ticket.getTicketStatus().name());
+            tk.setNote(ticket.getNote() == null ? "" : ticket.getNote());
             tk.setNeeds(ticket.getNeeds().stream()
                     .map(needs -> needs.getQuantity() + " " + needs.getMaterial().getMatName())
                     .collect(Collectors.joining(", ")));

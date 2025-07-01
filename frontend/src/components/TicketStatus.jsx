@@ -3,25 +3,25 @@ import React from "react";
 
 export default function TicketStatus({ status }) {
   const statusColors = {
-    SOUMISE: "blue-500",
-    EN_COURS_DE_VALIDATION: "indigo-500",
-    APPROUVEE: "green-500",
-    REJETEE: "red-500",
-    EN_COURS_DE_TRAITEMENT: "yellow-500",
-    PRETE_A_ETRE_LIVREE: "cyan-500",
-    LIVREE: "emerald-500",
-    CLOTUREE: "gray-700",
-    ANNULEE: "rose-500",
+    SOUMISE: "bg-blue-500",
+    EN_COURS_DE_VALIDATION: "bg-indigo-500",
+    APPROUVEE: "bg-green-500",
+    REJETEE: "bg-red-500",
+    EN_COURS_DE_TRAITEMENT: "bg-yellow-500",
+    PRETE_A_ETRE_LIVREE: "bg-cyan-500",
+    LIVREE: "bg-emerald-500",
+    CLOTUREE: "bg-gray-700",
+    ANNULEE: "bg-rose-500",
   };
 
   return (
     <div
       className={
-        `bg-${statusColors[status]}` +
-        " text-white rounded px-2 py-1 text-center text-xs font-semibold"
+        `${statusColors[status]} ` +
+        " text-white rounded px-2 py-1 text-sm text-center font-semibold w-fit"
       }
     >
-      <span>{status.replace(/_/g, " ").toLowerCase()}</span>
+      <span>{status.replace(/_/g, " ")}</span>
     </div>
   );
 }

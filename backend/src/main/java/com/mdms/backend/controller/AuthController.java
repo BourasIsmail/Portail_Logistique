@@ -63,23 +63,19 @@ public class AuthController {
             return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
         }
 
-//      Set the authentication
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImp userDetails = (UserDetailsImp) authentication.getPrincipal();
 
         String jwtToken = jwtUtils.generateToken(userDetails);
         ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-//                .httpOnly(true)
                 .path("/")
                 .maxAge(Duration.ofDays(1))
                 .sameSite("Lax")
-//                .secure(true)
                 .build();
 
         Map<String, Object> response = new HashMap<>();
-//        response.put("message", "Login successful!");
-//        response.put("token", jwtToken);
+
         response.put("username", userDetails.getUsername());
         response.put("email", userDetails.getEmail());
         response.put("role", userDetails.getAuthorities().stream().toList().get(0).getAuthority());

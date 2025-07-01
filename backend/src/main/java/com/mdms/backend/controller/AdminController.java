@@ -4,20 +4,26 @@ import com.mdms.backend.entity.*;
 import com.mdms.backend.request.AddMaterialRequest;
 import com.mdms.backend.request.AddServiceRequest;
 import com.mdms.backend.request.AddUserRequest;
+import com.mdms.backend.response.TicketsResponse;
+import com.mdms.backend.response.UserTicketsResponse;
 import com.mdms.backend.respository.*;
+import com.mdms.backend.security.service.UserDetailsImp;
 import com.mdms.backend.service.CategoryMatService;
 import com.mdms.backend.service.MaterialService;
+import com.mdms.backend.service.TicketService;
 import com.mdms.backend.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -43,6 +49,10 @@ public class AdminController {
     private ServiceRepository serviceRepository;
     @Autowired
     private DivisionRepository divisionRepository;
+    @Autowired
+    private TicketService ticketService;
+    @Autowired
+    private TicketRepository ticketRepository;
 
     @GetMapping("/test")
     private ResponseEntity<?> test() {
@@ -133,4 +143,66 @@ public class AdminController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/get-allTickets")
+    private ResponseEntity<?> getTickets() {
+        List<Ticket> ticketsInfo = ticketService.getTickets();
+
+        List<TicketsResponse> tickets = new ArrayList<>();
+        for(Ticket ticket : ticketsInfo){
+            TicketsResponse tk = new TicketsResponse();
+
+            tk.setId(ticket.getTicketId());
+            tk.setTicketDescription(ticket.getTicketDescription());
+            tk.setDate(new SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedDate()));
+            try{
+            if(ticket.getUser() != null){
+                tk.setService(ticket.getUser().getService().getServiceName());
+            }}
+            catch (Exception e){
+                tk.setService("No service");
+            }
+            tk.setCategory(ticket.getCategoryMat().getCtgrName());
+            tk.setTicketStatus(ticket.getTicketStatus().name());
+            tk.setNote(ticket.getNote() == null ? "" : ticket.getNote());
+            tk.setNeeds(ticket.getNeeds().stream()
+                    .map(needs -> needs.getQuantity() + " " + needs.getMaterial().getMatName())
+                    .collect(Collectors.joining(", ")));
+            tk.setArchived(ticket.isArchived());
+
+            tickets.add(tk);
+        }
+
+        Map<String, ?> response = Map.of("message", "Tickets fetched successfully!", "tickets", tickets);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/archive-ticket/{id}")
+    private ResponseEntity<?> archiveTicket(@PathVariable("id") Long id){
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(()-> new RuntimeException("Ticket not found with id : " + id));
+
+        ticket.setArchived(!ticket.isArchived());
+
+        ticketRepository.save(ticket);
+
+        return ResponseEntity.ok("Ticket archived successfully!");
+    }
+
+    @PutMapping("/update-ticket-status/{id}")
+    private ResponseEntity<?> updateTicketStatus(@PathVariable("id") Long id, @RequestBody Map<String, String> requestBody){
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(()-> new RuntimeException("Ticket not found with id : " + id));
+
+        try{
+            ticket.setTicketStatus(TicketStatus.valueOf(requestBody.get("status")));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+
+        ticket.setNote(requestBody.get("note") != null ? requestBody.get("note") : "");
+
+        ticketRepository.save(ticket);
+
+        return ResponseEntity.ok("Ticket status updated successfully!");
+    }
+
 }

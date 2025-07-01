@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useAuth } from "@/utils/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
-import { TicketsIcon, TicketPlusIcon } from "lucide-react";
+import { TicketsIcon, ArchiveIcon, PackageIcon, UsersIcon } from "lucide-react";
 
 const data = {
   navMain: [
@@ -15,14 +15,26 @@ const data = {
       icon: TicketsIcon,
       isActive: true,
     },
+    {
+      title: "Les Matériels",
+      url: "/admin/dashboard/materials",
+      icon: PackageIcon,
+      isActive: true,
+    },
+    {
+      title: "Les Services",
+      url: "/admin/dashboard/services",
+      icon: UsersIcon,
+      isActive: true,
+    },
   ],
-  // navSecondary: [
-  //   {
-  //     title: "Crée Demande",
-  //     url: "/dashboard/create-ticket",
-  //     icon: TicketPlusIcon,
-  //   },
-  // ],
+  navSecondary: [
+    {
+      title: "Demande Archivée",
+      url: "/admin/dashboard/archive",
+      icon: ArchiveIcon,
+    },
+  ],
   // projects: [
   //   {
   //     name: "Design Engineering",
