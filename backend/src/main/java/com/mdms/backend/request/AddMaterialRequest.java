@@ -10,6 +10,6 @@ public class AddMaterialRequest {
     @NotBlank(message = "material name is required")
     private String matName;
 
-    @NotNull(message = "category id is required")
-    private Long ctgrId;
+    @NotNull(message = "category name is required")
+    private String ctgrName;
 }

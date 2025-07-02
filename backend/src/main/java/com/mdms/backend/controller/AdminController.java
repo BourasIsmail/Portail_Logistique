@@ -4,6 +4,7 @@ import com.mdms.backend.entity.*;
 import com.mdms.backend.request.AddMaterialRequest;
 import com.mdms.backend.request.AddServiceRequest;
 import com.mdms.backend.request.AddUserRequest;
+import com.mdms.backend.response.MaterialResponse;
 import com.mdms.backend.response.TicketsResponse;
 import com.mdms.backend.response.UserTicketsResponse;
 import com.mdms.backend.respository.*;
@@ -84,8 +85,8 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: Material name is already in use!");
         }
 
-        CategoryMat category = categoryMatRepository.findByCtgrId(request.getCtgrId())
-                .orElseThrow(()-> new RuntimeException("Category not found with id : " + request.getCtgrId()));
+        CategoryMat category = categoryMatRepository.findByCtgrName(request.getCtgrName())
+                .orElseThrow(()-> new RuntimeException("Category not found with name : " + request.getCtgrName()));
 
         Material material = new Material(null, request.getMatName(), category);
 
@@ -205,4 +206,41 @@ public class AdminController {
         return ResponseEntity.ok("Ticket status updated successfully!");
     }
 
+    @GetMapping("/get-materials")
+    private ResponseEntity<?> getAllMaterials(){
+        List<Material> materials = materialRepository.findAll();
+
+        List<MaterialResponse> materialResponses = new ArrayList<>();
+        for(Material material : materials){
+            MaterialResponse mr = new MaterialResponse();
+
+            mr.setId(material.getMatId());
+            mr.setMatName(material.getMatName());
+            mr.setCtgrName(material.getCategory().getCtgrName());
+
+            materialResponses.add(mr);
+        }
+
+        return ResponseEntity.ok(materialResponses);
+    }
+
+    @PutMapping("/update-material/{id}")
+    private ResponseEntity<?> updateMaterialInfo(@PathVariable("id") Long id, @RequestBody Map<String, String> requestBody){
+        Material material = materialRepository.findById(id).orElseThrow(()-> new RuntimeException("Material not found with id : " + id));
+
+        material.setMatName(requestBody.get("matName"));
+        material.setCategory(categoryMatRepository.findByCtgrName(requestBody.get("ctgrName"))
+                .orElseThrow(()-> new RuntimeException("Category not found with name : " + requestBody.get("ctgrName"))));
+
+        materialRepository.save(material);
+
+        return ResponseEntity.ok("Material updated successfully!");
+   }
+
+   @DeleteMapping("/delete-material/{id}")
+    private ResponseEntity<?> deleteMaterial(@PathVariable("id") Long id){
+       Material material = materialRepository.findById(id).orElseThrow(()-> new RuntimeException("Material not found with id : " + id));
+       materialRepository.delete(material);
+       return ResponseEntity.ok("Material deleted successfully!");
+    }
 }

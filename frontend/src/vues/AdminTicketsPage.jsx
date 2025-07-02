@@ -34,9 +34,13 @@ export default function AdminTicketsPage() {
   return (
     <>
       <Dashboard>
-        <h1 className="text-2xl font-semibold mb-4">Demandes</h1>
+        <h1 className="text-2xl font-semibold mb-1">Demandes</h1>
         <div className="container mx-auto px-10">
-          <DataTable columns={columns(getData)} data={data} />
+          <DataTable
+            columns={columns(getData)}
+            data={data}
+            usePagination={true}
+          />
         </div>
       </Dashboard>
     </>

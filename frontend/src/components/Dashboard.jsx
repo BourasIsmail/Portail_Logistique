@@ -46,7 +46,7 @@ export default function Dashboard({ children, ...props }) {
     <>
       <div className={"[--header-height:calc(--spacing(14))] "} {...props}>
         <SidebarProvider className="flex flex-col">
-          <SiteHeader />
+          <SiteHeader direction={"/dashboard"} />
           <div className="flex flex-1">
             <AppSidebar data={data} className="" />
             <SidebarInset>

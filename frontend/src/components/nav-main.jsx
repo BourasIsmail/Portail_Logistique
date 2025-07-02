@@ -27,39 +27,51 @@ export function NavMain({ items }) {
       <SidebarGroupLabel></SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-            <SidebarMenuItem>
-              <Link to={item.url}>
-                <SidebarMenuButton tooltip={item.title}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </Link>
-              {item.items?.length ? (
-                <>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuAction className="data-[state=open]:rotate-90">
-                      <ChevronRight />
-                      <span className="sr-only">Toggle</span>
-                    </SidebarMenuAction>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <Link to={subItem.url}>
-                            <SidebarMenuSubButton asChild>
-                              <span>{subItem.title}</span>
-                            </SidebarMenuSubButton>
-                          </Link>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </>
-              ) : null}
-            </SidebarMenuItem>
-          </Collapsible>
+          <span>
+            <Collapsible
+              key={item.title}
+              asChild
+              defaultOpen={item.isActive}
+              className="mb-1 last:mb-0"
+            >
+              <SidebarMenuItem>
+                <Link to={item.url}>
+                  <SidebarMenuButton tooltip={item.title}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </Link>
+                {item.items?.length ? (
+                  <>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuAction className="data-[state=open]:rotate-90">
+                        <ChevronRight />
+                        <span className="sr-only">Toggle</span>
+                      </SidebarMenuAction>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.items?.map((subItem) => (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <Link to={subItem.url}>
+                              <SidebarMenuSubButton asChild>
+                                <span>{subItem.title}</span>
+                              </SidebarMenuSubButton>
+                            </Link>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </>
+                ) : null}
+              </SidebarMenuItem>
+            </Collapsible>
+            {items[items.length - 1] !== item && (
+              <div className="px-1">
+                <SidebarMenuItem className="border-border border" />
+              </div>
+            )}
+          </span>
         ))}
       </SidebarMenu>
     </SidebarGroup>

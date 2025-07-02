@@ -16,6 +16,8 @@ import {
 import TicketsPage from "./vues/TicketsPage";
 import CreateTicketPage from "./vues/CreateTicketPage";
 import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
+import AdminMaterialsPage from "./vues/AdminServicesPage";
+import AdminServcesPage from "./vues/AdminServicesPage";
 
 function App() {
   const { userDetails, login } = useAuth();
@@ -44,7 +46,6 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
-
           {/* Dashboard routes for admin */}
           <Route
             path="/admin/dashboard"
@@ -63,6 +64,22 @@ function App() {
             }
           />
           <Route
+            path="/admin/dashboard/materials"
+            element={
+              <ProtectedRoute role={["ROLE_ADMIN"]}>
+                <AdminMaterialsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard/services"
+            element={
+              <ProtectedRoute role={["ROLE_ADMIN"]}>
+                <AdminServcesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/dashboard/archive"
             element={
               <ProtectedRoute role={["ROLE_ADMIN"]}>
@@ -70,7 +87,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           {/* Dashboard routes for users */}
           <Route
             path="/dashboard"

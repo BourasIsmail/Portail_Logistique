@@ -15,7 +15,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 
 import { Link } from "react-router-dom";
 
-export function SiteHeader() {
+export function SiteHeader({ direction }) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -35,7 +35,7 @@ export function SiteHeader() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to={"/dashboard"}>
+                <Link to={direction}>
                   <BreadcrumbPage>Dashboard</BreadcrumbPage>
                 </Link>
               </BreadcrumbLink>
