@@ -15,6 +15,8 @@ public class TicketRequest {
     @NotNull(message = "category id is required")
     private Long ctgrId;
 
+    private String observation = "";
+
     @NotEmpty(message = "at least one need is required")
     private List<NeedsDto> needs;
 }

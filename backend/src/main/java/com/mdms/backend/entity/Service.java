@@ -33,7 +33,7 @@ public class Service {
     @JsonIgnoreProperties({"services"})
     private Division division;
 
-    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "service", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"service"})
-    private Set<User> employees = new HashSet<>();
+    private User user;
 }

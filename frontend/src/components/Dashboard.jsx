@@ -24,7 +24,7 @@ const data = {
   navSecondary: [],
 };
 
-export default function Dashboard({ children, ...props }) {
+export default function Dashboard({ children, title, ...props }) {
   const { userDetails } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -48,7 +48,7 @@ export default function Dashboard({ children, ...props }) {
         <SidebarProvider className="flex flex-col">
           <SiteHeader direction={"/dashboard"} />
           <div className="flex flex-1">
-            <AppSidebar data={data} className="" />
+            <AppSidebar data={data} title={title} className="" />
             <SidebarInset>
               <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
             </SidebarInset>

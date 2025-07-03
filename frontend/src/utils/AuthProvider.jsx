@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { decode } from "punycode";
+import api from "./api";
+import { toast } from "sonner";
 
 const AuthContext = createContext();
 
@@ -28,6 +30,35 @@ export const getInfoFromToken = (token) => {
   } catch (error) {
     console.error("Invalid token", error);
     return null;
+  }
+};
+
+export const changePassword = async (id, newPassword) => {
+  const token = getTokenFromCookie();
+  if (!token) {
+    console.warn("No token found");
+    toast.error("No token found. Please log in again.");
+    return;
+  }
+
+  try {
+    const response = await api.put(`/admin/change-pass/${id}`, {
+      password: newPassword,
+    });
+
+    if (!response.ok) {
+      toast.error("Failed to change password");
+      throw new Error("Failed to change password");
+    }
+
+    // const newToken = response.data;
+    // const userDetails = getInfoFromToken(newToken);
+    // useAuth().login(userDetails);
+    toast.success("Password changed successfully");
+    console.log("Password changed successfully", data);
+  } catch (error) {
+    toast.error("Error changing password. Please try again.", error);
+    console.error("Error changing password", error);
   }
 };
 

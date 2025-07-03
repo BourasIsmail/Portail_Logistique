@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import TicketStatus from "@/components/TicketStatus";
-
 import ActionDropdownMenu from "@/components/admin_components/ActionDropdownMenu";
 import { Button } from "../ui/button";
 import {
@@ -28,25 +27,38 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
+type Needs = {
+  name: string;
+  quantity: number;
+  affectation: string;
+};
+
 export type Demande = {
   id: string;
   ticketDescription: string;
   service: string;
   category: string;
-  needs: string;
-  date: string;
+  needs: Needs[];
+  date: Date;
   ticketStatus: string;
+  observations: string;
   note?: string | "";
 };
 
 export const columns = (refreshTable: () => void): ColumnDef<Demande>[] => [
   {
     accessorKey: "ticketDescription",
-    header: "Desctiption",
+    header: () => {
+      return (
+        <div className="max-w-24 overflow-hidden text-ellipsis whitespace-nowrap">
+          Description
+        </div>
+      );
+    },
   },
   {
     accessorKey: "service",
-    header: "Service",
+    header: "Entité",
     id: "service",
     enableColumnFilter: true,
   },
@@ -57,30 +69,42 @@ export const columns = (refreshTable: () => void): ColumnDef<Demande>[] => [
   {
     accessorKey: "needs",
     header: "Besoins",
-  },
-
-  // TODO: send data already sorted by date from the backend
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      useEffect(() => {
-        column.toggleSorting(column.getIsSorted() === "asc");
-      }, [column]);
-
+    cell: ({ row }) => {
       return (
-        <button
-          type="button"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-between text-center"
-        >
-          Date du demande
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </button>
+        <div className="max-w-3xs overflow-hidden text-ellipsis whitespace-nowrap">
+          {(row.getValue("needs") as { quantity: number; name: string }[])
+            .map((item) => `${item.quantity} ${item.name}`)
+            .join(", ")}
+        </div>
       );
     },
-    cell: ({ row }) => {
-      return <div className="text-center">{row.getValue("date")}</div>;
+  },
+  {
+    accessorKey: "observation",
+    header: () => {
+      return;
     },
+    cell: ({ row }) => {
+      return;
+    },
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <button
+        type="button"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex items-center justify-between text-center"
+      >
+        Date du demande
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center">
+        {new Date(row.getValue("date")).toLocaleDateString("fr-FR")}
+      </div>
+    ),
   },
 
   // TODO: make the header a button to select which status to show

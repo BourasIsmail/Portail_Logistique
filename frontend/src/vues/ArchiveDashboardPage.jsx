@@ -85,7 +85,7 @@ export default function TicketsPage() {
 
   return (
     <>
-      <Dashboard>
+      <Dashboard title="Admin Dashboard">
         <h1 className="text-2xl font-semibold mb-4">Demandes Archivées</h1>
         <div className="container mx-auto py-10">
           <DataTable columns={updatedColumns} data={data} />

@@ -8,7 +8,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -41,14 +43,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.ROLE_USER;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "service_id", referencedColumnName = "service_id")
-    @JsonIgnoreProperties({"employees", "division"})
+    @JsonIgnoreProperties({"user", "division"})
     private Service service;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"user"})
-    private Set<Ticket> tickets = new HashSet<>();
+    private List<Ticket> tickets = new ArrayList<>();
 
     private boolean enabled = true;
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
 import LoginPage from "./vues/LoginPage";
 import MainPage from "./vues/MainPage";
 import DashboardPage from "./vues/DashboardPage";
@@ -16,7 +17,7 @@ import {
 import TicketsPage from "./vues/TicketsPage";
 import CreateTicketPage from "./vues/CreateTicketPage";
 import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
-import AdminMaterialsPage from "./vues/AdminServicesPage";
+import AdminMaterialsPage from "./vues/AdminMaterialsPage";
 import AdminServcesPage from "./vues/AdminServicesPage";
 
 function App() {
@@ -72,7 +73,7 @@ function App() {
             }
           />
           <Route
-            path="/admin/dashboard/services"
+            path="/admin/dashboard/Entités"
             element={
               <ProtectedRoute role={["ROLE_ADMIN"]}>
                 <AdminServcesPage />
@@ -113,6 +114,13 @@ function App() {
             }
           />
         </Routes>
+        <Toaster
+          richColors
+          visibleToasts={1}
+          duration={2000}
+          position="top-center"
+          style={{ marginTop: "1rem" }}
+        />
       </ThemeProvider>
     </>
   );

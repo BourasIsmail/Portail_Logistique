@@ -4,11 +4,8 @@ import com.mdms.backend.entity.*;
 import com.mdms.backend.request.AddMaterialRequest;
 import com.mdms.backend.request.AddServiceRequest;
 import com.mdms.backend.request.AddUserRequest;
-import com.mdms.backend.response.MaterialResponse;
-import com.mdms.backend.response.TicketsResponse;
-import com.mdms.backend.response.UserTicketsResponse;
+import com.mdms.backend.response.*;
 import com.mdms.backend.respository.*;
-import com.mdms.backend.security.service.UserDetailsImp;
 import com.mdms.backend.service.CategoryMatService;
 import com.mdms.backend.service.MaterialService;
 import com.mdms.backend.service.TicketService;
@@ -17,14 +14,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -66,17 +59,16 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
 
-        Service service = serviceRepository.findByServiceId(request.getServiceId())
-                .orElseThrow(()-> new RuntimeException("Service not found with id : " + request.getServiceId()));
+        Division division = divisionRepository.findByDivName(request.getDivision())
+                .orElseThrow(()-> new RuntimeException("Division not found with name : " + request.getDivision()));
 
-        User user = new User(request.getUsername(), request.getEmail(),
-                passwordEncoder.encode(request.getPassword()), service);
+        Service service = new Service(null, request.getName(), division, null);
+        service = serviceRepository.save(service);
 
-        userService.saveUser(user);
+        User user = new User(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), service);
+        service.setUser(user);
 
-        Map<String, ?> response = Map.of("message", "User added successfully!", "user", user);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userRepository.save(user));
     }
 
     @PostMapping("/add-material")
@@ -96,6 +88,7 @@ public class AdminController {
 
         return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/add-category")
     private ResponseEntity<?> addCategory(@NotBlank @RequestParam(name = "ctgrName") String categoryName) {
@@ -121,7 +114,7 @@ public class AdminController {
         Division division = divisionRepository.findByDivId(request.getDivId())
                 .orElseThrow(()-> new RuntimeException("Division not found with id : " + request.getDivId()));
 
-        Service service = new Service(null, request.getServiceName(), division, new HashSet<>());
+        Service service = new Service(null, request.getServiceName(), division, null);
 
         serviceRepository.save(service);
 
@@ -149,30 +142,33 @@ public class AdminController {
     private ResponseEntity<?> getTickets() {
         List<Ticket> ticketsInfo = ticketService.getTickets();
 
+        ticketsInfo.sort(Comparator.comparing(Ticket::getCreatedDate).reversed());
+
         List<TicketsResponse> tickets = new ArrayList<>();
         for(Ticket ticket : ticketsInfo){
             TicketsResponse tk = new TicketsResponse();
 
             tk.setId(ticket.getTicketId());
             tk.setTicketDescription(ticket.getTicketDescription());
-            tk.setDate(new SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedDate()));
-            try{
-            if(ticket.getUser() != null){
-                tk.setService(ticket.getUser().getService().getServiceName());
-            }}
-            catch (Exception e){
-                tk.setService("No service");
-            }
+            tk.setDate(ticket.getCreatedDate());
+            tk.setService(ticket.getUser().getService().getServiceName());
+            tk.setObservation(ticket.getObservation() == null ? "" : ticket.getObservation());
             tk.setCategory(ticket.getCategoryMat().getCtgrName());
             tk.setTicketStatus(ticket.getTicketStatus().name());
             tk.setNote(ticket.getNote() == null ? "" : ticket.getNote());
-            tk.setNeeds(ticket.getNeeds().stream()
-                    .map(needs -> needs.getQuantity() + " " + needs.getMaterial().getMatName())
-                    .collect(Collectors.joining(", ")));
+
+            List<NeedResponse> needs = new ArrayList<>();
+            for (Needs need: ticket.getNeeds()){
+                needs.add(new NeedResponse(need.getMaterial().getMatName(), need.getQuantity(),
+                        need.getAffectation()));
+            }
+
+            tk.setNeeds(needs);
             tk.setArchived(ticket.isArchived());
 
             tickets.add(tk);
         }
+
 
         Map<String, ?> response = Map.of("message", "Tickets fetched successfully!", "tickets", tickets);
         return ResponseEntity.ok(response);
@@ -242,5 +238,60 @@ public class AdminController {
        Material material = materialRepository.findById(id).orElseThrow(()-> new RuntimeException("Material not found with id : " + id));
        materialRepository.delete(material);
        return ResponseEntity.ok("Material deleted successfully!");
+    }
+
+    @GetMapping("/get-divisions")
+    private ResponseEntity<?> getAllDivisions(){
+        List<Division> divisions = divisionRepository.findAll();
+
+        List<String> divisionsNames = new ArrayList<>();
+        for(Division division : divisions){
+            divisionsNames.add(division.getDivName());
+        }
+
+        return ResponseEntity.ok(divisionsNames);
+    }
+
+    @GetMapping("/get-users")
+    private ResponseEntity<?> getAllUsers(){
+        List<User> users = userRepository.findAll();
+
+        List<UsersResponse> response = new ArrayList<>();
+        for(User user : users){
+            UsersResponse userResponse = new UsersResponse();
+
+            userResponse.setId(user.getUserId());
+            userResponse.setEmail(user.getEmail());
+
+            if(user.getService() != null){
+                userResponse.setService(user.getService().getServiceName());
+                userResponse.setDivision(user.getService().getDivision().getDivName());
+            }else {
+                userResponse.setService("No service");
+                userResponse.setDivision("No division");
+            }
+
+
+            response.add(userResponse);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/make-admin/{id}")
+    private ResponseEntity<?> addAdminAuthorize(@PathVariable("id") Long id){
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with id : " + id));
+        user.setRole(Roles.ROLE_ADMIN);
+        userRepository.save(user);
+        return ResponseEntity.ok("User made admin successfully!");
+    }
+
+
+    @PutMapping("/change-pass/{id}")
+    private ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody Map<String, String> requestBody){
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with id : " + id));
+        user.setPassword(passwordEncoder.encode(requestBody.get("password")));
+        userRepository.save(user);
+        return ResponseEntity.ok("Password changed successfully!");
     }
 }

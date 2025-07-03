@@ -74,7 +74,9 @@ public class UserController {
     private ResponseEntity<?> getTickets(@AuthenticationPrincipal UserDetailsImp userDetails) {
         User user = userService.getUserById(userDetails.getId());
 
-        Set<Ticket> userTickets = user.getTickets();
+        List<Ticket> userTickets = user.getTickets();
+
+        userTickets.sort(Comparator.comparing(Ticket::getCreatedDate).reversed());
 
         List<UserTicketsResponse> tickets = new ArrayList<>();
         for(Ticket ticket : userTickets){
@@ -85,6 +87,7 @@ public class UserController {
             tk.setDate(new SimpleDateFormat("dd-MM-yyyy").format(ticket.getCreatedDate()));
             tk.setCategory(ticket.getCategoryMat().getCtgrName());
             tk.setTicketStatus(ticket.getTicketStatus().name());
+            tk.setObservation(ticket.getObservation() == null ? "" : ticket.getObservation());
             tk.setNote(ticket.getNote() == null ? "" : ticket.getNote());
             tk.setNeeds(ticket.getNeeds().stream()
                     .map(needs -> needs.getQuantity() + " " + needs.getMaterial().getMatName())
@@ -115,5 +118,6 @@ public class UserController {
 
         return ResponseEntity.ok(categories);
     }
+
 
 }

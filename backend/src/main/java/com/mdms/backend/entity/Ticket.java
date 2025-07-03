@@ -49,6 +49,9 @@ public class Ticket {
     @JsonIgnoreProperties({"ticket"})
     private List<Needs> needs = new ArrayList<>();
 
+    @Column(name = "observation")
+    private String observation;
+
     @Column(name = "note")
     private String note = "";
 

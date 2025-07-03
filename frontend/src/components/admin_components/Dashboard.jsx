@@ -22,20 +22,20 @@ const data = {
       isActive: true,
     },
     {
-      title: "Les Demandes",
+      title: "Demandes",
       url: "/admin/dashboard/tickets",
       icon: TicketsIcon,
       isActive: true,
     },
     {
-      title: "Les Matériels",
+      title: "Parametrage Articles",
       url: "/admin/dashboard/materials",
       icon: PackageIcon,
       isActive: true,
     },
     {
-      title: "Les Services",
-      url: "/admin/dashboard/services",
+      title: "Parametrage Entités",
+      url: "/admin/dashboard/entités",
       icon: UsersIcon,
       isActive: true,
     },
@@ -66,7 +66,7 @@ const data = {
   // ],
 };
 
-export default function Dashboard({ children, ...props }) {
+export default function Dashboard({ children, title, ...props }) {
   const { userDetails } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -90,7 +90,7 @@ export default function Dashboard({ children, ...props }) {
         <SidebarProvider className="flex flex-col">
           <SiteHeader direction={"/admin/dashboard"} />
           <div className="flex flex-1">
-            <AppSidebar data={data} className="" />
+            <AppSidebar data={data} title={title} className="" />
             <SidebarInset>
               <div className="flex flex-1 flex-col gap-4 p-4 pt-2">
                 {children}

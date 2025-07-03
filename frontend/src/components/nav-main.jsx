@@ -26,8 +26,8 @@ export function NavMain({ items }) {
       {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarGroupLabel></SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <span>
+        {items.map((item, index) => (
+          <span key={item.title}>
             <Collapsible
               key={item.title}
               asChild

@@ -13,6 +13,7 @@ import {
   Ticket,
   TicketPlusIcon,
   TicketsIcon,
+  LayoutDashboardIcon,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -31,8 +32,9 @@ import {
 
 import { useAuth } from "@/utils/AuthProvider";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
-export function AppSidebar({ data, ...props }) {
+export function AppSidebar({ data, title, ...props }) {
   const { userDetails } = useAuth();
 
   return (
@@ -43,19 +45,23 @@ export function AppSidebar({ data, ...props }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  {/* TODO : add logo here */}
-                  {/* <Command className="size-4" /> */}
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className={"flex justify-center items-center"}
+            >
+              <Link to="/admin/dashboard">
+                <div className="flex items-center justify-end gap-2">
+                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-7 items-center justify-center rounded-lg">
+                    <LayoutDashboardIcon className="size-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold text-lg pr-3">
+                      {title}
+                    </span>
+                  </div>
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
-                    Entraide National
-                  </span>
-                  {/* <span className="truncate text-xs">Enterprise</span> */}
-                </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -65,7 +71,7 @@ export function AppSidebar({ data, ...props }) {
         {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className={"pb-1.5"}>
         <NavUser user={userDetails} />
       </SidebarFooter>
     </Sidebar>

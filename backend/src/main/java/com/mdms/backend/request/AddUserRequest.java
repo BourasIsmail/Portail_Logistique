@@ -10,7 +10,7 @@ import lombok.Getter;
 public class AddUserRequest {
 
     @NotBlank(message = "username is required")
-    private String username;
+    private String name;
 
     @NotBlank(message = "email is required")
     @Email
@@ -19,6 +19,6 @@ public class AddUserRequest {
     @NotBlank(message = "password is required")
     private String password;
 
-    @NotNull(message = "service id is required")
-    private Long serviceId;
+    @NotNull(message = "division name is required")
+    private String division;
 }

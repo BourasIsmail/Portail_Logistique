@@ -32,18 +32,23 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   usePagination?: boolean;
+  sorting?: SortingState;
+  setSorting?: (
+    updater: SortingState | ((old: SortingState) => SortingState)
+  ) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   usePagination = false,
+  sorting,
+  setSorting,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 8,
   });
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -83,7 +88,7 @@ export function DataTable<TData, TValue>({
       {usePagination && (
         <div className="flex items-center py-4">
           <Input
-            placeholder="Filtrer par service ..."
+            placeholder="Filtrer par entité ..."
             value={
               (table.getColumn("service")?.getFilterValue() as string) ?? ""
             }

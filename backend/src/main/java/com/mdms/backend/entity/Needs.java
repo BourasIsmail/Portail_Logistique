@@ -25,14 +25,8 @@ public class Needs {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "need_aff_bureau")
-    private String affectationParBureau;
-
-    @Column(name = "need_aff_personne")
-    private String affectationParPersonne;
-
-    @Column(name = "need_observation")
-    private String observation;
+    @Column(name = "need_aff")
+    private String affectation;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mat_id", referencedColumnName = "mat_id")
