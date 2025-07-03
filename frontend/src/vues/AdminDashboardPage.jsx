@@ -16,42 +16,37 @@ import TicketStatus from "@/components/TicketStatus";
 import Chart from "@/components/admin_components/Chart";
 
 const getMats = (tickets) => {
-  const materials = tickets.reduce((acc, ticket) => {
-    const regex = /(\d+)\s+([^\d,]+)/g;
-    let match;
-    while ((match = regex.exec(ticket.needs)) !== null) {
-      const materialCount = parseInt(match[1], 10);
-      const materialName = match[2].trim();
+  const materialMap = new Map();
 
-      if (materialName && !isNaN(materialCount)) {
-        // Add material count to acc for this material
-        acc[materialName] = (acc[materialName] || 0) + materialCount;
-      }
-    }
-    return acc;
-  }, {});
-
-  // Step 2: Sort materials by descending count
-  const sortedMaterials = Object.entries(materials).sort(
-    ([, a], [, b]) => b - a
-  );
-
-  // Step 3: Build final array with top 4 + "autre"
-  const finalMaterials = [];
-  let autreValue = 0;
-
-  sortedMaterials.forEach(([name, value], index) => {
-    if (index < 4) {
-      finalMaterials.push({ name, value });
-    } else {
-      autreValue += value;
-    }
+  // 1. Count total quantity per material
+  tickets.forEach((ticket) => {
+    ticket.needs.forEach((mat) => {
+      const currentQty = materialMap.get(mat.name) || 0;
+      materialMap.set(mat.name, currentQty + mat.quantity);
+    });
   });
 
-  // Step 4: Add "autre" entry
-  finalMaterials.push({ name: "Autre", value: autreValue });
+  // 2. Sort by quantity descending
+  const sortedMaterials = Array.from(materialMap.entries()).sort(
+    (a, b) => b[1] - a[1]
+  );
 
-  return finalMaterials;
+  // 3. Get top 4 materials
+  const top4 = sortedMaterials.slice(0, 4).map(([name, quantity]) => ({
+    name,
+    value: quantity,
+  }));
+
+  // 4. Group the rest into "Autre"
+  const otherTotal = sortedMaterials
+    .slice(4)
+    .reduce((sum, [, quantity]) => sum + quantity, 0);
+
+  if (otherTotal > 0) {
+    top4.push({ name: "Autre", value: otherTotal });
+  }
+
+  return top4;
 };
 
 const generateChartData = (data) => {
@@ -178,24 +173,23 @@ export default function AdminDashboardPage() {
   }
   return (
     <>
-      <Dashboard>
+      <Dashboard title="Admin Dashboard">
         <div className="flex flex-col gap-2 mb-1">
           <h1 className="text-2xl font-semibold mb-1 ">Tableau de Bord</h1>
           <p className="text-muted-foreground">
             Vue d'ensemble des performances et des statistiques
           </p>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-10">
           {cardData.map((card, index) => {
             const IconComponent = card.icon;
 
             return (
               <Card
                 key={index}
-                className={`relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
+                className={`gap-4 relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
               >
                 {/* Background Pattern */}
-                <div className="absolute inset-0 bg-grid-pattern opacity-5" />
 
                 <CardHeader className="relative ">
                   <div className="flex items-center justify-between">
@@ -254,7 +248,7 @@ export default function AdminDashboardPage() {
             Graphiques et tendances des demandes
           </p>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-10">
           <Chart
             data={materialsData}
             title={"Matériaux les plus demandés"}
@@ -264,9 +258,9 @@ export default function AdminDashboardPage() {
           />
           <Chart
             data={servicesData}
-            title={"Pourcentage des demandes par service"}
+            title={"Pourcentage des demandes par entité"}
             description={
-              "Visualisation des parts des demandes réparties selon les différents services"
+              "Visualisation des parts des demandes réparties selon les différents entités"
             }
           />
           <Chart

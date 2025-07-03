@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   RefreshCcw,
   PlusIcon,
+  LockIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,51 +40,74 @@ import TicketStatus from "@/components/TicketStatus";
 import ActionDropdownMenu from "@/components/admin_components/ActionDropdownMenu";
 import api from "@/utils/api";
 import { useState } from "react";
+import { toast } from "sonner";
+import { changePassword } from "@/utils/AuthProvider";
 
 export type Material = {
   id: string;
-  matName: string;
-  ctgrName: string;
+  service: string;
+  email: string;
+  division: string;
 };
 
 export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
   {
-    accessorKey: "matName",
+    accessorKey: "email",
     header: () => {
-      const [categories, setCategories] = useState<string[]>([]);
-
-      const fetchCategories = async () => {
-        try {
-          const response = await api.get("/user/get-categories");
-          setCategories(response.data.map((cat) => cat.ctgrName));
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-        }
-      };
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <span>Email</span>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="text-center">{row.getValue("email")}</div>;
+    },
+  },
+  {
+    accessorKey: "service",
+    header: () => {
+      const [divisions, setDivisions] = useState([]);
 
       useEffect(() => {
-        fetchCategories();
+        const fetchDivisions = async () => {
+          try {
+            const response = await api.get("/admin/get-divisions");
+            console.log("Divisions Data:", response.data);
+            setDivisions(response.data);
+          } catch (error) {
+            console.error("Error fetching divisions:", error);
+          }
+        };
+
+        fetchDivisions();
       }, []);
 
       const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const name = formData.get("name");
-        const ctgr = formData.get("category");
-        console.log("Adding material:", name, ctgr);
+        const email = formData.get("email");
+        const password = formData.get("password");
+        const division = formData.get("division");
+
         try {
-          await api.post("/admin/add-material", {
-            matName: name,
-            ctgrName: ctgr,
+          await api.post("/admin/add-user", {
+            name,
+            email,
+            password,
+            division,
           });
           refreshTable();
         } catch (error) {
           console.error("Error adding material:", error);
+          alert("Cette catégorie existe déjà !");
         }
       };
+
       return (
-        <div className="flex items-center  gap-2">
-          <span>Nom d'Article</span>
+        <div className="flex items-center justify-center gap-2">
+          <span>Service</span>
           <span>
             <Dialog>
               <DialogTrigger asChild>
@@ -103,38 +127,56 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                 <form onSubmit={handleSubmit} className="grid gap-4">
                   <DialogHeader className={undefined}>
                     <DialogTitle className={undefined}>
-                      Ajouter Un Article
+                      Ajouter une Entité
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="grid gap-4">
+                  <div className="grid gap-4 mb-2">
                     <div className="grid gap-3">
                       <label>Nom :</label>
                       <Input
                         name="name"
                         type="text"
-                        placeholder="Nom d'article"
+                        placeholder="Nom d'Entité"
                         className={undefined}
+                        required
                       />
                     </div>
                     <div className="grid gap-3">
-                      <label>Catégorie :</label>
-                      <Select name="category">
-                        <SelectTrigger className="w-full">
-                          <SelectValue
-                            placeholder={"Sélectionner une catégorie"}
-                          />
+                      <label>Email :</label>
+                      <Input
+                        name="email"
+                        type="text"
+                        placeholder="example@entraide.ma"
+                        className={undefined}
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <label>Mot de passe :</label>
+                      <Input
+                        name="password"
+                        type="text"
+                        placeholder="***********"
+                        className={undefined}
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <label>Division :</label>
+                      <Select name="division" required>
+                        <SelectTrigger className={undefined}>
+                          <SelectValue placeholder="Sélectionner une division" />
                         </SelectTrigger>
                         <SelectContent className={undefined}>
-                          {categories &&
-                            categories.map((category) => (
-                              <SelectItem
-                                key={category + Math.random()}
-                                value={category}
-                                className={undefined}
-                              >
-                                {category}
-                              </SelectItem>
-                            ))}
+                          {divisions.map((division) => (
+                            <SelectItem
+                              key={division + Math.random()}
+                              value={division}
+                              className={undefined}
+                            >
+                              {division}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -146,7 +188,7 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                       variant={undefined}
                       size={undefined}
                     >
-                      Ajouter Article
+                      Confirmer
                     </Button>
                   </DialogFooter>
                 </form>
@@ -156,17 +198,19 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
         </div>
       );
     },
+    cell: ({ row }) => {
+      return <div className="text-center">{row.getValue("service")}</div>;
+    },
   },
   {
-    accessorKey: "ctgrName",
+    accessorKey: "division",
     header: () => {
       const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const name = formData.get("name");
-        console.log("Adding category:", name);
         try {
-          await api.post("/admin/add-category?ctgrName=" + name);
+          await api.post("/admin/add-division?divName=" + name);
           refreshTable();
         } catch (error) {
           console.error("Error adding material:", error);
@@ -174,8 +218,8 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
         }
       };
       return (
-        <div className="flex items-center gap-2">
-          <span>Catégorie</span>
+        <div className="flex items-center justify-center gap-2">
+          <span>Division</span>
           <span>
             <Dialog>
               <DialogTrigger asChild>
@@ -195,7 +239,7 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                 <form onSubmit={handleSubmit} className="grid gap-4">
                   <DialogHeader className={undefined}>
                     <DialogTitle className={undefined}>
-                      Ajouter Une Catégorie
+                      Ajouter Une Division
                     </DialogTitle>
                   </DialogHeader>
                   <div className="grid gap-4 mb-2">
@@ -204,7 +248,7 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                       <Input
                         name="name"
                         type="text"
-                        placeholder="Nom du catégorie"
+                        placeholder="Nom du division"
                         className={undefined}
                       />
                     </div>
@@ -216,7 +260,7 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                       variant={undefined}
                       size={undefined}
                     >
-                      Ajouter Catégorie
+                      Ajouter Division
                     </Button>
                   </DialogFooter>
                 </form>
@@ -226,43 +270,31 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
         </div>
       );
     },
+    cell: ({ row }) => {
+      return <div className="text-center">{row.getValue("division")}</div>;
+    },
   },
   {
     accessorKey: "id",
     header: "",
     cell: ({ row }) => {
-      const [matName, setMatName] = useState(row.getValue("matName"));
-      const [category, setCategory] = useState(row.getValue("ctgrName"));
-      const [categories, setCategories] = useState<string[]>([]);
+      const [pass, setPass] = useState<String>("");
 
-      const fetchCategories = async () => {
-        try {
-          const response = await api.get("/user/get-categories");
-          setCategories(response.data.map((cat) => cat.ctgrName));
-        } catch (error) {
-          console.error("Error fetching categories:", error);
+      const handleClick = async () => {
+        if (!pass || pass.trim() === "") {
+          toast.warning("Veuillez entrer un mot de passe valide.");
+          return;
         }
-      };
 
-      useEffect(() => {
-        fetchCategories();
-      }, []);
-
-      const handleSubmit = async () => {
-        let id = row.getValue("id");
-        let name = matName != null ? matName : row.getValue("matName");
-        let cat = category != null ? category : row.getValue("ctgrName");
-
-        console.log("Updating material:", id, name, cat);
-        try {
-          await api.put(`/admin/update-material/${id}`, {
-            matName: name,
-            ctgrName: cat,
+        await changePassword(row.getValue("id"), pass)
+          .then(() => {
+            toast.success("Mot de passe modifié avec succès.");
+            refreshTable();
+          })
+          .catch((error) => {
+            console.error("Error changing password:", error);
+            toast.error("Erreur lors de la modification du mot de passe.");
           });
-          refreshTable();
-        } catch (error) {
-          console.error("Error updating material:", error);
-        }
       };
 
       return (
@@ -282,28 +314,10 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
               <DropdownMenuContent align="end" className={undefined}>
                 <DialogTrigger asChild>
                   <DropdownMenuItem className={undefined} inset={undefined}>
-                    <RefreshCcw className="h-4 w-4" />
-                    Modifier Article
+                    <LockIcon className="h-4 w-4" />
+                    Changer mot de passe
                   </DropdownMenuItem>
                 </DialogTrigger>
-                <DropdownMenuSeparator className={undefined} />
-                <DropdownMenuItem
-                  className={undefined}
-                  inset={undefined}
-                  onClick={() => {
-                    let id = row.getValue("id");
-                    console.log("Deleting material:", id);
-                    // try {
-                    //   await api.delete(`/admin/delete-material/${id}`);
-                    //   refreshTable();
-                    // } catch (error) {
-                    //   console.error("Error deleting material:", error);
-                    // }
-                  }}
-                >
-                  <PackageMinusIcon className="h-4 w-4" />
-                  Suprimmer Article
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent
@@ -312,53 +326,26 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
             >
               <DialogHeader className={undefined}>
                 <DialogTitle className={"text-center"}>
-                  Modifier Article
+                  Modifier mot de passe
                 </DialogTitle>
               </DialogHeader>
               <div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-2 ">Nom :</label>
+                  <label className="text-sm font-medium mb-2 ">
+                    Nouveau mot de pass :
+                  </label>
                   <Input
                     type="text"
-                    name="matName"
-                    value={matName}
-                    onChange={(e) => setMatName(e.target.value)}
-                    placeholder={"nom d'article"}
+                    onChange={(e) => setPass(e.target.value)}
+                    placeholder={"********"}
                     className="w-full"
                   />
-                </div>
-                <div className="flex flex-col mb-1">
-                  <label className="text-sm font-medium mb-2 mt-4">
-                    Catégorie :
-                  </label>
-                  <Select
-                    name="category"
-                    onValueChange={(value) => setCategory(value)}
-                    value={category}
-                    defaultValue={row.getValue("ctgrName")}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={row.getValue("ctgrName")} />
-                    </SelectTrigger>
-                    <SelectContent className={undefined}>
-                      {categories &&
-                        categories.map((category) => (
-                          <SelectItem
-                            key={category + Math.random()}
-                            value={category}
-                            className={undefined}
-                          >
-                            {category}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
               <DialogFooter className={undefined}>
                 <Button
                   type="submit"
-                  onClick={handleSubmit}
+                  onClick={handleClick}
                   className={undefined}
                   variant={undefined}
                   size={undefined}

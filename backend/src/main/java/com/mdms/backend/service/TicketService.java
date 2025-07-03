@@ -35,9 +35,7 @@ public class TicketService {
             need.setMaterial(material);
             need.setQuantity(needsDto.getQuantity());
             need.setTicket(ticket);
-            need.setAffectationParBureau(needsDto.getAffectationParBureau());
-            need.setAffectationParPersonne(needsDto.getAffectationParPersonne());
-            need.setObservation(needsDto.getObservation());
+            need.setAffectation(needsDto.getAffectation());
 
             needs.add(need);
         }
@@ -47,6 +45,7 @@ public class TicketService {
         ticket.setUser(user);
         ticket.setTicketStatus(TicketStatus.EN_COURS_DE_TRAITEMENT);
         ticket.setNeeds(needs);
+        ticket.setObservation(request.getObservation());
 
         return ticketRepository.save(ticket);
     }

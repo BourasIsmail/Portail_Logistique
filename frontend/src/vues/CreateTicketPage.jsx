@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronsUpDown } from "lucide-react";
 import { v4 as uuid } from "uuid";
+import { toast } from "sonner";
 
 export default function CreateTicketPage() {
   const [loading, setLoading] = useState(true);
@@ -47,17 +48,17 @@ export default function CreateTicketPage() {
     const formData = new FormData(e.target);
 
     if (needs.length === 0) {
-      alert(
+      toast.warning(
         "Veuillez d'abord ajouter des besoins de matériaux avant d'envoyer la demande."
       );
       return;
     }
     if (needs.some((need) => need.materialName === "")) {
-      alert("Veuillez choisir un matériel pour chaque besoin.");
+      toast.warning("Veuillez choisir un article pour chaque besoin.");
       return;
     }
     if (!formData.get("ticketDesc")) {
-      alert("Veuillez fournir une description du ticket.");
+      toast.warning("Veuillez fournir une description du ticket.");
       return;
     }
 
@@ -66,15 +67,14 @@ export default function CreateTicketPage() {
       ctgrId: categories.find(
         (value) => value.ctgrName === formData.get("ctgrName")
       ).ctgrId,
+      observation: formData.get("observation") || "",
       needs: [
         ...needs.map((need) => ({
           materialId: materials.find(
             (material) => material.matName === need.materialName
           ).matId,
           quantity: need.quantity,
-          observation: need.observation,
-          affectationParBureau: need.affectationParBureau,
-          affectationParPersonne: need.affectationParPersonne,
+          affectation: need.affectation,
         })),
       ],
     };
@@ -85,12 +85,12 @@ export default function CreateTicketPage() {
       .post("/user/create-ticket", ticketData)
       .then((response) => {
         console.log("Ticket created successfully:", response.data);
-        alert("Ticket créé avec succès !");
+        toast.success("Ticket créé avec succès !");
         return navigate("/dashboard/tickets", { replace: true });
       })
       .catch((error) => {
         console.error("Error creating ticket:", error);
-        alert("Une erreur s'est produite lors de la création du ticket.");
+        toast.error("Une erreur s'est produite lors de la création du ticket.");
       });
   };
 
@@ -104,7 +104,7 @@ export default function CreateTicketPage() {
 
   const handleClick = () => {
     if (materials.length === 0) {
-      alert(
+      toast.warning(
         "Veuillez d'abord choisir une catégorie pour ajouter des matriaux."
       );
       return;
@@ -116,9 +116,7 @@ export default function CreateTicketPage() {
         id: uuid(),
         materialName: "",
         quantity: 1,
-        observation: "",
-        affectationParBureau: "",
-        affectationParPersonne: "",
+        affectation: "",
       },
     ]);
   };
@@ -144,15 +142,15 @@ export default function CreateTicketPage() {
 
   return (
     <>
-      <Dashboard>
+      <Dashboard title={"Service Dashboard"}>
         <div className="flex items-start justify-center h-full mt-10">
           <div className="max-w-2xl mx-auto">
-            <h1 className="text-2xl font-semibold mb-4">Créer Un Ticket</h1>
+            <h1 className="text-2xl font-semibold mb-4">Créer Une Demande</h1>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4 w-lg flex flex-col justify-center">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium mb-2">
-                    Description
+                    Description <span className="text-red-500">*</span>
                   </label>
                   <Input
                     placeholder="Donnez une description"
@@ -161,7 +159,9 @@ export default function CreateTicketPage() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-2">Categorie</label>
+                  <label className="text-sm font-medium mb-2">
+                    Categorie <span className="text-red-500">*</span>
+                  </label>
                   <Select
                     name="ctgrName"
                     required
@@ -182,6 +182,19 @@ export default function CreateTicketPage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium mb-2">
+                    Observation :
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="observation"
+                    className="w-full"
+                    name="observation"
+                  />
+                </div>
+
                 <div className="flex flex-col">
                   <label className="text-sm font-medium mb-2">Besoin</label>
                   {needs.length > 0 &&
@@ -216,10 +229,10 @@ export default function CreateTicketPage() {
                             </Button>
                           </div>
                         </div>
-                        <CollapsibleContent className="p-4 rounded">
+                        <CollapsibleContent className="px-4 rounded py-1">
                           <div className="mb-2">
-                            <label className="text-sm font-medium mb-2">
-                              Nom :
+                            <label className="text-sm font-medium ">
+                              Nom : <span className="text-red-500">*</span>
                             </label>
                             <Select
                               name="materialName"
@@ -229,7 +242,7 @@ export default function CreateTicketPage() {
                               defaultValue={need.materialName}
                               required
                             >
-                              <SelectTrigger className="w-full">
+                              <SelectTrigger className="w-full mt-1">
                                 <SelectValue placeholder="matériaux" />
                               </SelectTrigger>
                               <SelectContent>
@@ -247,12 +260,13 @@ export default function CreateTicketPage() {
                           <div className="mb-2 flex gap-4">
                             <div>
                               <label className="text-sm font-medium mt-2">
-                                Quantité :
+                                Quantité :{" "}
+                                <span className="text-red-500">*</span>
                               </label>
                               <Input
                                 type="number"
                                 placeholder="quantité"
-                                className="w-40"
+                                className="w-40 mt-1"
                                 name="quantity"
                                 min="1"
                                 onChange={(e) => {
@@ -266,67 +280,32 @@ export default function CreateTicketPage() {
                                 required
                               />
                             </div>
-                            <div className="flex-1">
-                              <label className="text-sm font-medium mt-2">
-                                Observation :
+                            <div className="mb-2 w-full">
+                              <label className="text-sm font-medium mt-2 ">
+                                Affectation Par Person :
                               </label>
                               <Input
                                 type="text"
-                                placeholder="observation"
+                                placeholder="affectation"
+                                name="affectation"
+                                className={"mt-1"}
                                 onChange={(e) => {
                                   handleChange(
                                     index,
-                                    "observation",
+                                    "affectation",
                                     e.target.value
                                   );
                                 }}
-                                value={need.observation}
-                                name="observation"
+                                value={need.affectation}
                               />
                             </div>
-                          </div>
-                          <div className="mb-2">
-                            <label className="text-sm font-medium mt-2">
-                              Affectation Par Bureau :
-                            </label>
-                            <Input
-                              type="text"
-                              placeholder="affectation par bureau"
-                              name="affectationParBureau"
-                              onChange={(e) => {
-                                handleChange(
-                                  index,
-                                  "affectationParBureau",
-                                  e.target.value
-                                );
-                              }}
-                              value={need.affectationParBureau}
-                            />
-                          </div>
-                          <div className="mb-2">
-                            <label className="text-sm font-medium mt-2">
-                              Affectation Par Person :
-                            </label>
-                            <Input
-                              type="text"
-                              placeholder="affectation par person"
-                              name="affectationParPersonne"
-                              onChange={(e) => {
-                                handleChange(
-                                  index,
-                                  "affectationParPersonne",
-                                  e.target.value
-                                );
-                              }}
-                              value={need.affectationParPersonne}
-                            />
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
                     ))}
                   <div className="flex justify-start items-center">
                     <Badge variant="secondary" className="text-sm">
-                      Ajoute Materiel
+                      Ajoute Article
                     </Badge>
                     <Button
                       className="mx-2 rounded-full h-6 px-2"
@@ -337,7 +316,7 @@ export default function CreateTicketPage() {
                     </Button>
                   </div>
                 </div>
-                <Button type="submit">Submit</Button>
+                <Button type="submit">Envoyer</Button>
               </div>
             </form>
           </div>

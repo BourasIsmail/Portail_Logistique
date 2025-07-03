@@ -1,4 +1,5 @@
 import { SidebarIcon } from "lucide-react";
+import logo from "../assets/logo.png";
 
 import { SearchForm } from "@/components/search-form";
 import {
@@ -22,7 +23,7 @@ export function SiteHeader({ direction }) {
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b ">
       <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
         <Button
-          className="h-8 w-8"
+          className="h-8 w-8 "
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
@@ -31,12 +32,19 @@ export function SiteHeader({ direction }) {
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
         {/* <Breadcrumb className="hidden sm:block"> */}
-        <Breadcrumb className="block">
+        <Breadcrumb className=" w-full flex items-center justify-center">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link to={direction}>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage className={"w-full"}>
+                    <div className="flex gap-2 items-center justify-center text-center">
+                      {/* <span className="text-sm font-semibold"> */}
+                      <span className="text-xl font-bold tracking-wide uppercase self-center">
+                        Portail Logistique
+                      </span>
+                    </div>
+                  </BreadcrumbPage>
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

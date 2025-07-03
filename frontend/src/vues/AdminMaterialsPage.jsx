@@ -31,8 +31,8 @@ export default function AdminMaterialsPage() {
 
   return (
     <>
-      <Dashboard>
-        <h1 className="text-2xl font-semibold mb-4">Materiels</h1>
+      <Dashboard title="Admin Dashboard">
+        <h1 className="text-2xl font-semibold mb-4">Parametrage d'articles</h1>
         <div className="min-w-3xl mx-auto px-10">
           <DataTable columns={columns(getData)} data={data} />
         </div>

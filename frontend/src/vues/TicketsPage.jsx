@@ -38,34 +38,64 @@ export default function TicketsPage() {
 
   return (
     <>
-      <Dashboard>
+      <Dashboard title={"Service Dashboard"}>
         <h1 className="text-2xl font-semibold mb-4">Tickets</h1>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Desciption</TableHead>
-              <TableHead>Categorie</TableHead>
-              <TableHead>Besoin</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((ticket) => (
-              <TableRow key={ticket.id}>
-                <TableCell className="font-medium">
-                  {ticket.ticketDescription}
-                </TableCell>
-                <TableCell>{ticket.category}</TableCell>
-                <TableCell>{ticket.needs}</TableCell>
-                <TableCell>{ticket.date}</TableCell>
-                <TableCell className="md:w-32">
-                  <TicketStatus status={ticket.ticketStatus} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="w-full">
+          <div className="max-w-10/12 mx-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Desciption</TableHead>
+                  <TableHead>Categorie</TableHead>
+                  <TableHead>Besoin</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {!data ? (
+                  <TableRow className={undefined}>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.map((ticket) => (
+                    <TableRow key={ticket.id}>
+                      <TableCell className="font-medium">
+                        {ticket.ticketDescription}
+                      </TableCell>
+                      <TableCell>{ticket.category}</TableCell>
+                      <TableCell
+                        className={"max-w-3xs break-words whitespace-normal"}
+                      >
+                        {ticket.needs}
+                      </TableCell>
+                      <TableCell>{ticket.date}</TableCell>
+                      <TableCell className="md:w-32 max-w-md flex flex-col ">
+                        <TicketStatus status={ticket.ticketStatus} />
+                        {ticket.note && (
+                          <div className="text-black text-md mt-2 break-words whitespace-normal max-w-xs text-center">
+                            <span>
+                              📌
+                              <span className="italic font-semibold">
+                                Commentaire:
+                              </span>{" "}
+                              {ticket.note}
+                            </span>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </Dashboard>
     </>
   );

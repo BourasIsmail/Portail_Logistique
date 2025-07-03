@@ -10,6 +10,7 @@ public class UserTicketsResponse {
     private String ticketDescription;
     private String ticketStatus;
     private String category;
+    private String observation;
     private String date;
     private String note;
     private String needs;

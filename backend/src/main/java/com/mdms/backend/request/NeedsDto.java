@@ -14,7 +14,5 @@ public class NeedsDto {
     @NotNull(message = "quantity is required")
     private int quantity;
 
-    private String affectationParBureau;
-    private String affectationParPersonne;
-    private String observation;
+    private String affectation = "";
 }
