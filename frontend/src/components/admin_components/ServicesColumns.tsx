@@ -8,6 +8,7 @@ import {
   RefreshCcw,
   PlusIcon,
   LockIcon,
+  ShieldUserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -318,6 +319,26 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                     Changer mot de passe
                   </DropdownMenuItem>
                 </DialogTrigger>
+                <DropdownMenuSeparator className={undefined} />
+                <DropdownMenuItem
+                  className={undefined}
+                  inset={undefined}
+                  onClick={async () => {
+                    let id = row.getValue("id");
+                    try {
+                      await api.put(`/admin/make-admin/${id}`);
+                      toast.success(
+                        "Utilisateur rendu administrateur avec succès"
+                      );
+                      refreshTable();
+                    } catch (error) {
+                      console.error("Error deleting material:", error);
+                    }
+                  }}
+                >
+                  <ShieldUserIcon className="h-4 w-4" />
+                  Rendre administrateur
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent

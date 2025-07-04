@@ -6,7 +6,6 @@ import com.mdms.backend.request.AddServiceRequest;
 import com.mdms.backend.request.AddUserRequest;
 import com.mdms.backend.response.*;
 import com.mdms.backend.respository.*;
-import com.mdms.backend.security.service.UserDetailsImp;
 import com.mdms.backend.service.CategoryMatService;
 import com.mdms.backend.service.MaterialService;
 import com.mdms.backend.service.TicketService;
@@ -15,14 +14,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -267,14 +262,30 @@ public class AdminController {
 
             userResponse.setId(user.getUserId());
             userResponse.setEmail(user.getEmail());
-            userResponse.setService(user.getService().getServiceName());
-            userResponse.setDivision(user.getService().getDivision().getDivName());
+
+            if(user.getService() != null){
+                userResponse.setService(user.getService().getServiceName());
+                userResponse.setDivision(user.getService().getDivision().getDivName());
+            }else {
+                userResponse.setService("No service");
+                userResponse.setDivision("No division");
+            }
+
 
             response.add(userResponse);
         }
 
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/make-admin/{id}")
+    private ResponseEntity<?> addAdminAuthorize(@PathVariable("id") Long id){
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with id : " + id));
+        user.setRole(Roles.ROLE_ADMIN);
+        userRepository.save(user);
+        return ResponseEntity.ok("User made admin successfully!");
+    }
+
 
     @PutMapping("/change-pass/{id}")
     private ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody Map<String, String> requestBody){

@@ -39,6 +39,7 @@ import TicketStatus from "@/components/TicketStatus";
 import ActionDropdownMenu from "@/components/admin_components/ActionDropdownMenu";
 import api from "@/utils/api";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export type Material = {
   id: string;
@@ -290,15 +291,16 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                 <DropdownMenuItem
                   className={undefined}
                   inset={undefined}
-                  onClick={() => {
+                  onClick={async () => {
                     let id = row.getValue("id");
                     console.log("Deleting material:", id);
-                    // try {
-                    //   await api.delete(`/admin/delete-material/${id}`);
-                    //   refreshTable();
-                    // } catch (error) {
-                    //   console.error("Error deleting material:", error);
-                    // }
+                    try {
+                      await api.delete(`/admin/delete-material/${id}`);
+                      toast.success("Article supprimé avec succès");
+                      refreshTable();
+                    } catch (error) {
+                      console.error("Error deleting material:", error);
+                    }
                   }}
                 >
                   <PackageMinusIcon className="h-4 w-4" />

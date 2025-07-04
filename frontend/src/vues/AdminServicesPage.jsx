@@ -15,8 +15,8 @@ export default function AdminServcesPage() {
 
   const getData = async () => {
     try {
-      const UsersData = await api.get("/admin/get-users");
-      console.log("Materials Data:", UsersData.data);
+      const materialsData = await api.get("/admin/get-materials");
+      console.log("Materials Data:", materialsData.data);
 
       setData(UsersData.data);
     } catch (error) {
