@@ -19,14 +19,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (userDetails !== null) {
-      console.log(
-        "userDetails is not null, redirecting to dashboard from login page"
-      );
       return navigate("/dashboard", { replace: true });
     }
 
     setLoading(false);
-  }, [userDetails, navigate]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,11 +41,8 @@ export default function LoginPage() {
       let userDetail = res.data;
 
       login(userDetail);
-      console.log(
-        "redirecting to dashboard from LoginPage after login was successful"
-      );
 
-      if (userDetail.role === "ROLE_ADMIN") {
+      if (userDetail.role.includes("ROLE_ADMIN")) {
         return navigate("/admin/dashboard", { replace: true });
       }
 

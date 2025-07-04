@@ -14,6 +14,8 @@ const ProtectedRoute = ({ children, role }) => {
     }
 
     if (!role.includes(userDetails.role)) {
+      console.log(role);
+      console.log(userDetails.role);
       return navigate("/notfound", { state: { from: "ProtectedRoute" } });
     }
 

@@ -50,7 +50,13 @@ export function AppSidebar({ data, title, ...props }) {
               asChild
               className={"flex justify-center items-center"}
             >
-              <Link to="/admin/dashboard">
+              <Link
+                to={
+                  userDetails.role.includes("ROLE_ADMIN")
+                    ? "/admin/dashboard"
+                    : "/dashboard"
+                }
+              >
                 <div className="flex items-center justify-end gap-2">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-7 items-center justify-center rounded-lg">
                     <LayoutDashboardIcon className="size-4" />
