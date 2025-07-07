@@ -3,7 +3,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "8080:8080"
+      - "0.0.0.0:8080:8080" # Changed this line
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://172.16.20.111/entraide_logistique_db
       - SPRING_DATASOURCE_USERNAME=usr_logistique
@@ -15,4 +15,4 @@ services:
     build:
       context: ./frontend
     ports:
-      - "5173:80"
+      - "0.0.0.0:5173:80" # Changed this line
