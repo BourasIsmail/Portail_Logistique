@@ -2,7 +2,8 @@ import axios from "axios";
 import { getTokenFromCookie } from "./AuthProvider";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  // baseURL: "http://localhost:8080/api",
+  baseURL: "https://172.16.20.6:8080/api",
   withCredentials: true,
 });
 
