@@ -6,6 +6,7 @@ import com.mdms.backend.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -38,11 +39,12 @@ public class SecurityConfig {
         );
 //        http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((requests)
-                        -> requests
-                        .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                        .anyRequest().authenticated());
+                -> requests
+                .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Add this line
+                .anyRequest().authenticated());
 //        http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //        http.authenticationProvider(authenticationProvider());
 //        http.exceptionHandling(exception
