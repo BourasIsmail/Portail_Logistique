@@ -8,11 +8,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://172.16.20.111/entraide_logistique_db
       - SPRING_DATASOURCE_USERNAME=usr_logistique
       - SPRING_DATASOURCE_PASSWORD=EN*2CNyr07F*SIC57
-    depends_on:
-      - frontend
 
   frontend:
     build:
       context: ./frontend
     ports:
       - "0.0.0.0:5173:80"
+    depends_on:
+      - backend
