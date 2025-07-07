@@ -18,14 +18,4 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// export const getMaterialsByCategory = async (ctgrName) => {
-//   try {
-//     const response = await api.get(`/user/get-materials/${ctgrName}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching materials by category:", error);
-//     return [];
-//   }
-// };
-
 export default api;
