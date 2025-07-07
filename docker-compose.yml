@@ -14,7 +14,5 @@ services:
   frontend:
     build:
       context: ./frontend
-    environment:
-      - REACT_APP_BACKEND_URL=http://172.16.20.6:8080/api
     ports:
       - "0.0.0.0:5173:80" # Changed this line

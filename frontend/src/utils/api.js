@@ -2,7 +2,8 @@ import axios from "axios";
 import { getTokenFromCookie } from "./AuthProvider";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL || "http://localhost:8080/api",
+  baseURL: "http://172.16.20.6:8080/api",
+  // baseURL: "http://localhost.6:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
