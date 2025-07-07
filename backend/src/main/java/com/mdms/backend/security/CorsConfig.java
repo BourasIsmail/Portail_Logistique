@@ -18,6 +18,8 @@ public class CorsConfig {
         config.addAllowedOrigin("https://172.16.20.6:5173");
         config.addAllowedOrigin("https://172.16.20.6");
         config.addAllowedOrigin("172.16.20.6:5173");
+        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/", config);
