@@ -19,6 +19,7 @@ import CreateTicketPage from "./vues/CreateTicketPage";
 import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
 import AdminMaterialsPage from "./vues/AdminMaterialsPage";
 import AdminServcesPage from "./vues/AdminServicesPage";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const { userDetails, login } = useAuth();
