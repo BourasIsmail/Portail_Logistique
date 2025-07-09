@@ -7,7 +7,8 @@ import lombok.Setter;
 @Getter
 public class UsersResponse {
     private Long id;
-    private String service;
+    private String name;
     private String email;
-    private String division;
+    private String type;
+    private String parentName;
 }

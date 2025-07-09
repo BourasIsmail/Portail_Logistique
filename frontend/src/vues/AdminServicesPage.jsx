@@ -15,10 +15,9 @@ export default function AdminServcesPage() {
 
   const getData = async () => {
     try {
-      const materialsData = await api.get("/admin/get-materials");
-      console.log("Materials Data:", materialsData.data);
+      const usersData = await api.get("/admin/get-users");
 
-      setData(UsersData.data);
+      setData(usersData.data);
     } catch (error) {
       console.error("Error fetching tickets data:", error);
     }

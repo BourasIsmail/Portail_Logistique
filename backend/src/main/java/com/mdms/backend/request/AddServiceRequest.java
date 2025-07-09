@@ -1,5 +1,6 @@
 package com.mdms.backend.request;
 
+import com.mdms.backend.entity.EntityType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,6 +11,9 @@ public class AddServiceRequest {
     @NotBlank(message = "service name is required")
     private String serviceName;
 
-    @NotNull(message = "division id is required")
-    private Long divId;
+    private String type;
+
+    private String parentName;
+
+    private String parentType;
 }

@@ -44,7 +44,7 @@ public class User {
     private Roles role = Roles.ROLE_USER;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "service_id", referencedColumnName = "service_id")
+    @JoinColumn(name = "entity_id", referencedColumnName = "entity_id")
     @JsonIgnoreProperties({"user", "division"})
     private Service service;
 

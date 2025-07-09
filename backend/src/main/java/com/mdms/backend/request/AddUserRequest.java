@@ -1,5 +1,6 @@
 package com.mdms.backend.request;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,10 @@ public class AddUserRequest {
     @NotBlank(message = "password is required")
     private String password;
 
-    @NotNull(message = "division name is required")
-    private String division;
+    @NotBlank(message = "entity type is required")
+    private String type;
+
+    @Nullable
+    private String parentName;
+
 }

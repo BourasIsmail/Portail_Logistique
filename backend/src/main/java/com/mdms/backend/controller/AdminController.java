@@ -41,8 +41,8 @@ public class AdminController {
     private CategoryMatService categoryMatService;
     @Autowired
     private ServiceRepository serviceRepository;
-    @Autowired
-    private DivisionRepository divisionRepository;
+//    @Autowired
+//    private DivisionRepository divisionRepository;
     @Autowired
     private TicketService ticketService;
     @Autowired
@@ -53,23 +53,31 @@ public class AdminController {
         return ResponseEntity.ok("Test");
     }
 
-    @PostMapping("/add-user")
+    @PostMapping("/create-user")
     private ResponseEntity<?> addUser(@Valid @RequestBody AddUserRequest request) {
+        System.out.println(EntityType.valueOf(request.getType()));
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
 
-        Division division = divisionRepository.findByDivName(request.getDivision())
-                .orElseThrow(()-> new RuntimeException("Division not found with name : " + request.getDivision()));
+        Service entity = new Service();
+        entity.setServiceName(request.getName());
+        entity.setType(EntityType.valueOf(request.getType()));
 
-        Service service = new Service(null, request.getName(), division, null);
-        service = serviceRepository.save(service);
+        if(request.getParentName() != null && !request.getParentName().isBlank() && serviceRepository.existsByServiceName(request.getParentName())){
+            Service parent = serviceRepository.findByServiceName(request.getParentName())
+                    .orElseThrow(()-> new RuntimeException("Parent service not found with name : " + request.getParentName()));
 
-        User user = new User(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), service);
-        service.setUser(user);
+            entity.setParent(parent);
+        }
+        entity = serviceRepository.save(entity);
+
+        User user = new User(request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), entity);
+        entity.setUser(user);
 
         return ResponseEntity.ok(userRepository.save(user));
     }
+
 
     @PostMapping("/add-material")
     private ResponseEntity<?> addMaterial(@Valid @RequestBody AddMaterialRequest request) {
@@ -101,39 +109,6 @@ public class AdminController {
         categoryMatService.saveCategory(categoryMat);
 
         Map<String, ?> response = Map.of("message", "Category added successfully!", "category", categoryMat);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/add-service")
-    private ResponseEntity<?> addService(@Valid @RequestBody AddServiceRequest request) {
-        if(serviceRepository.existsByServiceName(request.getServiceName())){
-            return ResponseEntity.badRequest().body("Error: Service name is already in use!");
-        }
-
-        Division division = divisionRepository.findByDivId(request.getDivId())
-                .orElseThrow(()-> new RuntimeException("Division not found with id : " + request.getDivId()));
-
-        Service service = new Service(null, request.getServiceName(), division, null);
-
-        serviceRepository.save(service);
-
-        Map<String, ?> response = Map.of("message", "Service added successfully!", "service", service);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/add-division")
-    private ResponseEntity<?> addDivision(@NotBlank @RequestParam("divName") String divisionName) {
-        if(divisionRepository.existsByDivName(divisionName)){
-            return ResponseEntity.badRequest().body("Error: Division name is already in use!");
-        }
-
-        Division division = new Division(null, divisionName, new HashSet<>());
-
-        divisionRepository.save(division);
-
-        Map<String, ?> response = Map.of("message", "Division added successfully!", "division", division);
 
         return ResponseEntity.ok(response);
     }
@@ -240,17 +215,6 @@ public class AdminController {
        return ResponseEntity.ok("Material deleted successfully!");
     }
 
-    @GetMapping("/get-divisions")
-    private ResponseEntity<?> getAllDivisions(){
-        List<Division> divisions = divisionRepository.findAll();
-
-        List<String> divisionsNames = new ArrayList<>();
-        for(Division division : divisions){
-            divisionsNames.add(division.getDivName());
-        }
-
-        return ResponseEntity.ok(divisionsNames);
-    }
 
     @GetMapping("/get-users")
     private ResponseEntity<?> getAllUsers(){
@@ -263,19 +227,37 @@ public class AdminController {
             userResponse.setId(user.getUserId());
             userResponse.setEmail(user.getEmail());
 
-            if(user.getService() != null){
-                userResponse.setService(user.getService().getServiceName());
-                userResponse.setDivision(user.getService().getDivision().getDivName());
-            }else {
-                userResponse.setService("No service");
-                userResponse.setDivision("No division");
+
+            if(user.getService() == null){
+                continue;
             }
 
+            userResponse.setName(user.getService().getServiceName());
+            userResponse.setType(user.getService().getType().name());
+            if(user.getService().getParent() != null){
+                userResponse.setParentName(user.getService().getParent().getServiceName());
+            }else {
+                userResponse.setParentName("");
+            }
 
             response.add(userResponse);
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/get-entities")
+    private ResponseEntity<?> getAllEntities(){
+        List<Map<String, String>> entities = serviceRepository.findAll().stream()
+                .map(entity -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("label", entity.getServiceName());
+                    map.put("value", entity.getServiceName());
+                    return map;
+                })
+                .toList();
+
+        return ResponseEntity.ok(entities);
     }
 
     @PutMapping("/make-admin/{id}")
