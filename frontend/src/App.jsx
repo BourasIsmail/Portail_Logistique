@@ -16,9 +16,27 @@ import {
 } from "./utils/AuthProvider";
 import TicketsPage from "./vues/TicketsPage";
 import CreateTicketPage from "./vues/CreateTicketPage";
+
 import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
 import AdminMaterialsPage from "./vues/AdminMaterialsPage";
 import AdminServcesPage from "./vues/AdminServicesPage";
+
+import InfoDashboardPage from "./vues/role_info/AdminDashboardPage";
+import InfoMatPage from "./vues/role_info/AdminMaterialsPage";
+import InfoServPage from "./vues/role_info/AdminServicesPage";
+import InfoAllTicketsPage from "./vues/role_info/AdminTicketsPage";
+import InfoCreateTicketPage from "./vues/role_info/CreateTicketPage";
+import InfoTicketsPage from "./vues/role_info/TicketsPage";
+import InfoArchivePage from "./vues/role_info/ArchiveDashboardPage";
+
+import LogisticsDashboardPage from "./vues/role_logistics/AdminDashboardPage";
+import LogisticsMatPage from "./vues/role_logistics/AdminMaterialsPage";
+import LogisticsServPage from "./vues/role_logistics/AdminServicesPage";
+import LogisticsAllTicketsPage from "./vues/role_logistics/AdminTicketsPage";
+import LogisticsCreateTicketPage from "./vues/role_logistics/CreateTicketPage";
+import LogisticsTicketsPage from "./vues/role_logistics/TicketsPage";
+import LogisticsArchivePage from "./vues/role_logistics/ArchiveDashboardPage";
+
 import { Navigate } from "react-router-dom";
 
 function App() {
@@ -26,6 +44,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("rendering app");
     if (userDetails === null) {
       const userInfo = getInfoFromToken(getTokenFromCookie());
       if (userInfo) {
@@ -111,6 +130,122 @@ function App() {
             element={
               <ProtectedRoute role={["ROLE_USER"]}>
                 <CreateTicketPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* routes for ROLE_info */}
+          <Route
+            path="/info/dashboard"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/allTickets"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoAllTicketsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/materials"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoMatPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/Entités"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoServPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/archive"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoArchivePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/create-ticket"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoCreateTicketPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/info/dashboard/tickets"
+            element={
+              <ProtectedRoute role={["ROLE_INFO"]}>
+                <InfoTicketsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* routes for ROLE_LOGISTICS */}
+          <Route
+            path="/logistics/dashboard"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/allTickets"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsAllTicketsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/materials"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsMatPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/Entités"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsServPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/archive"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsArchivePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/create-ticket"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsCreateTicketPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logistics/dashboard/tickets"
+            element={
+              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
+                <LogisticsTicketsPage />
               </ProtectedRoute>
             }
           />

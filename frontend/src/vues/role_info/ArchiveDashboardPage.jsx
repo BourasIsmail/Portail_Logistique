@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/utils/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import Dashboard from "@/components/admin_components/Dashboard";
+import Dashboard from "@/components/role_info/Dashboard";
 import api from "@/utils/api";
-import { columns } from "@/components/admin_components/columns";
-import { DataTable } from "@/components/admin_components/data-table";
+import { columns } from "@/components/role_info/columns";
+import { DataTable } from "@/components/role_info/data-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -87,7 +87,7 @@ export default function TicketsPage() {
 
   return (
     <>
-      <Dashboard title="Admin Dashboard">
+      <Dashboard title="Serv. Informatique Dashboard">
         <h1 className="text-2xl font-semibold mb-4">Demandes Archivées</h1>
         <div className="container mx-auto py-10">
           <DataTable columns={updatedColumns} data={data} />

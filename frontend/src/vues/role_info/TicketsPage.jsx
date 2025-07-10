@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/utils/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import Dashboard from "@/components/Dashboard";
+import Dashboard from "@/components/role_info/Dashboard";
 import api from "@/utils/api";
 import {
   Table,
@@ -38,7 +38,7 @@ export default function TicketsPage() {
 
   return (
     <>
-      <Dashboard title={"Service Dashboard"}>
+      <Dashboard title={"Serv. Informatique Dashboard"}>
         <h1 className="text-2xl font-semibold mb-4">Tickets</h1>
         <div className="w-full">
           <div className="max-w-10/12 mx-auto">
@@ -53,7 +53,7 @@ export default function TicketsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {!data ? (
+                {data.length == 0 ? (
                   <TableRow className={undefined}>
                     <TableCell colSpan={5} className="h-24 text-center">
                       No results.

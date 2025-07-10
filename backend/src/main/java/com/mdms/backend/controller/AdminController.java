@@ -12,6 +12,7 @@ import com.mdms.backend.service.TicketService;
 import com.mdms.backend.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -260,12 +261,12 @@ public class AdminController {
         return ResponseEntity.ok(entities);
     }
 
-    @PutMapping("/make-admin/{id}")
-    private ResponseEntity<?> addAdminAuthorize(@PathVariable("id") Long id){
+    @PutMapping("/change-role/{id}")
+    private ResponseEntity<?> modifyRole(@PathVariable("id") Long id, @RequestBody Map<String, String> requestBody){
         User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with id : " + id));
-        user.setRole(Roles.ROLE_ADMIN);
+        user.setRole(Roles.valueOf(requestBody.get("role")));
         userRepository.save(user);
-        return ResponseEntity.ok("User made admin successfully!");
+        return ResponseEntity.ok("User role changed successfully!");
     }
 
 

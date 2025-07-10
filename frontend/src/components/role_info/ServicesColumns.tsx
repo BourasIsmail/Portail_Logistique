@@ -41,15 +41,12 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import TicketStatus from "@/components/TicketStatus";
-import ActionDropdownMenu from "@/components/admin_components/ActionDropdownMenu";
 import api from "@/utils/api";
 import { useState } from "react";
 import { toast } from "sonner";
 import { changePassword } from "@/utils/AuthProvider";
 
 import FilterableFreeSelect from "@/components/test";
-import { get } from "http";
 
 export type Material = {
   id: string;

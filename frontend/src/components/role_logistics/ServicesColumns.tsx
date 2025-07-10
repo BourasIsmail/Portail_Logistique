@@ -9,10 +9,6 @@ import {
   PlusIcon,
   LockIcon,
   ShieldUserIcon,
-  UserIcon,
-  WarehouseIcon,
-  UserRoundCogIcon,
-  UserRoundIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,15 +37,12 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import TicketStatus from "@/components/TicketStatus";
-import ActionDropdownMenu from "@/components/admin_components/ActionDropdownMenu";
 import api from "@/utils/api";
 import { useState } from "react";
 import { toast } from "sonner";
 import { changePassword } from "@/utils/AuthProvider";
 
 import FilterableFreeSelect from "@/components/test";
-import { get } from "http";
 
 export type Material = {
   id: string;
@@ -276,177 +269,6 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
       return (
         <div className="text-center">
           {row.getValue("parentName") ? row.getValue("parentName") : "//"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "id",
-    header: "",
-    cell: ({ row }) => {
-      const [pass, setPass] = useState<String>("");
-      const [newRole, setNewRole] = useState<String>();
-      const [dialog, setDialog] = useState<String>(null);
-
-      const handleClick = async () => {
-        if (!pass || pass.trim() === "") {
-          toast.warning("Veuillez entrer un mot de passe valide.");
-          return;
-        }
-
-        await changePassword(row.getValue("id"), pass)
-          .then(() => {
-            toast.success("Mot de passe modifié avec succès.");
-            refreshTable();
-          })
-          .catch((error) => {
-            console.error("Error changing password:", error);
-            toast.error("Erreur lors de la modification du mot de passe.");
-          });
-      };
-
-      const handleClick2 = async () => {
-        if (!newRole || newRole.trim() === "") {
-          toast.warning("Veuillez sélectionner un rôle valide.");
-          return;
-        }
-
-        let id = row.getValue("id");
-        try {
-          await api.put(`/admin/change-role/${id}`, {
-            role: newRole,
-          });
-          toast.success("Utilisateur rendu administrateur avec succès");
-          refreshTable();
-        } catch (error) {
-          console.error("Error deleting material:", error);
-        }
-      };
-
-      return (
-        <div className="flex justify-end items-center">
-          <Dialog>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  size={undefined}
-                >
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className={undefined}>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem className={undefined} inset={undefined}>
-                    <LockIcon className="h-4 w-4" />
-                    Changer mot de passe
-                  </DropdownMenuItem>
-                </DialogTrigger>
-                <DropdownMenuSeparator className={undefined} />
-                <DropdownMenuItem
-                  className={undefined}
-                  inset={undefined}
-                  onClick={() => setDialog("a")}
-                >
-                  <ShieldUserIcon className="h-4 w-4" />
-                  Modifier rôle
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DialogContent
-              aria-describedby={undefined}
-              className="sm:max-w-[425px]"
-            >
-              <DialogHeader className={undefined}>
-                <DialogTitle className={"text-center"}>
-                  Modifier mot de passe
-                </DialogTitle>
-              </DialogHeader>
-              <div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-2 ">
-                    Nouveau mot de pass :
-                  </label>
-                  <Input
-                    type="text"
-                    onChange={(e) => setPass(e.target.value)}
-                    placeholder={"********"}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-              <DialogFooter className={undefined}>
-                <Button
-                  type="submit"
-                  onClick={handleClick}
-                  className={undefined}
-                  variant={undefined}
-                  size={undefined}
-                >
-                  Confirmer
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={dialog === "a"} onOpenChange={() => setDialog(null)}>
-            <DialogContent
-              aria-describedby={undefined}
-              className="sm:max-w-3xs"
-            >
-              <DialogHeader className={undefined}>
-                <DialogTitle className={"text-center"}>
-                  Modifier rôle
-                </DialogTitle>
-              </DialogHeader>
-              <div className="w-full mt-3 mb-2">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium mb-2 ">
-                    Nouveau role :
-                  </label>
-                  <Select
-                    onValueChange={(role) => setNewRole(role)}
-                    value={newRole}
-                  >
-                    <SelectTrigger className={"self-center w-full"}>
-                      <SelectValue placeholder="Sélectionner le rôle" />
-                    </SelectTrigger>
-                    <SelectContent className={undefined}>
-                      <SelectItem value="ROLE_ADMIN" className={undefined}>
-                        <ShieldUserIcon className="h-4 w-4 mr-2" />
-                        Administrateur
-                      </SelectItem>
-                      <SelectItem value="ROLE_USER" className={undefined}>
-                        <UserRoundIcon className="h-4 w-4 mr-2" />
-                        Utilisateur
-                      </SelectItem>
-                      <SelectItem value="ROLE_INFO" className={undefined}>
-                        <UserRoundCogIcon className="h-4 w-4 mr-2" />
-                        Serv. Informatique
-                      </SelectItem>
-                      <SelectItem value="ROLE_LOGISTICS" className={undefined}>
-                        <WarehouseIcon className="h-4 w-4 mr-2" />
-                        Serv. Logistique
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <DialogFooter className={undefined}>
-                <Button
-                  type="submit"
-                  onClick={handleClick2}
-                  className={undefined}
-                  variant={undefined}
-                  size={undefined}
-                >
-                  Confirmer
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
       );
     },

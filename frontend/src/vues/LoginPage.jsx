@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import { LoginForm } from "@/components/login-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/utils/AuthProvider";
+import { useAuth, getTokenFromCookie } from "@/utils/AuthProvider";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 import { Title } from "@radix-ui/react-dialog";
@@ -18,7 +18,7 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    if (userDetails !== null) {
+    if (getTokenFromCookie() !== null) {
       return navigate("/dashboard", { replace: true });
     }
 

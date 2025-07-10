@@ -85,7 +85,7 @@ export default function ActionDropdownMenu({ row, refreshTable }) {
               try {
                 console.log("Archiving ticket:", row.getValue("id"));
                 await api.put(`/admin/archive-ticket/${row.getValue("id")}`);
-                toast.success("Ticket archivé");
+                toast.success("Ticket archivé ");
                 refreshTable();
               } catch (error) {
                 console.error("Error archiving ticket:", error);

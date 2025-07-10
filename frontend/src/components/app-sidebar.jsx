@@ -52,20 +52,20 @@ export function AppSidebar({ data, title, ...props }) {
             >
               <Link
                 to={
-                  userDetails.role.includes("ROLE_ADMIN")
-                    ? "/admin/dashboard"
-                    : "/dashboard"
+                  (userDetails?.role === "ROLE_ADMIN" && "/admin/dashboard") ||
+                  (userDetails?.role === "ROLE_LOGISTICS" &&
+                    "/logistics/dashboard") ||
+                  (userDetails?.role === "ROLE_INFO" && "/info/dashboard") ||
+                  (userDetails?.role === "ROLE_USER" && "/dashboard")
                 }
               >
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center gap-3 px-2 py-1 w-full text-left">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-7 items-center justify-center rounded-lg">
                     <LayoutDashboardIcon className="size-4" />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-lg pr-3">
-                      {title}
-                    </span>
-                  </div>
+                  <span className="text-lg font-semibold leading-tight break-words whitespace-normal">
+                    {title}
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>

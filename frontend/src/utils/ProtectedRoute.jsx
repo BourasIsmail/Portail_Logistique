@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
+import { useAuth, getTokenFromCookie } from "./AuthProvider";
 
 const ProtectedRoute = ({ children, role }) => {
   const navigate = useNavigate();
@@ -8,11 +8,6 @@ const ProtectedRoute = ({ children, role }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (userDetails == null) {
-      console.log("redirecting to login page from ProtectedRoute");
-      return navigate("/login");
-    }
-
     if (!role.includes(userDetails.role)) {
       console.log(role);
       console.log(userDetails.role);
@@ -21,6 +16,11 @@ const ProtectedRoute = ({ children, role }) => {
 
     setLoading(false);
   }, []);
+
+  if (getTokenFromCookie() === null) {
+    console.log("redirecting to login page from ProtectedRoute");
+    return navigate("/login");
+  }
 
   if (loading) {
     return null;
