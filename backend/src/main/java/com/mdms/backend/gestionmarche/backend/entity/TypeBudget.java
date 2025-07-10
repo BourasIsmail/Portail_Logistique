@@ -1,4 +1,4 @@
-package com.gestionmarche.backend.entity;
+package com.mdms.backend.gestionmarche.backend.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

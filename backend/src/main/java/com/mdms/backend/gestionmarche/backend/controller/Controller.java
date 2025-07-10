@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/api/admin")
-class AdminController {
+class Controller {
 
     @GetMapping("/test-gm")
     public ResponseEntity<?> testGm() {

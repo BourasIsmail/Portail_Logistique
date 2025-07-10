@@ -1,6 +1,6 @@
-package com.gestionmarche.backend.repository;
+package com.mdms.backend.gestionmarche.backend.repository;
 
-import com.gestionmarche.backend.entity.SituationMarche;
+import com.mdms.backend.gestionmarche.backend.entity.SituationMarche;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
