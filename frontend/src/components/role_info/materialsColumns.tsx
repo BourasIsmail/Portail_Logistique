@@ -160,9 +160,41 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
     },
     cell: ({ row }) => {
       return (
-        <div className="flex items-center justify-center">
-          <span>{row.getValue("matName")}</span>
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button type="button" className="w-full">
+              <div className="flex items-center justify-center">
+                <span className="max-w-md overflow-hidden text-ellipsis whitespace-nowrap text-center">
+                  {row.getValue("matName")}
+                </span>
+              </div>
+            </button>
+          </DialogTrigger>
+          <DialogContent
+            className="sm:max-w-[425px]"
+            aria-describedby={undefined}
+          >
+            <DialogHeader className={undefined}>
+              <DialogTitle className={"text-center"}>Article</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 mb-2">
+              <div className="w-full">
+                <label className="font-semibold">Nom :</label>
+                <div className="flex items-center justify-center">
+                  <span className="text-center">{row.getValue("matName")}</span>
+                </div>
+              </div>
+              <div className="w-full">
+                <label className="font-semibold">Catégorie :</label>
+                <div className="flex items-center justify-center">
+                  <span className="text-center">
+                    {row.getValue("ctgrName")}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       );
     },
   },
