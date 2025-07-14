@@ -2,54 +2,210 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Routes, Route } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from "sonner";
-import LoginPage from "./vues/LoginPage";
-import MainPage from "./vues/MainPage";
-import DashboardPage from "./vues/DashboardPage";
-import ProtectedRoute from "./utils/ProtectedRoute";
-import AdminDashboardPage from "./vues/AdminDashboardPage";
-import AdminTicketsPage from "./vues/AdminTicketsPage";
 import {
   useAuth,
   getInfoFromToken,
   getTokenFromCookie,
 } from "./utils/AuthProvider";
-import TicketsPage from "./vues/TicketsPage";
-import CreateTicketPage from "./vues/CreateTicketPage";
+import RoleViewResolver from "./utils/RoleViewResolver";
 
-import ArchiveDashboardPage from "./vues/ArchiveDashboardPage";
-import AdminMaterialsPage from "./vues/AdminMaterialsPage";
-import AdminServcesPage from "./vues/AdminServicesPage";
+import LoginPage from "./vues/LoginPage";
+import MainPage from "./vues/MainPage";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
-import InfoDashboardPage from "./vues/role_info/AdminDashboardPage";
-import InfoMatPage from "./vues/role_info/AdminMaterialsPage";
-import InfoServPage from "./vues/role_info/AdminServicesPage";
-import InfoAllTicketsPage from "./vues/role_info/AdminTicketsPage";
-import InfoCreateTicketPage from "./vues/role_info/CreateTicketPage";
-import InfoTicketsPage from "./vues/role_info/TicketsPage";
-import InfoArchivePage from "./vues/role_info/ArchiveDashboardPage";
+import GMMainPage from "./gestion_marche/vues/MainPage";
+import MarchesPage from "./gestion_marche/vues/marches/page";
+import MarchesPerIdPage from "./gestion_marche/vues/marches/id/page";
+import BDPage from "./gestion_marche/vues/bons-commande/page";
+import BDPerIdPage from "./gestion_marche/vues/bons-commande/id/page";
+import ConractPage from "./gestion_marche/vues/contrats/page";
+import ContractPerIdPage from "./gestion_marche/vues/contrats/id/page";
+import ParametrageGMPage from "./gestion_marche/vues/parametrage/page";
+import GMDashboardPage from "./gestion_marche/vues/tableau-de-bord/page";
 
-import LogisticsDashboardPage from "./vues/role_logistics/AdminDashboardPage";
-import LogisticsMatPage from "./vues/role_logistics/AdminMaterialsPage";
-import LogisticsServPage from "./vues/role_logistics/AdminServicesPage";
-import LogisticsAllTicketsPage from "./vues/role_logistics/AdminTicketsPage";
-import LogisticsCreateTicketPage from "./vues/role_logistics/CreateTicketPage";
-import LogisticsTicketsPage from "./vues/role_logistics/TicketsPage";
-import LogisticsArchivePage from "./vues/role_logistics/ArchiveDashboardPage";
+function gestionDemandeRoutes() {
+  return (
+    <>
+      <Route
+        path="/md/dashboard"
+        element={
+          <ProtectedRoute
+            role={["ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS", "ROLE_USER"]}
+          >
+            <RoleViewResolver page="dashboard" />
+          </ProtectedRoute>
+        }
+      />
 
-import { Navigate } from "react-router-dom";
+      <Route
+        path="/md/demandes"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="demandes" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/articles"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="articles" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/entitées"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="entitées" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/archive"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="archive" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/mes-demandes"
+        element={
+          <ProtectedRoute role={["ROLE_USER", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="mes-demandes" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/crée-demande"
+        element={
+          <ProtectedRoute role={["ROLE_USER", "ROLE_INFO", "ROLE_LOGISTICS"]}>
+            <RoleViewResolver page="crée-demande" />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/md/*"
+        element={
+          <ProtectedRoute
+            role={["ROLE_USER", "ROLE_INFO", "ROLE_LOGISTICS", "ROLE_ADMIN"]}
+          >
+            <Navigate to="/md/dashboard" />
+          </ProtectedRoute>
+        }
+      />
+    </>
+  );
+}
+
+function gestionMarcheRoutes() {
+  return (
+    <>
+      <Route
+        path="/gm"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <GMMainPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/gm/marches"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <MarchesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/marches/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <MarchesPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/bons-commande"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <BDPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/bons-commande/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <BDPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/contrats"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <ConractPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/contrats/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <ContractPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/parametrage"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <ParametrageGMPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/tableau-de-bord"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <GMDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/gm/*"
+        element={
+          <ProtectedRoute role={["ROLE_LOGISTICS", "ROLE_ADMIN"]}>
+            <Navigate to="/gm" />
+          </ProtectedRoute>
+        }
+      />
+    </>
+  );
+}
 
 function App() {
   const { userDetails, login } = useAuth();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("rendering app");
+    const userInfo = getInfoFromToken(getTokenFromCookie());
     if (userDetails === null) {
-      const userInfo = getInfoFromToken(getTokenFromCookie());
       if (userInfo) {
-        console.log("updating user info from App.jsx");
-        console.log(userInfo);
+        console.log("User info form App.jsx", userInfo);
         login(userInfo);
       }
     }
@@ -65,192 +221,27 @@ function App() {
     <>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Routes>
-          <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
-          {/* Dashboard routes for admin */}
           <Route
-            path="/admin/dashboard"
+            path="/"
             element={
-              <ProtectedRoute role={["ROLE_ADMIN"]}>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/dashboard/tickets"
-            element={
-              <ProtectedRoute role={["ROLE_ADMIN"]}>
-                <AdminTicketsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/dashboard/materials"
-            element={
-              <ProtectedRoute role={["ROLE_ADMIN"]}>
-                <AdminMaterialsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/dashboard/Entités"
-            element={
-              <ProtectedRoute role={["ROLE_ADMIN"]}>
-                <AdminServcesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/dashboard/archive"
-            element={
-              <ProtectedRoute role={["ROLE_ADMIN"]}>
-                <ArchiveDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* Dashboard routes for users */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute role={["ROLE_USER"]}>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/tickets"
-            element={
-              <ProtectedRoute role={["ROLE_USER"]}>
-                <TicketsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/create-ticket"
-            element={
-              <ProtectedRoute role={["ROLE_USER"]}>
-                <CreateTicketPage />
-              </ProtectedRoute>
+              userDetails &&
+              (userDetails?.role == "ROLE_ADMIN" ||
+                userDetails?.role == "ROLE_LOGISTICS") ? (
+                <MainPage />
+              ) : (
+                <Navigate to="/md/dashboard" />
+              )
             }
           />
 
-          {/* routes for ROLE_info */}
-          <Route
-            path="/info/dashboard"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/allTickets"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoAllTicketsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/materials"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoMatPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/Entités"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoServPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/archive"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoArchivePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/create-ticket"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoCreateTicketPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/info/dashboard/tickets"
-            element={
-              <ProtectedRoute role={["ROLE_INFO"]}>
-                <InfoTicketsPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* material demande routes */}
+          {gestionDemandeRoutes()}
 
-          {/* routes for ROLE_LOGISTICS */}
-          <Route
-            path="/logistics/dashboard"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/allTickets"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsAllTicketsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/materials"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsMatPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/Entités"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsServPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/archive"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsArchivePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/create-ticket"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsCreateTicketPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/logistics/dashboard/tickets"
-            element={
-              <ProtectedRoute role={["ROLE_LOGISTICS"]}>
-                <LogisticsTicketsPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* gestion marchée routes */}
+          {gestionMarcheRoutes()}
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Toaster
           richColors

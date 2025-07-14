@@ -16,26 +16,20 @@ import {
 const data = {
   navMain: [
     {
-      title: "Tableau de Bord",
-      url: "/admin/dashboard",
-      icon: ChartColumnBigIcon,
-      isActive: true,
-    },
-    {
       title: "Demandes",
-      url: "/admin/dashboard/tickets",
+      url: "/md/demandes",
       icon: TicketsIcon,
       isActive: true,
     },
     {
       title: "Parametrage Articles",
-      url: "/admin/dashboard/materials",
+      url: "/md/articles",
       icon: PackageIcon,
       isActive: true,
     },
     {
       title: "Parametrage Entités",
-      url: "/admin/dashboard/entités",
+      url: "/md/entitées",
       icon: UsersIcon,
       isActive: true,
     },
@@ -43,7 +37,7 @@ const data = {
   navSecondary: [
     {
       title: "Demande Archivée",
-      url: "/admin/dashboard/archive",
+      url: "/md/archive",
       icon: ArchiveIcon,
     },
   ],
@@ -88,7 +82,7 @@ export default function Dashboard({ children, title, ...props }) {
     <>
       <div className={"[--header-height:calc(--spacing(14))]"} {...props}>
         <SidebarProvider className="flex flex-col">
-          <SiteHeader direction={"/admin/dashboard"} />
+          <SiteHeader direction={"/md/dashboard"} />
           <div className="flex flex-1">
             <AppSidebar data={data} title={title} className="" />
             <SidebarInset>

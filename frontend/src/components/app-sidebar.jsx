@@ -50,15 +50,7 @@ export function AppSidebar({ data, title, ...props }) {
               asChild
               className={"flex justify-center items-center"}
             >
-              <Link
-                to={
-                  (userDetails?.role === "ROLE_ADMIN" && "/admin/dashboard") ||
-                  (userDetails?.role === "ROLE_LOGISTICS" &&
-                    "/logistics/dashboard") ||
-                  (userDetails?.role === "ROLE_INFO" && "/info/dashboard") ||
-                  (userDetails?.role === "ROLE_USER" && "/dashboard")
-                }
-              >
+              <Link to={"/md/dashboard"}>
                 <div className="flex items-center gap-3 px-2 py-1 w-full text-left">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-7 items-center justify-center rounded-lg">
                     <LayoutDashboardIcon className="size-4" />

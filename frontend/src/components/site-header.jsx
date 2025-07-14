@@ -1,4 +1,4 @@
-import { SidebarIcon } from "lucide-react";
+import { SidebarIcon, ArrowLeftCircleIcon } from "lucide-react";
 import logo from "../assets/logo.png";
 
 import { SearchForm } from "@/components/search-form";
@@ -13,11 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 
 export function SiteHeader({ direction }) {
   const { toggleSidebar } = useSidebar();
+  const navigate = useNavigate();
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b ">
@@ -30,7 +32,16 @@ export function SiteHeader({ direction }) {
         >
           <SidebarIcon />
         </Button>
-        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Separator orientation="vertical" className="h-4" />
+        <Button
+          variant="ghost"
+          className="hover:text-gray-900 hover:bg-gray-100 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          <ArrowLeftCircleIcon className="h-5 w-5" />
+          Menu Principal
+        </Button>
+
         {/* <Breadcrumb className="hidden sm:block"> */}
         <Breadcrumb className=" w-full flex items-center justify-center">
           <BreadcrumbList>

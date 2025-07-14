@@ -8,19 +8,20 @@ const ProtectedRoute = ({ children, role }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!getTokenFromCookie()) {
+      console.log("redirecting to login page from ProtectedRoute");
+      return navigate("/login");
+    }
+
     if (!role.includes(userDetails.role)) {
-      console.log(role);
-      console.log(userDetails.role);
-      return navigate("/notfound", { state: { from: "ProtectedRoute" } });
+      console.log(
+        "User does not have the required role, redirecting to dashboard"
+      );
+      return navigate("/dashboard", { state: { from: "ProtectedRoute" } });
     }
 
     setLoading(false);
   }, []);
-
-  if (getTokenFromCookie() === null) {
-    console.log("redirecting to login page from ProtectedRoute");
-    return navigate("/login");
-  }
 
   if (loading) {
     return null;
