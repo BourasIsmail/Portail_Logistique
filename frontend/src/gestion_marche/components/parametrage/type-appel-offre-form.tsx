@@ -4,34 +4,34 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { TypeBudget } from "@/gestion_marche/types";
+import type { TypeAO } from "@/gestion_marche/types";
 
-interface TypeBudgetFormProps {
-  typeBudget: TypeBudget | null;
-  onSubmit: (formData: TypeBudget) => void;
+interface TypeAOFormProps {
+  typeAO: TypeAO | null;
+  onSubmit: (formData: TypeAO) => void;
   onCancel: () => void;
 }
 
-export default function TypeBudgetForm({
-  typeBudget,
+export default function TypeAOForm({
+  typeAO,
   onSubmit,
   onCancel,
-}: TypeBudgetFormProps): JSX.Element {
-  const [formData, setFormData] = useState<TypeBudget>({
+}: TypeAOFormProps): JSX.Element {
+  const [formData, setFormData] = useState<TypeAO>({
     id: 0,
     name: "",
   });
 
   useEffect(() => {
-    if (typeBudget) {
-      setFormData(typeBudget);
+    if (typeAO) {
+      setFormData(typeAO);
     } else {
       setFormData({
         id: 0,
         name: "",
       });
     }
-  }, [typeBudget]);
+  }, [typeAO]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -47,7 +47,7 @@ export default function TypeBudgetForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name" className={undefined}>
-          Nom du type de budget
+          Nom du type d'appel d'offre
         </Label>
         <Input
           id="name"
@@ -55,7 +55,7 @@ export default function TypeBudgetForm({
           value={formData.name}
           onChange={handleChange}
           required
-          placeholder="Ex: Budget d'investissement"
+          placeholder="Ex: Offre ouverte"
           className={undefined}
           type={undefined}
         />

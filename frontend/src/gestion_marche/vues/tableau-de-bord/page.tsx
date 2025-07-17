@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { JSX, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,40 +15,98 @@ import {
   ArrowLeftCircleIcon,
 } from "lucide-react";
 import Navbar from "@/components/navbar";
-import type { DashboardStats } from "@/gestion_marche/types";
+import type {
+  BonCommande,
+  Contrat,
+  DashboardStats,
+  Marche,
+} from "@/gestion_marche/types";
 import { replace, useNavigate } from "react-router-dom";
+import api from "@/utils/api";
 
 export default function TableauDeBordPage(): JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("apercu");
   const navigate = useNavigate();
 
   // Données fictives pour les statistiques
-  const stats: DashboardStats = {
-    totalMarches: 24,
-    totalBC: 38,
-    totalContrats: 12,
-    montantTotalMarches: 4250000,
-    montantTotalBC: 1850000,
-    montantTotalContrats: 950000,
-    marchesPaye: 18,
-    marchesEnCours: 6,
-    bcPaye: 32,
-    bcEnCours: 6,
-    contratActifs: 10,
-    contratExpires: 2,
-  };
+  const [stats, setStats] = useState<DashboardStats>({
+    totalMarches: 0,
+    totalBC: 0,
+    totalContrats: 0,
+    montantTotalMarches: 0,
+    montantTotalBC: 0,
+    montantTotalContrats: 0,
+    marchesPaye: 0,
+    marchesEnCours: 0,
+    bcPaye: 0,
+    bcEnCours: 0,
+    contratActifs: 0,
+    contratExpires: 0,
+  });
+
+  useEffect(() => {
+    // Simuler une récupération de données depuis une API
+    const fetchData = async () => {
+      const marches: Marche[] = (await api.get("/admin/get-all-marches")).data;
+
+      const bcs: BonCommande[] = (await api.get("/admin/get-all-bon-commandes"))
+        .data;
+      const contrats: Contrat[] = (await api.get("/admin/get-all-contracts"))
+        .data;
+
+      console.log("Fetched Marches:", marches);
+      console.log("Fetched BCs:", bcs);
+      console.log("Fetched Contrats:", contrats);
+
+      setStats({
+        totalMarches: marches.length,
+        totalBC: bcs.length,
+        totalContrats: contrats.length,
+
+        montantTotalMarches: marches.reduce(
+          (acc, m) => acc + m.montantMarche,
+          0
+        ),
+        montantTotalBC: bcs.reduce((acc, b) => acc + b.montant, 0),
+        montantTotalContrats: contrats.reduce((acc, c) => acc + c.montant, 0),
+
+        marchesPaye: marches.reduce(
+          (acc, m) =>
+            acc + m.situationMarches.filter((s) => s.paye == true).length,
+          0
+        ),
+        marchesEnCours: marches.reduce(
+          (acc, m) =>
+            acc + m.situationMarches.filter((s) => s.paye == false).length,
+          0
+        ),
+
+        bcPaye: bcs.reduce(
+          (acc, b) => acc + b.situationBCs.filter((s) => s.paye == true).length,
+          0
+        ),
+        bcEnCours: bcs.reduce(
+          (acc, b) =>
+            acc + b.situationBCs.filter((s) => s.paye == false).length,
+          0
+        ),
+
+        contratActifs: contrats.filter((c) => c.statut === "En cours").length,
+        contratExpires: contrats.filter((c) => c.statut === "Suspendu").length,
+      });
+    };
+
+    fetchData();
+  }, []);
 
   // Fonction pour formater les montants
   const formatMontant = (montant: number): string => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "MAD",
-    }).format(montant);
+    return montant + " DH";
   };
 
   return (
     <main className="flex min-h-screen flex-col bg-gray-50">
-      <Navbar showBackButton />
+      <Navbar title="Gestion des marchés" showBackButton />
       <div className="container mx-auto pt-4 ">
         <button
           className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
@@ -205,14 +263,14 @@ export default function TableauDeBordPage(): JSX.Element {
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Actifs</p>
+                      <p className="text-sm text-gray-500">En cours</p>
                       <p className="text-xl font-semibold text-green-600">
                         {stats.contratActifs}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Expirés</p>
-                      <p className="text-xl font-semibold text-red-600">
+                      <p className="text-sm text-gray-500">Suspendus</p>
+                      <p className="text-xl font-semibold text-yellow-600">
                         {stats.contratExpires}
                       </p>
                     </div>
@@ -429,14 +487,14 @@ export default function TableauDeBordPage(): JSX.Element {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Contrats actifs</span>
+                      <span className="text-gray-600">Contrats en cours</span>
                       <span className="font-semibold text-green-600">
                         {stats.contratActifs}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Contrats expirés</span>
-                      <span className="font-semibold text-red-600">
+                      <span className="text-gray-600">Contrats suspendus</span>
+                      <span className="font-semibold text-yellow-600">
                         {stats.contratExpires}
                       </span>
                     </div>

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BonCommandeRepository extends JpaRepository<BonCommande, Long> {
+    BonCommande findByNumBC(String numBC);
+    boolean existsByNumBC(String numBC);
 }

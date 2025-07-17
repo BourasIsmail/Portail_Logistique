@@ -14,9 +14,10 @@ import { ArrowLeftCircleIcon, FileText, Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/navbar";
 import { useNavigate } from "react-router-dom";
+import { Marche } from "@/gestion_marche/types";
 
 interface DetailViewProps {
-  type: "marche" | "bc" | "contrat";
+  type: "marche" | "bc" | "contrat" | "appelOffre";
   data: any;
   backUrl: string;
   onEdit: () => void;
@@ -47,6 +48,8 @@ export default function DetailView({
         return `Bon de commande: ${data.numBC}`;
       case "contrat":
         return `Contrat: ${data.reference}`;
+      case "appelOffre":
+        return `Appel d'offre: ${data.reference}`;
     }
   };
 
@@ -58,21 +61,31 @@ export default function DetailView({
         return "Les détails ci-dessous présentent toutes les informations relatives à ce bon de commande, y compris ses caractéristiques principales et les situations associées.";
       case "contrat":
         return "Les détails ci-dessous présentent toutes les informations relatives à ce contrat, y compris ses dates d'effet et d'échéance.";
+      case "appelOffre":
+        return "Les détails ci-dessous présentent toutes les informations relatives à cet appel d'offre, y compris ses caractéristiques principales et les situations associées.";
     }
   };
 
   const renderMarcheDetails = () => (
     <>
       {/* Informations générales */}
-      <Card className="border-gray-200">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
           <CardTitle className="text-gray-900">Détails du marché</CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className={undefined}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 className="font-semibold text-sm text-gray-500">Référence</h3>
               <p className="text-gray-900">{data.referenceMarche || "-"}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Appel d'offre
+              </h3>
+              <p className="text-gray-900">
+                {data.appelOffre?.reference || "-"}
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-sm text-gray-500">
@@ -88,7 +101,7 @@ export default function DetailView({
             </div>
             <div>
               <h3 className="font-semibold text-sm text-gray-500">Rubrique</h3>
-              <p className="text-gray-900">{data.rubrique || "-"}</p>
+              <p className="text-gray-900">{data.rubrique.rubrique || "-"}</p>
             </div>
             <div className="md:col-span-2">
               <h3 className="font-semibold text-sm text-gray-500">Objet</h3>
@@ -152,11 +165,11 @@ export default function DetailView({
       <Separator className="my-6 bg-gray-200" />
 
       {/* Situations du marché */}
-      <Card className="border-gray-200">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
           <CardTitle className="text-gray-900">Situations du marché</CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className={undefined}>
           {!data.situationMarches || data.situationMarches.length === 0 ? (
             <div className="text-center py-4 text-gray-500">
               Aucune situation n&apos;est associée à ce marché.
@@ -198,11 +211,11 @@ export default function DetailView({
                           {index + 1}
                         </TableCell>
                         <TableCell className={undefined}>
-                          {formatDate(situation.dateLivraison.toString())}
+                          {formatDate(situation.dateLivraison?.toString())}
                         </TableCell>
                         <TableCell className={undefined}>
                           {formatDate(
-                            situation.dateReceptionProvisoire.toString()
+                            situation.dateReceptionProvisoire?.toString()
                           )}
                         </TableCell>
                         <TableCell className={undefined}>
@@ -238,13 +251,13 @@ export default function DetailView({
   const renderBCDetails = () => (
     <>
       {/* Informations générales */}
-      <Card className="border-gray-200">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
           <CardTitle className="text-gray-900">
             Détails du bon de commande
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className={undefined}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 className="font-semibold text-sm text-gray-500">Numéro BC</h3>
@@ -268,17 +281,17 @@ export default function DetailView({
             </div>
             <div>
               <h3 className="font-semibold text-sm text-gray-500">Rubrique</h3>
-              <p className="text-gray-900">{data.rubrique || "-"}</p>
+              <p className="text-gray-900">{data.rubrique?.rubrique || "-"}</p>
             </div>
             <div>
               <h3 className="font-semibold text-sm text-gray-500">
                 Numéro PMN
               </h3>
-              <p className="text-gray-900">{data.pmnNum || "-"}</p>
+              <p className="text-gray-900">{data.pmn?.num || "-"}</p>
             </div>
             <div className="md:col-span-2">
               <h3 className="font-semibold text-sm text-gray-500">Objet PMN</h3>
-              <p className="text-gray-900">{data.pmnObjet || "-"}</p>
+              <p className="text-gray-900">{data.pmn?.objet || "-"}</p>
             </div>
             <div>
               <h3 className="font-semibold text-sm text-gray-500">
@@ -314,13 +327,13 @@ export default function DetailView({
       <Separator className="my-6 bg-gray-200" />
 
       {/* Situations du BC */}
-      <Card className="border-gray-200">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
           <CardTitle className="text-gray-900">
             Situations du bon de commande
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className={undefined}>
           {!data.situationBCs || data.situationBCs.length === 0 ? (
             <div className="text-center py-4 text-gray-500">
               Aucune situation n&apos;est associée à ce bon de commande.
@@ -398,15 +411,19 @@ export default function DetailView({
   );
 
   const renderContratDetails = () => (
-    <Card className="border-gray-200">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
+    <Card className="border-gray-200 pt-0">
+      <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
         <CardTitle className="text-gray-900">Détails du contrat</CardTitle>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className={undefined}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h3 className="font-semibold text-sm text-gray-500">Référence</h3>
             <p className="text-gray-900">{data.reference || "-"}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500">Rubrique</h3>
+            <p className="text-gray-900">{data.rubrique.rubrique || "-"}</p>
           </div>
           <div>
             <h3 className="font-semibold text-sm text-gray-500">
@@ -414,7 +431,7 @@ export default function DetailView({
             </h3>
             <p className="text-gray-900">{data.anneeBudgetaire || "-"}</p>
           </div>
-          <div className="md:col-span-2">
+          <div>
             <h3 className="font-semibold text-sm text-gray-500">Objet</h3>
             <p className="text-gray-900">{data.objet || "-"}</p>
           </div>
@@ -429,6 +446,12 @@ export default function DetailView({
             <p className="font-semibold text-gray-900">
               {formatMoney(data.montant)}
             </p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500">
+              Type de budget
+            </h3>
+            <p className="text-gray-900">{data.typeBudget.name || "-"}</p>
           </div>
           <div>
             <h3 className="font-semibold text-sm text-gray-500">
@@ -449,18 +472,22 @@ export default function DetailView({
           <div>
             <h3 className="font-semibold text-sm text-gray-500">Statut</h3>
             <Badge
-              variant={data.statut === "En cours" ? "default" : "secondary"}
               className={
                 data.statut === "En cours"
                   ? "bg-blue-100 text-blue-800"
+                  : data.statut === "Terminé"
+                  ? "bg-green-100 text-green-800"
+                  : data.statut === "Suspendu"
+                  ? "bg-yellow-100 text-yellow-800"
                   : "bg-gray-100 text-gray-800"
               }
+              variant={"default"}
             >
               {data.statut || "-"}
             </Badge>
           </div>
           {data.description && (
-            <div className="md:col-span-2">
+            <div className="">
               <h3 className="font-semibold text-sm text-gray-500">
                 Description
               </h3>
@@ -472,29 +499,177 @@ export default function DetailView({
     </Card>
   );
 
+  const renderAppelOffreDetails = () => (
+    <>
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
+          <CardTitle className="text-gray-900">
+            Détails de l'appel d'offre
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={undefined}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">Référence</h3>
+              <p className="text-gray-900">{data.reference || "-"}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">Rubrique</h3>
+              <p className="text-gray-900">{data.rubrique.rubrique || "-"}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Type d'appel d'offre
+              </h3>
+              <p className="text-gray-900">{data.typeAO.name || "-"}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Année budgétaire
+              </h3>
+              <p className="text-gray-900">{data.anneeBudgetaire || "-"}</p>
+            </div>
+            <div className="md:col-span-2">
+              <h3 className="font-semibold text-sm text-gray-500">Objet</h3>
+              <p className="text-gray-900">{data.objet || "-"}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Estimation
+              </h3>
+              <p className="font-semibold text-gray-900">
+                {formatMoney(data.estimation)}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Date de publication dans le portail
+              </h3>
+              <p className="text-gray-900">
+                {formatDate(data.datePublication)}
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Date de ouverture des plis
+              </h3>
+              <p className="text-gray-900">{formatDate(data.dateOuverture)}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Date de fin travaux de la commission
+              </h3>
+              <p className="text-gray-900">{formatDate(data.dateFinTravaux)}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm text-gray-500">
+                Date de notification de l'approbation
+              </h3>
+              <p className="text-gray-900">
+                {formatDate(data.dateNotificationApprobation)}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator className="my-6 bg-gray-200" />
+
+      <Card className="border-gray-200 pt-0">
+        <CardHeader className="bg-gray-50 border-b pt-6 rounded-t-xl border-gray-200">
+          <CardTitle className="text-gray-900">
+            Marchés associés à l'appel d'offre
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={undefined}>
+          {!data.marches && data.marches.length >= 0 ? (
+            <div className="text-center py-4 text-gray-500">
+              Aucun marché n&apos;est associé à cet appel d&apos;offre.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table className={undefined}>
+                <TableHeader className="bg-gray-50">
+                  <TableRow className={undefined}>
+                    <TableHead className="text-gray-700">N°</TableHead>
+                    <TableHead className="text-gray-700">Reference</TableHead>
+                    <TableHead className="text-gray-700">Montant</TableHead>
+                    <TableHead className="text-gray-700">
+                      Attributaire
+                    </TableHead>
+                    <TableHead className="text-gray-700">
+                      Date d'approbation
+                    </TableHead>
+                    <TableHead className="text-gray-700">
+                      Date de visa
+                    </TableHead>
+                    <TableHead className="text-gray-700">
+                      Date d'ordre de service
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className={undefined}>
+                  {data.marches.map((marche: Marche, index: number) => (
+                    <TableRow
+                      key={marche.id}
+                      className="hover:bg-gray-50"
+                      onClick={() => navigate(`/gm/marches/${marche.id}`)}
+                    >
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell className={undefined}>
+                        {marche.referenceMarche || "-"}
+                      </TableCell>
+                      <TableCell className={undefined}>
+                        {formatMoney(marche.montantMarche)}
+                      </TableCell>
+                      <TableCell className={undefined}>
+                        {marche.attributaire || "-"}
+                      </TableCell>
+                      <TableCell className={undefined}>
+                        {formatDate(marche.dateApprobation)}
+                      </TableCell>
+                      <TableCell className={undefined}>
+                        {formatDate(marche.dateVisa)}
+                      </TableCell>
+                      <TableCell className={undefined}>
+                        {formatDate(marche.dateOrdreService)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </>
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Navbar showBackButton />
-      <div className="container mx-auto pt-1.5 ">
-        <button
-          className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftCircleIcon className="w-5 h-5" />
-          <span className="text-lg font-bold text-gray-900">Retour</span>
-        </button>
-      </div>
-      <div className="container mx-auto py-6 px-4 space-y-6">
-        <div className="flex justify-end">
-          <Button
-            onClick={onEdit}
-            className={undefined}
-            // className="bg-blue-600 hover:bg-blue-700"
-            variant={undefined}
-            size={undefined}
-          >
-            Modifier
-          </Button>
+      <div className="container mx-auto pt-3 pb-6 px-6 space-y-2 ">
+        <div className="flex pt-1.5 self-center items-center justify-between px-5">
+          <div>
+            <button
+              className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeftCircleIcon className="w-5 h-5" />
+              <span className="text-lg font-bold text-gray-900">Retour</span>
+            </button>
+          </div>
+          <div className="flex justify-end pt-1.5 ">
+            <Button
+              onClick={onEdit}
+              className={undefined}
+              // className="bg-blue-600 hover:bg-blue-700"
+              variant={undefined}
+              size={undefined}
+            >
+              Modifier
+            </Button>
+          </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -516,6 +691,7 @@ export default function DetailView({
             {type === "marche" && renderMarcheDetails()}
             {type === "bc" && renderBCDetails()}
             {type === "contrat" && renderContratDetails()}
+            {type === "appelOffre" && renderAppelOffreDetails()}
           </div>
         </div>
       </div>

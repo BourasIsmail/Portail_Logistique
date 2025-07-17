@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children, role }) => {
     }
 
     setLoading(false);
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return null;

@@ -10,6 +10,7 @@ import Navbar from "@/components/navbar";
 
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftCircleIcon } from "lucide-react";
+import TypesAOTable from "@/gestion_marche/components/parametrage/types-appel-offre-table";
 
 export default function ParametragePage() {
   const [activeTab, setActiveTab] = useState("types-budget");
@@ -17,8 +18,8 @@ export default function ParametragePage() {
 
   return (
     <main className="flex min-h-screen flex-col bg-gray-50">
-      <Navbar showBackButton />
-      <div className="container mx-auto pt-4">
+      <Navbar title="Gestion des marchés" showBackButton />
+      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
         <button
           className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
           onClick={() => navigate(-1)}
@@ -64,6 +65,12 @@ export default function ParametragePage() {
             >
               PMN
             </TabsTrigger>
+            <TabsTrigger
+              value="types-appel-offre"
+              className="data-[state=active]:bg-black data-[state=active]:text-white text-gray-700"
+            >
+              Type d'appel d'offre
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent
@@ -72,7 +79,7 @@ export default function ParametragePage() {
           >
             <div className="mb-4">
               <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Types de budget
+                Types de Budget
               </h2>
               <p className="text-gray-600 text-sm">
                 Les types de budget permettent de catégoriser les dépenses selon
@@ -88,7 +95,7 @@ export default function ParametragePage() {
           >
             <div className="mb-4">
               <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Rubriques budgétaires
+                Rubriques Budgétaires
               </h2>
               <p className="text-gray-600 text-sm">
                 Les rubriques budgétaires correspondent aux lignes de votre plan
@@ -114,6 +121,24 @@ export default function ParametragePage() {
               </p>
             </div>
             <PMNTable />
+          </TabsContent>
+
+          <TabsContent
+            value="types-appel-offre"
+            className="border-gray-200 border rounded-md p-4 bg-white shadow-sm"
+          >
+            <div className="mb-4">
+              <h2 className="text-lg font-medium text-gray-900 mb-2">
+                Types d'Appel d'Offre
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Les types d'appel d'offre définissent les catégories de
+                procédures de passation des marchés. Ils permettent de
+                standardiser les processus et de faciliter la gestion des appels
+                d'offres.
+              </p>
+            </div>
+            <TypesAOTable />
           </TabsContent>
         </Tabs>
       </div>

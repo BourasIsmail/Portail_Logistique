@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import TypeBudgetForm from "./type-budget-form";
+import TypeAOForm from "./type-appel-offre-form";
 import {
   Dialog,
   DialogContent,
@@ -27,103 +27,97 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { TypeBudget } from "@/gestion_marche/types";
+import type { TypeAO } from "@/gestion_marche/types";
 import api from "@/utils/api";
+import { toast } from "sonner";
 
-// Mock data
-const mockTypesBudget: TypeBudget[] = [
-  { id: 1, name: "Budget d'investissement" },
-  { id: 2, name: "Budget de fonctionnement" },
-];
-
-export default function TypesBudgetTable(): JSX.Element {
-  const [typesBudget, setTypesBudget] = useState<TypeBudget[]>([]);
+export default function TypesAOTable(): JSX.Element {
+  const [typesAO, setTypesAO] = useState<TypeAO[]>([]);
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
-  const [currentTypeBudget, setCurrentTypeBudget] = useState<TypeBudget | null>(
-    null
-  );
+  const [currentTypeAO, setCurrentTypeAO] = useState<TypeAO | null>(null);
   const [formTitle, setFormTitle] = useState<string>("");
 
   useEffect(() => {
     // Fetch initial data from API if needed
-    const fetchTypesBudget = async () => {
+    const fetchTypesAO = async () => {
       try {
-        const response = await api.get("/admin/get-all-type-budget");
+        const response = await api.get("/admin/get-all-typeAO");
         if (response.status === 200) {
           console.log("Fetched types budget:", response.data);
-          setTypesBudget(response.data);
+          setTypesAO(response.data);
         }
       } catch (error) {
         console.error("Error fetching types budget:", error);
       }
     };
-    fetchTypesBudget();
+    fetchTypesAO();
   }, []);
 
   const handleAdd = (): void => {
-    setCurrentTypeBudget(null);
-    setFormTitle("Ajouter un type de budget");
+    setCurrentTypeAO(null);
+    setFormTitle("Ajouter un type d'appel d'offre");
     setIsFormOpen(true);
   };
 
-  const handleEdit = (typeBudget: TypeBudget): void => {
-    setCurrentTypeBudget(typeBudget);
-    setFormTitle("Modifier le type de budget");
+  const handleEdit = (typeAO: TypeAO): void => {
+    setCurrentTypeAO(typeAO);
+    setFormTitle("Modifier le type d'appel d'offre");
     setIsFormOpen(true);
   };
 
-  const handleDelete = (typeBudget: TypeBudget): void => {
-    setCurrentTypeBudget(typeBudget);
+  const handleDelete = (typeAO: TypeAO): void => {
+    setCurrentTypeAO(typeAO);
     setIsDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (currentTypeBudget) {
+    if (currentTypeAO) {
       try {
         const response = await api.delete(
-          `/admin/delete-type-budget/${currentTypeBudget.name}`
+          `/admin/delete-typeAO/${currentTypeAO.name}`
         );
         if (response.status === 200) {
           console.log("Type budget deleted:", response.data);
-          setTypesBudget((prev) =>
-            prev.filter((item) => item.id !== currentTypeBudget.id)
+          setTypesAO((prev) =>
+            prev.filter((item) => item.id !== currentTypeAO.id)
           );
         }
       } catch (error) {
-        console.error("Error deleting type budget:", error);
+        console.error("Error deleting type appel offre:", error);
         return;
       }
     }
     setIsDeleteDialogOpen(false);
   };
 
-  const handleSubmit = async (formData: TypeBudget) => {
+  const handleSubmit = async (formData: TypeAO) => {
     try {
-      if (currentTypeBudget) {
+      if (currentTypeAO) {
         // update
         const response = await api.put(
-          `/admin/update-type-budget/${currentTypeBudget.name}`,
+          `/admin/update-typeAO/${currentTypeAO.name}`,
           formData
         );
         if (response.status === 200) {
-          setTypesBudget((prev) =>
+          setTypesAO((prev) =>
             prev.map((item) =>
-              item.id === currentTypeBudget.id ? { ...response.data } : item
+              item.id === currentTypeAO.id ? { ...response.data } : item
             )
           );
           setIsFormOpen(false);
         }
       } else {
         // Add
-        const response = await api.post("/admin/add-type-budget", formData);
+        const response = await api.post("/admin/add-typeAO", formData);
         if (response.status === 200) {
-          setTypesBudget((prev) => [...prev, { ...response.data }]);
+          setTypesAO((prev) => [...prev, { ...response.data }]);
           setIsFormOpen(false);
         }
       }
     } catch (error) {
-      console.error("Error updating type budget:", error);
+      console.error("Error updating type appel offre:", error);
+      toast.error("Ce type d'appel d'offre existe déjà.");
       return;
     }
   };
@@ -155,16 +149,16 @@ export default function TypesBudgetTable(): JSX.Element {
             </TableRow>
           </TableHeader>
           <TableBody className={undefined}>
-            {typesBudget.length > 0 ? (
-              typesBudget.map((typeBudget) => (
-                <TableRow key={typeBudget.id} className="hover:bg-gray-50">
-                  <TableCell className={undefined}>{typeBudget.id}</TableCell>
-                  <TableCell className={undefined}>{typeBudget.name}</TableCell>
+            {typesAO.length > 0 ? (
+              typesAO.map((typeAO) => (
+                <TableRow key={typeAO.id} className="hover:bg-gray-50">
+                  <TableCell className={undefined}>{typeAO.id}</TableCell>
+                  <TableCell className={undefined}>{typeAO.name}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleEdit(typeBudget)}
+                      onClick={() => handleEdit(typeAO)}
                       className="text-blue-600 hover:bg-blue-100 hover:text-blue-700"
                     >
                       <Pencil className="h-4 w-4 mr-1" />
@@ -173,7 +167,7 @@ export default function TypesBudgetTable(): JSX.Element {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleDelete(typeBudget)}
+                      onClick={() => handleDelete(typeAO)}
                       className="text-red-600 hover:bg-red-50 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4 mr-1" />
@@ -188,7 +182,7 @@ export default function TypesBudgetTable(): JSX.Element {
                   colSpan={3}
                   className="h-24 text-center text-gray-500"
                 >
-                  Aucun type de budget trouvé.
+                  Aucun type d'appel d'offre trouvé.
                 </TableCell>
               </TableRow>
             )}
@@ -202,8 +196,8 @@ export default function TypesBudgetTable(): JSX.Element {
           <DialogHeader className={undefined}>
             <DialogTitle className="text-gray-900">{formTitle}</DialogTitle>
           </DialogHeader>
-          <TypeBudgetForm
-            typeBudget={currentTypeBudget}
+          <TypeAOForm
+            typeAO={currentTypeAO}
             onSubmit={handleSubmit}
             onCancel={() => setIsFormOpen(false)}
           />
@@ -218,10 +212,10 @@ export default function TypesBudgetTable(): JSX.Element {
         <AlertDialogContent className="border-gray-200">
           <AlertDialogHeader className={undefined}>
             <AlertDialogTitle className="text-gray-900">
-              Êtes-vous sûr de vouloir supprimer ce type de budget ?
+              Êtes-vous sûr de vouloir supprimer ce type d'appel d'offre ?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-gray-600">
-              Cette action est irréversible. Ce type de budget sera
+              Cette action est irréversible. Ce type d'appel d'offre sera
               définitivement supprimé.
             </AlertDialogDescription>
           </AlertDialogHeader>

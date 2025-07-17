@@ -5,6 +5,7 @@ import DetailView from "@/components/detail-view";
 import FormModal from "@/components/form-modal";
 
 import type { Contrat } from "@/gestion_marche/types";
+import api from "@/utils/api";
 
 // Mock data for demonstration - would be replaced with API call
 const mockContrats = [
@@ -43,26 +44,45 @@ export default function ContratDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // In a real app, this would be an API call
-    const id = Number(params.id);
-    const foundContrat = mockContrats.find((c) => c.id === id);
+    // Fetch contrat details based on ID from params
+    const fetchContrat = async () => {
+      const id = Number(params.id);
+      console.log("Fetching contrat with ID:", id);
+      const response = await api.get(`/admin/get-contract/${id}`);
+      console.log("Fetched contrat:", response.data);
 
-    if (foundContrat) {
-      setContrat(foundContrat);
-    } else {
-      // Redirect to list if not found
-      navigate("/gm/contrats");
-    }
+      if (response.status === 200) {
+        setContrat({
+          ...response.data,
+          typeBudgetId: response.data.id,
+          rubriqueId: response.data.id,
+        });
+      } else {
+        // Redirect to list if not found
+        navigate("/gm/contrats");
+      }
+    };
+    fetchContrat();
   }, [params.id, navigate]);
 
   const handleEdit = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = () => {
-    // In a real app, this would be an API call
-    //setContrat({ ...formData, id: contrat.id })
-    setIsModalOpen(false);
+  const handleSubmit = async (formData: Contrat) => {
+    const response = await api.put(
+      `/admin/update-contract/${formData.id}`,
+      formData
+    );
+    if (response.status === 200) {
+      // Update the local state with the updated contrat
+      setContrat({
+        ...response.data,
+        typeBudgetId: response.data.id,
+        rubriqueId: response.data.id,
+      });
+      setIsModalOpen(false);
+    }
   };
 
   if (!contrat) {

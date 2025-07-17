@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContratRepository extends JpaRepository<Contrat, Long> {
+    Contrat findByReference(String Reference);
+    boolean existsByReference(String Reference);
 }

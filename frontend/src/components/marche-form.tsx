@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,19 +13,26 @@ import {
 } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Marche } from "@/gestion_marche/types";
+import {
+  AppelOffre,
+  Marche,
+  Rubrique,
+  TypeBudget,
+} from "@/gestion_marche/types";
+import api from "@/utils/api";
+import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 
 // Mock data for dropdowns
-const typeBudgets = [
-  { id: 1, nom: "Budget d'investissement" },
-  { id: 2, nom: "Budget de fonctionnement" },
-];
+// const typeBudgets = [
+//   { id: 1, nom: "Budget d'investissement" },
+//   { id: 2, nom: "Budget de fonctionnement" },
+// ];
 
-const rubriques = [
-  { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
-  { id: 2, nCompte: "789012", rubrique: "Mobilier de bureau" },
-  { id: 3, nCompte: "345678", rubrique: "Fournitures de bureau" },
-];
+// const rubriques = [
+//   { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
+//   { id: 2, nCompte: "789012", rubrique: "Mobilier de bureau" },
+//   { id: 3, nCompte: "345678", rubrique: "Fournitures de bureau" },
+// ];
 
 interface MarcheFormProps {
   marche?: Marche;
@@ -38,27 +45,72 @@ export default function MarcheForm({
   onSubmit,
   onCancel,
 }: MarcheFormProps) {
+  const [rubriques, setRubriques] = useState<Rubrique[]>([]);
+  const [typeBudget, setTypeBudget] = useState<TypeBudget[]>([]);
+  const [appelOffre, setAppelOffre] = useState<AppelOffre[]>([]);
   const [formData, setFormData] = useState(
     marche || {
       id: 0,
       anneeBudgetaire: new Date().getFullYear().toString(),
       numCompte: "",
-      rubrique: "",
       referenceMarche: "",
       objet: "",
       attributaire: "",
-      montantMarche: "",
+      montantMarche: 0,
       dateApprobation: "",
       dateVisa: "",
       dateNotificationApprobation: "",
       dateOrdreService: "",
       delaiExecution: "",
-      typeBudgetId: "",
+      typeBudgetId: undefined,
+      typeBudget: null,
+      rubriqueId: undefined,
+      rubrique: null,
+      appelOffreId: undefined,
+      appelOffre: null,
       situationMarches: [],
     }
   );
 
   const [situations, setSituations] = useState(formData.situationMarches || []);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTypeBudgets = async () => {
+      const response = await api.get("/admin/get-all-type-budget");
+      if (response.status === 200) {
+        setTypeBudget(response.data);
+      } else {
+        console.error("Failed to fetch type budgets");
+      }
+    };
+    const fetchRubrique = async () => {
+      const response = await api.get("/admin/get-all-rubrique");
+      if (response.status === 200) {
+        setRubriques(response.data);
+      } else {
+        console.error("Failed to fetch type budgets");
+      }
+      setLoading(false);
+    };
+    const fetchAppelOffre = async () => {
+      const response = await api.get("/admin/get-all-appel-offres");
+      if (response.status === 200) {
+        setAppelOffre(response.data);
+      } else {
+        console.error("Failed to fetch appel offres");
+      }
+    };
+
+    fetchAppelOffre();
+    fetchTypeBudgets();
+    fetchRubrique();
+  }, []);
+
+  if (loading) {
+    return;
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -68,7 +120,16 @@ export default function MarcheForm({
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const selectedTypeBudget = typeBudget.find(
+      (tb) => tb.id.toString() === value
+    );
+    if (selectedTypeBudget) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Number(value),
+        typeBudget: selectedTypeBudget,
+      }));
+    }
   };
 
   const handleRubriqueChange = (value: string) => {
@@ -76,8 +137,21 @@ export default function MarcheForm({
     if (selectedRubrique) {
       setFormData((prev) => ({
         ...prev,
+        rubriqueId: Number(value),
         numCompte: selectedRubrique.nCompte,
-        rubrique: selectedRubrique.rubrique,
+        rubrique: selectedRubrique,
+      }));
+    }
+  };
+
+  const handleAOChange = (value: string) => {
+    const selectedAO = appelOffre.find((r) => r.id.toString() === value);
+    if (selectedAO) {
+      setFormData((prev) => ({
+        ...prev,
+        appelOffreId: Number(value),
+        appelOffre: selectedAO,
+        objet: selectedAO.objet,
       }));
     }
   };
@@ -126,7 +200,9 @@ export default function MarcheForm({
     e.preventDefault();
     onSubmit({
       ...formData,
-      montantMarche: Number(formData.montantMarche),
+      typeBudgetId: Number(formData.typeBudgetId),
+      rubriqueId: Number(formData.rubriqueId),
+      appelOffreId: Number(formData.appelOffreId),
       situationMarches: situations,
     });
   };
@@ -141,6 +217,31 @@ export default function MarcheForm({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Respecter l'ordre des champs du modèle */}
+            <div className="space-y-2">
+              <Label htmlFor="rubrique" className={undefined}>
+                Appel d'offre
+              </Label>
+              <Select
+                value={formData.appelOffre?.id.toString() || ""}
+                onValueChange={handleAOChange}
+              >
+                <SelectTrigger className={undefined}>
+                  <SelectValue placeholder="Sélectionner une appel d'offre" />
+                </SelectTrigger>
+                <SelectContent className={undefined}>
+                  {appelOffre.map((ao) => (
+                    <SelectItem
+                      key={ao.id}
+                      value={ao.id.toString()}
+                      className={undefined}
+                    >
+                      {ao.reference}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="anneeBudgetaire" className={undefined}>
                 Année budgétaire
@@ -176,7 +277,10 @@ export default function MarcheForm({
               <Label htmlFor="rubrique" className={undefined}>
                 Rubrique
               </Label>
-              <Select onValueChange={handleRubriqueChange}>
+              <Select
+                value={formData.rubrique?.id.toString() || ""}
+                onValueChange={handleRubriqueChange}
+              >
                 <SelectTrigger className={undefined}>
                   <SelectValue placeholder="Sélectionner une rubrique" />
                 </SelectTrigger>
@@ -336,7 +440,7 @@ export default function MarcheForm({
                 Type de budget
               </Label>
               <Select
-                value={formData.typeBudgetId}
+                value={formData.typeBudgetId?.toString() || ""}
                 onValueChange={(value) =>
                   handleSelectChange("typeBudgetId", value)
                 }
@@ -345,13 +449,13 @@ export default function MarcheForm({
                   <SelectValue placeholder="Sélectionner un type de budget" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
-                  {typeBudgets.map((budget) => (
+                  {typeBudget.map((budget) => (
                     <SelectItem
                       key={budget.id}
                       value={budget.id.toString()}
                       className={undefined}
                     >
-                      {budget.nom}
+                      {budget.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

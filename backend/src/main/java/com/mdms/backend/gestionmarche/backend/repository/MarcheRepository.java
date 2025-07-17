@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MarcheRepository extends JpaRepository<Marche, Long> {
+    Marche findByReferenceMarche(String ReferenceMarche);
+    boolean existsByReferenceMarche(String ReferenceMarche);
 }

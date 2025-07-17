@@ -8,15 +8,21 @@ import {
 import MarcheForm from "./marche-form";
 import BCForm from "./bc-form";
 import ContratForm from "./contrat-form";
-import type { Marche, BonCommande, Contrat } from "@/gestion_marche/types";
+import AOForm from "./appel-offre-form";
+import type {
+  Marche,
+  BonCommande,
+  Contrat,
+  AppelOffre,
+} from "@/gestion_marche/types";
 import { JSX } from "react";
 
 interface FormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formType: "marche" | "bc" | "contrat";
+  formType: "marche" | "bc" | "contrat" | "appelOffre";
   title: string;
-  data?: Marche | BonCommande | Contrat | null | undefined;
+  data?: Marche | BonCommande | Contrat | AppelOffre | null | undefined;
   onSubmit: (data: any) => void;
 }
 
@@ -55,6 +61,14 @@ export default function FormModal({
         return (
           <ContratForm
             contrat={data as Contrat | null}
+            onSubmit={handleSubmit}
+            onCancel={onClose}
+          />
+        );
+      case "appelOffre":
+        return (
+          <AOForm
+            appelOffre={data as AppelOffre | null}
             onSubmit={handleSubmit}
             onCancel={onClose}
           />

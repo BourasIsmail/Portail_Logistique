@@ -67,8 +67,12 @@ export default function DataTable<T extends { id: number | string }>({
     let route = "";
     if ("referenceMarche" in item) {
       route = `/gm/marches/${item.id}`;
+    } else if ("typeAO" in item) {
+      route = `/gm/appelOffres/${item.id}`;
     } else if ("numBC" in item) {
       route = `/gm/bons-commande/${item.id}`;
+    } else if ("reference" in item) {
+      route = `/gm/contrats/${item.id}`;
     } else if ("reference" in item) {
       route = `/gm/contrats/${item.id}`;
     }

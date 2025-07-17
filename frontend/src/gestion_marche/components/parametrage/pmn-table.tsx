@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -28,6 +28,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import api from "@/utils/api";
+import type { PMN } from "@/gestion_marche/types";
+
 // Mock data
 const mockPMNs = [
   { id: 1, num: "PMN-2023-001", objet: "Achat de fournitures", montant: 50000 },
@@ -41,24 +44,33 @@ const mockPMNs = [
 ];
 
 export default function PMNTable() {
-  const [pmns, setPMNs] = useState(mockPMNs);
+  const [pmns, setPMNs] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentPMN, setCurrentPMN] = useState<PMN | null>(null);
   const [formTitle, setFormTitle] = useState("");
+
+  useEffect(() => {
+    // Fetch initial data from API if needed
+    const fetchPMNs = async () => {
+      try {
+        const response = await api.get("/admin/get-all-pmn");
+        if (response.status === 200) {
+          console.log("Fetched PMNs:", response.data);
+          setPMNs(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching PMNs:", error);
+      }
+    };
+    fetchPMNs();
+  }, []);
 
   const handleAdd = () => {
     setCurrentPMN(null);
     setFormTitle("Ajouter un PMN");
     setIsFormOpen(true);
   };
-
-  interface PMN {
-    id: number;
-    num: string;
-    objet: string;
-    montant: number;
-  }
 
   const handleEdit = (pmn: PMN) => {
     setCurrentPMN(pmn);
@@ -71,27 +83,53 @@ export default function PMNTable() {
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (currentPMN) {
-      setPMNs((prev) => prev.filter((item) => item.id !== currentPMN.id));
-      setIsDeleteDialogOpen(false);
+      try {
+        const response = await api.delete(
+          `/admin/delete-pmn/${currentPMN.num}`
+        );
+        if (response.status === 200) {
+          console.log("Type budget deleted:", response.data);
+          setPMNs((prev) => prev.filter((item) => item.id !== currentPMN.id));
+        }
+      } catch (error) {
+        console.error("Error deleting type budget:", error);
+        return;
+      }
     }
+    setIsDeleteDialogOpen(false);
   };
 
-  const handleSubmit = (formData: Omit<PMN, "id">) => {
-    if (currentPMN) {
-      // Update
-      setPMNs((prev) =>
-        prev.map((item) =>
-          item.id === currentPMN.id ? { ...formData, id: item.id } : item
-        )
-      );
-    } else {
-      // Add
-      const newId = Math.max(...pmns.map((item) => item.id), 0) + 1;
-      setPMNs((prev) => [...prev, { ...formData, id: newId }]);
+  const handleSubmit = async (formData: Omit<PMN, "id">) => {
+    try {
+      if (currentPMN) {
+        // Update
+        const response = await api.put(
+          `/admin/update-pmn/${currentPMN.num}`,
+          formData
+        );
+        if (response.status === 200) {
+          setPMNs((prev) =>
+            prev.map((item) =>
+              item.id === currentPMN.id ? { ...response.data } : item
+            )
+          );
+          setIsFormOpen(false);
+        }
+      } else {
+        // Add
+        console.log("Adding PMN with data:", formData);
+        const response = await api.post("/admin/add-pmn", formData);
+        if (response.status === 200) {
+          setPMNs((prev) => [...prev, { ...response.data }]);
+          setIsFormOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error adding type budget:", error);
+      return;
     }
-    setIsFormOpen(false);
   };
 
   const formatMontant = (montant: number) => {

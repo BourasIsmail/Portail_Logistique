@@ -1,46 +1,12 @@
-import React, { JSX, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import DataTable from "@/components/data-table";
 import FormModal from "@/components/form-modal";
 import Navbar from "@/components/navbar";
 import type { Marche, Column } from "@/gestion_marche/types";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftCircleIcon } from "lucide-react";
-
-// Mock data for demonstration
-const mockMarches: Marche[] = [
-  {
-    id: 1,
-    anneeBudgetaire: "2023",
-    numCompte: "123456",
-    rubrique: "Équipement informatique",
-    referenceMarche: "M2023-001",
-    objet: "Achat de matériel informatique",
-    attributaire: "Tech Solutions SA",
-    montantMarche: 250000,
-    dateApprobation: "2023-03-15",
-    dateVisa: "2023-03-20",
-    dateNotificationApprobation: "2023-03-22",
-    dateOrdreService: "2023-03-25",
-    delaiExecution: "60 jours",
-    situationMarches: [],
-  },
-  {
-    id: 2,
-    anneeBudgetaire: "2023",
-    numCompte: "789012",
-    rubrique: "Mobilier de bureau",
-    referenceMarche: "M2023-002",
-    objet: "Fourniture de mobilier de bureau",
-    attributaire: "Mobilier Pro SARL",
-    montantMarche: 180000,
-    dateApprobation: "2023-04-10",
-    dateVisa: "2023-04-15",
-    dateNotificationApprobation: "2023-04-18",
-    dateOrdreService: "2023-04-20",
-    delaiExecution: "45 jours",
-    situationMarches: [],
-  },
-];
+import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
+import api from "@/utils/api";
 
 // Define columns for the data table - Respecter l'ordre des champs du modèle
 const columns: Column<Marche>[] = [
@@ -51,9 +17,14 @@ const columns: Column<Marche>[] = [
     header: "Rubrique",
     render: (item: Marche) => (
       <div className="max-w-48 overflow-hidden text-ellipsis whitespace-nowrap">
-        {item.rubrique}
+        {item.rubrique.rubrique}
       </div>
     ),
+  },
+  {
+    key: "appelOffre",
+    header: "Appel d'offre",
+    render: (item: Marche) => item.appelOffre?.reference || "-",
   },
   {
     key: "anneeBudgetaire",
@@ -98,12 +69,33 @@ const columns: Column<Marche>[] = [
 ];
 
 export default function MarchesPage(): JSX.Element {
-  const [marches, setMarches] = useState<Marche[]>(mockMarches);
+  const [marches, setMarches] = useState<Marche[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentMarche, setCurrentMarche] = useState<Marche | null>(null);
   const [modalTitle, setModalTitle] = useState<string>("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    // Fetch initial data from API if needed
+    const fetchMarches = async () => {
+      try {
+        const response = await api.get("/admin/get-all-marches");
+        if (response.status === 200) {
+          console.log("Fetched marches:", response.data);
+          setMarches(response.data);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching marches:", error);
+      }
+    };
+    fetchMarches();
+  }, []);
+
+  if (loading) {
+    return;
+  }
   const handleAdd = (): void => {
     setCurrentMarche(null);
     setModalTitle("Ajouter un marché");
@@ -111,7 +103,12 @@ export default function MarchesPage(): JSX.Element {
   };
 
   const handleEdit = (marche: Marche): void => {
-    setCurrentMarche(marche);
+    setCurrentMarche({
+      ...marche,
+      rubriqueId: marche.rubrique.id,
+      typeBudgetId: marche.typeBudget.id,
+      appelOffreId: marche.appelOffre?.id,
+    });
     setModalTitle("Modifier le marché");
     setIsModalOpen(true);
   };
@@ -121,27 +118,48 @@ export default function MarchesPage(): JSX.Element {
     console.log("Export to Excel");
   };
 
-  const handleSubmit = (formData: Marche): void => {
-    if (currentMarche && "referenceMarche" in formData) {
-      // Update existing marché with its situations
-      console.log("Updating marché:", { ...(formData as Marche) });
-      setMarches((prev) =>
-        prev.map((m) =>
-          m.id === currentMarche.id ? { ...(formData as Marche), id: m.id } : m
-        )
+  const handleSubmit = async (formData: Marche) => {
+    try {
+      if (currentMarche && "referenceMarche" in formData) {
+        console.log("Updating existing marché:", formData);
+        // Update existing marché with its situations
+        const response = await api.put(
+          `/admin/update-marche/${currentMarche.id}`,
+          {
+            ...formData,
+            rubriqueId: formData.rubrique.id,
+            typeBudgetId: formData.typeBudget.id,
+            appelOffreId: formData.appelOffre?.id,
+          }
+        );
+        if (response.status === 200) {
+          setMarches((prev) =>
+            prev.map((m) =>
+              m.id === currentMarche.id ? { ...(formData as Marche) } : m
+            )
+          );
+          setIsModalOpen(false);
+        }
+      } else if ("referenceMarche" in formData) {
+        // Add new marché with its situations
+        const response = await api.post("/admin/add-marche", formData);
+        if (response.status === 200) {
+          setMarches((prev) => [...prev, response.data]);
+          setIsModalOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Error submitting form:",
+        error.response.data ? error.response.data : error
       );
-    } else if ("referenceMarche" in formData) {
-      // Add new marché with its situations
-      const newId = Math.max(...marches.map((m) => m.id), 0) + 1;
-      console.log("Adding marché:", { ...(formData as Marche), id: newId });
-      setMarches((prev) => [...prev, { ...(formData as Marche), id: newId }]);
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
-      <Navbar showBackButton />
-      <div className="container mx-auto pt-4 ">
+    <main className="flex min-h-screen flex-col bg-gray-50 ">
+      <Navbar title="Gestion des marchés" showBackButton />
+      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
         <button
           className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
           onClick={() => navigate(-1)}

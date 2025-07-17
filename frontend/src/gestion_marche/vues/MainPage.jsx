@@ -31,10 +31,6 @@ export default function MainPage() {
       console.log("redirecting to login page from MainPage");
       return navigate("/login", { replace: true });
     } else {
-      console.log(
-        "userDetails is not null, redirecting to dashboard from MainPage"
-      );
-
       if (userDetails.role === "ROLE_ADMIN") {
         setRole("/admin");
       } else if (userDetails.role === "ROLE_INFO") {
@@ -93,7 +89,7 @@ export default function MainPage() {
               <CardContent className="flex justify-center h-full items-end">
                 <Button asChild>
                   {/* // TODO : update this later */}
-                  <Link to="/gm/marches">Accéder</Link>
+                  <Link to="/gm/appelOffres">Accéder</Link>
                 </Button>
               </CardContent>
             </Card>

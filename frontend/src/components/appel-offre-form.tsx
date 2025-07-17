@@ -12,70 +12,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Contrat, Rubrique, TypeBudget } from "@/gestion_marche/types";
+import {
+  AppelOffre,
+  Contrat,
+  Rubrique,
+  TypeBudget,
+  TypeAO,
+} from "@/gestion_marche/types";
 import { set } from "react-hook-form";
 import api from "@/utils/api";
 
-// Mock data for dropdowns
-// const typeBudgets = [
-//   { id: 1, nom: "Budget d'investissement" },
-//   { id: 2, nom: "Budget de fonctionnement" },
-// ];
-
-// const rubriques = [
-//   { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
-//   { id: 2, nCompte: "789012", rubrique: "Mobilier de bureau" },
-//   { id: 3, nCompte: "345678", rubrique: "Fournitures de bureau" },
-// ];
-
-type ContratFormProps = {
-  contrat?: Contrat | null;
-  onSubmit: (
-    data: ContratFormProps["contrat"] extends null
-      ? Omit<NonNullable<ContratFormProps["contrat"]>, "statut"> & {
-          statut: string;
-        }
-      : NonNullable<ContratFormProps["contrat"]>
-  ) => void;
+type AOFormProps = {
+  appelOffre?: AppelOffre | null;
+  onSubmit: (data: AppelOffre) => void;
   onCancel: () => void;
 };
 
-export default function ContratForm({
-  contrat = null,
+export default function AOForm({
+  appelOffre = null,
   onSubmit,
   onCancel,
-}: ContratFormProps) {
-  const [typeBudget, setTypeBudget] = useState<TypeBudget[]>([]);
+}: AOFormProps) {
+  const [typeAO, setTypeAO] = useState<TypeAO[]>([]);
   const [rubrique, setRubrique] = useState<Rubrique[]>([]);
+
   const [formData, setFormData] = useState(
-    contrat || {
-      id: undefined, // or undefined if your backend assigns it, but must match Contrat type
-      reference: "",
+    appelOffre || {
+      id: undefined,
       anneeBudgetaire: new Date().getFullYear().toString(),
+      reference: "",
       objet: "",
-      attributaire: "",
-      montant: 0,
-      dateSignature: "",
-      dateDebut: "",
-      dateFin: "",
-      statut: "En cours",
-      typeBudgetId: undefined,
+      estimation: 0,
+      datePublication: new Date().toISOString().split("T")[0],
+      dateOuverture: "",
+      dateFinTravaux: "",
+      dateNotificationApprobation: "",
+      rubrique: null,
       rubriqueId: undefined,
-      numCompte: "",
-      rubrique: undefined,
-      typeBudget: undefined,
-      description: "",
+      typeAO: null,
+      typeAOId: undefined,
     }
   );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTypeBudgets = async () => {
-      const response = await api.get("/admin/get-all-type-budget");
+    const fetchAO = async () => {
+      const response = await api.get("/admin/get-all-typeAO");
       if (response.status === 200) {
-        setTypeBudget(response.data);
+        setTypeAO(response.data);
       } else {
-        console.error("Failed to fetch type budgets");
+        console.error("Failed to fetch typeAO");
       }
     };
     const fetchRubrique = async () => {
@@ -88,7 +74,7 @@ export default function ContratForm({
       setLoading(false);
     };
 
-    fetchTypeBudgets();
+    fetchAO();
     fetchRubrique();
   }, []);
 
@@ -100,10 +86,7 @@ export default function ContratForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "montant" ? Number(value) || 0 : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -166,26 +149,24 @@ export default function ContratForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="typeBudget" className={undefined}>
-                Type de budget
+              <Label htmlFor="typeAO" className={undefined}>
+                Type d'appel d'offre
               </Label>
               <Select
-                value={formData.typeBudgetId?.toString() || ""}
-                onValueChange={(value) =>
-                  handleSelectChange("typeBudgetId", value)
-                }
+                value={formData.typeAOId?.toString() || ""}
+                onValueChange={(value) => handleSelectChange("typeAOId", value)}
               >
                 <SelectTrigger className={undefined}>
-                  <SelectValue placeholder="Sélectionner un type de budget" />
+                  <SelectValue placeholder="Sélectionner un type d'appel d'offre" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
-                  {typeBudget.map((budget) => (
+                  {typeAO.map((type) => (
                     <SelectItem
-                      key={budget.id}
-                      value={budget.id.toString()}
+                      key={type.id}
+                      value={type.id.toString()}
                       className={undefined}
                     >
-                      {budget.name}
+                      {type.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -231,43 +212,15 @@ export default function ContratForm({
               />
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description" className={undefined}>
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description ? formData.description : ""}
-                onChange={handleChange}
-                className={undefined}
-              />
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="attributaire" className={undefined}>
-                Attributaire
+              <Label htmlFor="estimation" className={undefined}>
+                Estimation (DH)
               </Label>
               <Input
-                id="attributaire"
-                name="attributaire"
-                value={formData.attributaire}
-                onChange={handleChange}
-                required
-                className={undefined}
-                type={undefined}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="montant" className={undefined}>
-                Montant (DH)
-              </Label>
-              <Input
-                id="montant"
-                name="montant"
+                id="estimation"
+                name="estimation"
                 type="number"
-                value={formData.montant}
+                value={formData.estimation}
                 onChange={handleChange}
                 required
                 className={undefined}
@@ -275,14 +228,14 @@ export default function ContratForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateSignature" className={undefined}>
-                Date de signature
+              <Label htmlFor="datePublication" className={undefined}>
+                Date de publication dans le portail
               </Label>
               <Input
-                id="dateSignature"
-                name="dateSignature"
+                id="datePublication"
+                name="datePublication"
                 type="date"
-                value={formData.dateSignature}
+                value={formData.datePublication}
                 onChange={handleChange}
                 required
                 className={undefined}
@@ -290,14 +243,14 @@ export default function ContratForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateDebut" className={undefined}>
-                Date de début
+              <Label htmlFor="dateOuverture" className={undefined}>
+                Date de ouverture des plis
               </Label>
               <Input
-                id="dateDebut"
-                name="dateDebut"
+                id="dateOuverture"
+                name="dateOuverture"
                 type="date"
-                value={formData.dateDebut}
+                value={formData.dateOuverture}
                 onChange={handleChange}
                 required
                 className={undefined}
@@ -305,14 +258,14 @@ export default function ContratForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateFin" className={undefined}>
-                Date de fin
+              <Label htmlFor="dateFinTravaux" className={undefined}>
+                Date de fin des travaux de la commission
               </Label>
               <Input
-                id="dateFin"
-                name="dateFin"
+                id="dateFinTravaux"
+                name="dateFinTravaux"
                 type="date"
-                value={formData.dateFin}
+                value={formData.dateFinTravaux}
                 onChange={handleChange}
                 required
                 className={undefined}
@@ -320,31 +273,21 @@ export default function ContratForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="statut" className={undefined}>
-                Statut
-              </Label>
-              <Select
-                value={formData.statut}
-                onValueChange={(value) => handleSelectChange("statut", value)}
+              <Label
+                htmlFor="dateNotificationApprobation"
+                className={undefined}
               >
-                <SelectTrigger className={undefined}>
-                  <SelectValue placeholder="Sélectionner un statut" />
-                </SelectTrigger>
-                <SelectContent className={undefined}>
-                  <SelectItem value="En cours" className={undefined}>
-                    En cours
-                  </SelectItem>
-                  <SelectItem value="Terminé" className={undefined}>
-                    Terminé
-                  </SelectItem>
-                  <SelectItem value="Résilié" className={undefined}>
-                    Résilié
-                  </SelectItem>
-                  <SelectItem value="Suspendu" className={undefined}>
-                    Suspendu
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                Date de notification de l'approbation
+              </Label>
+              <Input
+                id="dateNotificationApprobation"
+                name="dateNotificationApprobation"
+                type="date"
+                value={formData.dateNotificationApprobation}
+                onChange={handleChange}
+                required
+                className={undefined}
+              />
             </div>
           </div>
         </CardContent>

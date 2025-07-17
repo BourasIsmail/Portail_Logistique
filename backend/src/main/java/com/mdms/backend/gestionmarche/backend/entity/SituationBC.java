@@ -1,5 +1,6 @@
 package com.mdms.backend.gestionmarche.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,18 +22,23 @@ public class SituationBC {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateLivraison;
-    private String dateReceptionProvisoire;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date dateReceptionProvisoire;
     private String numFacture;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateEnregistrement;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateServiceFait;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateLiquidation;
-    private float montantFacture;
+    private Number montantFacture;
     private boolean paye;
     private String observation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bon_commande_id")
-    @JsonIgnoreProperties("situationMarches")
+    @JsonIgnoreProperties("situationBCs")
     private BonCommande bonCommande;
 }

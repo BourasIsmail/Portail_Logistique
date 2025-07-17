@@ -5,14 +5,16 @@ import FormModal from "@/components/form-modal";
 import Navbar from "@/components/navbar";
 import { useNavigate } from "react-router-dom";
 
-import type { Column, Contrat } from "@/gestion_marche/types";
+import type { Column } from "@/gestion_marche/types";
 import { ArrowLeftCircleIcon } from "lucide-react";
 
 import api from "@/utils/api";
 import { Badge } from "@/components/ui/badge";
+import type { AppelOffre } from "@/gestion_marche/types";
+// Mock data for demonstration
 
 // Define columns for the data table - Respecter l'ordre des champs du modèle
-const columns: Column<Contrat>[] = [
+const columns: Column<AppelOffre>[] = [
   // { key: "id", header: "ID" },
   { key: "reference", header: "Référence" },
   {
@@ -22,84 +24,84 @@ const columns: Column<Contrat>[] = [
   {
     key: "objet",
     header: "Objet",
-    render: (item: Contrat) => (
+    render: (item: AppelOffre) => (
       <div className="max-w-32 overflow-hidden text-ellipsis whitespace-nowrap">
         {item.objet}
       </div>
     ),
   },
   {
-    key: "attributaire",
-    header: "Attributaire",
-    render: (item: Contrat) => (
-      <div className="max-w-32 overflow-hidden text-ellipsis whitespace-nowrap">
-        {item.attributaire}
-      </div>
+    key: "estimation",
+    header: "Estimation",
+    render: (item: AppelOffre) => `${item.estimation.toLocaleString()} DH`,
+  },
+  {
+    key: "rubrique",
+    header: "Rubrique",
+    render: (item: AppelOffre) => item.rubrique?.rubrique || "-",
+  },
+  {
+    key: "typeAO",
+    header: (
+      <span className="whitespace-break-spaces">Type d'appel d'offre</span>
+    ),
+    render: (item: AppelOffre) => item.typeAO?.name || "-",
+  },
+  {
+    key: "datePublication",
+    header: (
+      <span className="whitespace-break-spaces">
+        Date de pub dans le portail
+      </span>
     ),
   },
   {
-    key: "montant",
-    header: "Montant",
-    render: (item: { montant: number }) =>
-      `${item.montant.toLocaleString()} DH`,
+    key: "dateOuverture",
+    header: (
+      <span className="whitespace-break-spaces">Date d'ouverture des plis</span>
+    ),
   },
   {
-    key: "dateSignature",
-    header: <span className="whitespace-break-spaces">Date de signature</span>,
+    key: "dateFinTravaux",
+    header: (
+      <span className="whitespace-break-spaces">
+        Date de fin des travaux de la commission
+      </span>
+    ),
   },
   {
-    key: "dateDebut",
-    header: <span className="whitespace-break-spaces">Date de début</span>,
-  },
-  {
-    key: "dateFin",
-    header: <span className="whitespace-break-spaces">Date de fin</span>,
-  },
-  {
-    key: "statut",
-    header: "Statut",
-    render: (item: { statut: string }) => (
-      <Badge
-        className={
-          item.statut === "En cours"
-            ? "bg-blue-100 text-blue-800"
-            : item.statut === "Terminé"
-            ? "bg-green-100 text-green-800"
-            : item.statut === "Suspendu"
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-gray-100 text-gray-800"
-        }
-        variant={"default"}
-      >
-        {item.statut || "-"}
-      </Badge>
+    key: "dateNotificationApprobation",
+    header: (
+      <span className="whitespace-break-spaces">
+        Date notification de l'approbation
+      </span>
     ),
   },
 ];
 
 export default function ContratsPage() {
-  const [contrats, setContrats] = useState([]);
+  const [appelOffres, setAppelOffres] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentContrat, setCurrentContrat] = useState<Contrat | null>(null);
+  const [currentAO, setCurrentAO] = useState<AppelOffre | null>(null);
   const [modalTitle, setModalTitle] = useState("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch initial data from API if needed
-    const fetchContrats = async () => {
+    const fetchAOs = async () => {
       try {
-        const response = await api.get("/admin/get-all-contracts");
+        const response = await api.get("/admin/get-all-appel-offres");
         if (response.status === 200) {
-          console.log("Fetched contrats:", response.data);
-          setContrats(response.data);
+          console.log("Fetched AOs:", response.data);
+          setAppelOffres(response.data);
         }
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching contrats:", error);
+        console.error("Error fetching AOs:", error);
       }
     };
-    fetchContrats();
+    fetchAOs();
   }, []);
 
   if (loading) {
@@ -107,18 +109,18 @@ export default function ContratsPage() {
   }
 
   const handleAdd = () => {
-    setCurrentContrat(null);
-    setModalTitle("Ajouter un contrat");
+    setCurrentAO(null);
+    setModalTitle("Ajouter un appel d'offre");
     setIsModalOpen(true);
   };
 
-  const handleEdit = (contrat: Contrat) => {
-    setCurrentContrat({
+  const handleEdit = (contrat: AppelOffre) => {
+    setCurrentAO({
       ...contrat,
-      typeBudgetId: contrat.typeBudget.id,
       rubriqueId: contrat.rubrique.id,
+      typeAOId: contrat.typeAO.id,
     });
-    setModalTitle("Modifier le contrat");
+    setModalTitle("Modifier l'appel d'offre");
     setIsModalOpen(true);
   };
 
@@ -127,33 +129,31 @@ export default function ContratsPage() {
     console.log("Export to Excel");
   };
 
-  const handleSubmit = async (formData: Contrat) => {
+  const handleSubmit = async (formData: AppelOffre) => {
     try {
-      if (currentContrat) {
+      if (currentAO) {
         // Update existing contrat
         const response = await api.put(
-          `/admin/update-contract/${currentContrat.id}`,
+          `/admin/update-appel-offre/${currentAO.id}`,
           formData
         );
         if (response.status === 200) {
           // Update the local state with the updated contrat
-          setContrats((prev) =>
-            prev.map((c) =>
-              c.id === currentContrat.id ? { ...response.data } : c
-            )
+          setAppelOffres((prev) =>
+            prev.map((c) => (c.id === currentAO.id ? { ...response.data } : c))
           );
           setIsModalOpen(false);
         }
       } else {
         // Add new contrat
-        const response = await api.post("/admin/add-contract", formData);
+        const response = await api.post("/admin/add-appel-offre", formData);
         if (response.status === 200) {
-          setContrats((prev) => [...prev, { ...response.data }]);
+          setAppelOffres((prev) => [...prev, { ...response.data }]);
           setIsModalOpen(false);
         }
       }
     } catch (error) {
-      console.error("Error adding contrat:", error);
+      console.error("Error adding AO:", error.response?.data || error);
       return;
     }
   };
@@ -173,17 +173,18 @@ export default function ContratsPage() {
       <div className="container mx-auto py-2 px-4">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Gestion des contrats
+            Gestion des appels d'offres
           </h1>
           <p className="text-gray-600">
-            Cette section vous permet de gérer l&apos;ensemble des contrats de
-            votre organisation. Les contrats représentent des engagements sur
-            une période définie avec vos prestataires et fournisseurs.
+            Cette section vous permet de gérer l'ensemble des appels d'offres
+            publiés par votre organisation. Vous pouvez ajouter, modifier et
+            consulter les détails des appels d'offres, ainsi que les marchés
+            associés.
           </p>
         </div>
 
         <DataTable
-          data={contrats}
+          data={appelOffres}
           columns={columns}
           onAdd={handleAdd}
           onExport={handleExport}
@@ -194,9 +195,9 @@ export default function ContratsPage() {
         <FormModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          formType="contrat"
+          formType="appelOffre"
           title={modalTitle}
-          data={currentContrat}
+          data={currentAO}
           onSubmit={handleSubmit}
         />
       </div>

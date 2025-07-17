@@ -24,6 +24,8 @@ import ConractPage from "./gestion_marche/vues/contrats/page";
 import ContractPerIdPage from "./gestion_marche/vues/contrats/id/page";
 import ParametrageGMPage from "./gestion_marche/vues/parametrage/page";
 import GMDashboardPage from "./gestion_marche/vues/tableau-de-bord/page";
+import AOPage from "./gestion_marche/vues/appel-offre/page";
+import AOByIdPage from "./gestion_marche/vues/appel-offre/id/page";
 
 function gestionDemandeRoutes() {
   return (
@@ -119,6 +121,22 @@ function gestionMarcheRoutes() {
         }
       />
 
+      <Route
+        path="/gm/appelOffres"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <AOPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/appelOffres/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+            <AOByIdPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/gm/marches"
         element={

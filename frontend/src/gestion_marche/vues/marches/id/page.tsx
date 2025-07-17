@@ -4,69 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DetailView from "@/components/detail-view";
 import FormModal from "@/components/form-modal";
 import { Marche } from "@/gestion_marche/types";
-
-// Mock data for demonstration - would be replaced with API call
-const mockMarches = [
-  {
-    id: 1,
-    anneeBudgetaire: "2023",
-    numCompte: "123456",
-    rubrique: "Équipement informatique",
-    referenceMarche: "M2023-001",
-    objet: "Achat de matériel informatique",
-    attributaire: "Tech Solutions SA",
-    montantMarche: 250000,
-    dateApprobation: "2023-03-15",
-    dateVisa: "2023-03-20",
-    dateNotificationApprobation: "2023-03-22",
-    dateOrdreService: "2023-03-25",
-    delaiExecution: "60 jours",
-    situationMarches: [
-      {
-        id: 1,
-        dateLivraison: "2023-05-10",
-        dateReceptionProvisoire: "2023-05-15",
-        numFacture: "F2023-123",
-        dateEnregistrement: "2023-05-16",
-        numDecompte: "D2023-001",
-        dateServiceFait: "2023-05-18",
-        dateLiquidation: "2023-05-20",
-        montantDecompte: 150000,
-        paye: true,
-        observation: "Première livraison conforme",
-      },
-      {
-        id: 2,
-        dateLivraison: "2023-05-25",
-        dateReceptionProvisoire: "2023-05-30",
-        numFacture: "F2023-145",
-        dateEnregistrement: "2023-06-01",
-        numDecompte: "D2023-002",
-        dateServiceFait: "2023-06-03",
-        dateLiquidation: "2023-06-05",
-        montantDecompte: 100000,
-        paye: false,
-        observation: "Deuxième livraison conforme",
-      },
-    ],
-  },
-  {
-    id: 2,
-    anneeBudgetaire: "2023",
-    numCompte: "789012",
-    rubrique: "Mobilier de bureau",
-    referenceMarche: "M2023-002",
-    objet: "Fourniture de mobilier de bureau",
-    attributaire: "Mobilier Pro SARL",
-    montantMarche: 180000,
-    dateApprobation: "2023-04-10",
-    dateVisa: "2023-04-15",
-    dateNotificationApprobation: "2023-04-18",
-    dateOrdreService: "2023-04-20",
-    delaiExecution: "45 jours",
-    situationMarches: [],
-  },
-];
+import api from "@/utils/api";
 
 export default function MarcheDetailPage() {
   const params = useParams();
@@ -76,26 +14,49 @@ export default function MarcheDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // In a real app, this would be an API call
-    const id = Number(params.id);
-    const foundMarche = mockMarches.find((m) => m.id === id);
+    // Fetch contrat details based on ID from params
+    const fetchMarche = async () => {
+      const id = Number(params.id);
+      console.log("Fetching marche with ID:", id);
+      const response = await api.get(`/admin/get-marche/${id}`);
+      console.log("Fetched marche:", response.data);
 
-    if (foundMarche) {
-      setMarche(foundMarche as Marche);
-    } else {
-      // Redirect to list if not found
-      navigate("/gm/marches");
-    }
+      if (response.status === 200) {
+        setMarche({
+          ...response.data,
+          rubriqueId: response.data.rubrique.id,
+          typeBudgetId: response.data.typeBudget.id,
+          appelOffreId: response.data.appelOffre?.id,
+        });
+      } else {
+        // Redirect to list if not found
+        navigate("/gm/marches");
+      }
+    };
+    fetchMarche();
   }, [params.id, navigate]);
 
   const handleEdit = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = () => {
-    // In a real app, this would be an API call
-    //setMarche({ ...formData, id: marche.id })
-    //setIsModalOpen(false)
+  const handleSubmit = async (formData) => {
+    console.log("Form submitted:", formData);
+    const response = await api.put(`/admin/update-marche/${params.id}`, {
+      ...formData,
+      rubriqueId: formData.rubrique.id,
+      typeBudgetId: formData.typeBudget.id,
+      appelOffreId: formData.appelOffre?.id,
+    });
+    if (response.status === 200) {
+      setMarche({
+        ...response.data,
+        rubriqueId: response.data.rubrique.id,
+        typeBudgetId: response.data.typeBudget.id,
+        appelOffreId: response.data.appelOffre?.id,
+      });
+      setIsModalOpen(false);
+    }
   };
 
   if (!marche) {

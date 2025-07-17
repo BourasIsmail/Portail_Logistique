@@ -1,14 +1,11 @@
 package com.mdms.backend.gestionmarche.backend.repository;
 
-import com.mdms.backend.gestionmarche.backend.entity.TypeBudget;
+import com.mdms.backend.gestionmarche.backend.entity.TypeAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface TypeBudgetRepository extends JpaRepository<TypeBudget, Long> {
-    TypeBudget findByName(String name);
-
+public interface TypeAORepository extends JpaRepository<TypeAO, Long> {
+    TypeAO findByName(String name);
     boolean existsByName(String name);
 }

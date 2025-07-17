@@ -4,58 +4,58 @@ import { useParams, useNavigate } from "react-router-dom";
 import DetailView from "@/components/detail-view";
 import FormModal from "@/components/form-modal";
 
-import type { BonCommande } from "@/gestion_marche/types";
+import type { AppelOffre } from "@/gestion_marche/types";
 import api from "@/utils/api";
 
-export default function BCDetailPage() {
+export default function AppelOffreDetailPage() {
   const params = useParams();
   const navigate = useNavigate();
-  const [bc, setBC] = useState<BonCommande | null>(null);
+  const [appelOffre, setAppelOffre] = useState<AppelOffre | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch bon de commande details based on ID from params
-    const fetchBC = async () => {
+    // Fetch appel d'offre details based on ID from params
+    const fetchAppelOffre = async () => {
       const id = Number(params.id);
-      console.log("Fetching bon de commande with ID:", id);
-      const response = await api.get(`/admin/get-bon-commande/${id}`);
-      console.log("Fetched bon de commande:", response.data);
+      console.log("Fetching appel d'offre with ID:", id);
+      const response = await api.get(`/admin/get-appel-offre/${id}`);
+      console.log("Fetched appel d'offre:", response.data);
 
       if (response.status === 200) {
-        setBC({
+        setAppelOffre({
           ...response.data,
-          rubriqueId: response.data.rubrique.id,
-          pmnId: response.data.pmn?.id,
+          rubriqueId: response.data.id,
+          typeAOId: response.data.id,
         });
       } else {
         // Redirect to list if not found
-        navigate("/gm/bons-commande");
+        navigate("/gm/appelOffres");
       }
     };
-    fetchBC();
+    fetchAppelOffre();
   }, [params.id, navigate]);
 
   const handleEdit = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (formData: BonCommande) => {
+  const handleSubmit = async (formData: AppelOffre) => {
     const response = await api.put(
-      `/admin/update-bon-commande/${bc.id}`,
+      `/admin/update-appel-offre/${formData.id}`,
       formData
     );
-    if (response.status === 200 && "numBC" in response.data) {
-      // Update the local state with the updated bon de commande
-      setBC({
+    if (response.status === 200) {
+      // Update the local state with the updated appel d'offre
+      setAppelOffre({
         ...response.data,
-        rubriqueId: response.data.rubrique.id,
-        pmnId: response.data.pmn?.id,
+        typeAOId: response.data.id,
+        rubriqueId: response.data.id,
       });
       setIsModalOpen(false);
     }
   };
 
-  if (!bc) {
+  if (!appelOffre) {
     return (
       <div className="flex min-h-screen flex-col bg-gray-50">
         <div className="container mx-auto py-6 px-4">Chargement...</div>
@@ -66,18 +66,18 @@ export default function BCDetailPage() {
   return (
     <>
       <DetailView
-        type="bc"
-        data={bc}
-        backUrl="/bons-commande"
+        type="appelOffre"
+        data={appelOffre}
+        backUrl="/appelOffres"
         onEdit={handleEdit}
       />
 
       <FormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        formType="bc"
-        title="Modifier le bon de commande"
-        data={bc}
+        formType="appelOffre"
+        title="Modifier l'appel d'offre"
+        data={appelOffre}
         onSubmit={handleSubmit}
       />
     </>

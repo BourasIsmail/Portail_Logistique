@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import {
   Table,
@@ -28,6 +28,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import type { Rubrique } from "@/gestion_marche/types";
+
+import api from "@/utils/api";
+
 // Mock data
 const mockRubriques = [
   { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
@@ -36,23 +40,34 @@ const mockRubriques = [
 ];
 
 export default function RubriquesTable() {
-  const [rubriques, setRubriques] = useState(mockRubriques);
+  const [rubriques, setRubriques] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentRubrique, setCurrentRubrique] = useState<Rubrique | null>(null);
   const [formTitle, setFormTitle] = useState("");
+
+  useEffect(() => {
+    // Fetch initial data from API if needed
+    const fetchRubriques = async () => {
+      try {
+        const response = await api.get("/admin/get-all-rubrique");
+        console.log("Fetched rubriques:", response.data);
+        if (response.status === 200) {
+          console.log("Fetched rubriques:", response.data);
+          setRubriques(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching rubriques:", error);
+      }
+    };
+    fetchRubriques();
+  }, []);
 
   const handleAdd = () => {
     setCurrentRubrique(null);
     setFormTitle("Ajouter une rubrique");
     setIsFormOpen(true);
   };
-
-  interface Rubrique {
-    id: number;
-    nCompte: string;
-    rubrique: string;
-  }
 
   const handleEdit = (rubrique: Rubrique) => {
     setCurrentRubrique(rubrique);
@@ -65,27 +80,67 @@ export default function RubriquesTable() {
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    setRubriques((prev) =>
-      prev.filter((item) => item.id !== currentRubrique?.id)
-    );
+  const confirmDelete = async () => {
+    if (currentRubrique) {
+      try {
+        const response = await api.delete(
+          `/admin/delete-rubrique/${currentRubrique.rubrique}`
+        );
+        if (response.status === 200) {
+          console.log("Type budget deleted:", response.data);
+          setRubriques((prev) =>
+            prev.filter((item) => item.id !== currentRubrique.id)
+          );
+        }
+      } catch (error) {
+        console.error("Error deleting type budget:", error);
+        return;
+      }
+    }
     setIsDeleteDialogOpen(false);
   };
 
-  const handleSubmit = (formData: Omit<Rubrique, "id">) => {
-    if (currentRubrique) {
-      // Update
-      setRubriques((prev) =>
-        prev.map((item) =>
-          item.id === currentRubrique.id ? { ...formData, id: item.id } : item
-        )
-      );
-    } else {
-      // Add
-      const newId = Math.max(...rubriques.map((item) => item.id), 0) + 1;
-      setRubriques((prev) => [...prev, { ...formData, id: newId }]);
+  const handleSubmit = async (formData: Omit<Rubrique, "id">) => {
+    try {
+      if (currentRubrique) {
+        // Update
+        const response = await api.put(
+          `/admin/update-rubrique/${currentRubrique.rubrique}`,
+          formData
+        );
+        if (response.status === 200) {
+          setRubriques((prev) =>
+            prev.map((item) =>
+              item.id === currentRubrique.id
+                ? {
+                    id: response.data.id,
+                    nCompte: response.data.ncompte,
+                    rubrique: response.data.rubrique,
+                  }
+                : item
+            )
+          );
+          setIsFormOpen(false);
+        }
+      } else {
+        // Add
+        const response = await api.post("/admin/add-rubrique", formData);
+        if (response.status === 200) {
+          setRubriques((prev) => [
+            ...prev,
+            {
+              id: response.data.id,
+              nCompte: response.data.ncompte,
+              rubrique: response.data.rubrique,
+            },
+          ]);
+          setIsFormOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error adding type budget:", error);
+      return;
     }
-    setIsFormOpen(false);
   };
 
   return (

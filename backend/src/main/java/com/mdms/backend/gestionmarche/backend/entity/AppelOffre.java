@@ -1,6 +1,7 @@
 package com.mdms.backend.gestionmarche.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,44 +9,44 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "contrat")
-public class Contrat {
+@Table(name = "appel_offre")
+public class AppelOffre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
     private String reference;
+
     private String anneeBudgetaire;
     private String objet;
-    private String description; // optional
-    private String attributaire;
-    private Number montant;
+    private Number estimation;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dateSignature;
+    private Date datePublication;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dateDebut;
+    private Date dateOuverture;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dateFin;
+    private Date dateFinTravaux;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date dateNotificationApprobation;
 
-    private String statut;
-
-    private String numCompte;// optional
-
-    @ManyToOne(fetch =  FetchType.EAGER)
-    @JoinColumn(name = "typeBudgetId")
-    private TypeBudget typeBudget;
-
-    @ManyToOne(fetch =  FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rubriqueId")
-    private Rubrique rubrique;// optional
+    private Rubrique rubrique;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "typeAOId")
+    private TypeAO typeAO;
 
+    @OneToMany(mappedBy = "appelOffre", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"appelOffre"})
+    private List<Marche> marches;
 }

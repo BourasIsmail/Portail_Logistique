@@ -1,10 +1,30 @@
 import type React from "react";
 // Types communs pour l'application
+
+export interface AppelOffre {
+  id: number;
+  anneeBudgetaire: string;
+  reference: string;
+  objet: string;
+  estimation: number;
+
+  datePublication: string;
+  dateOuverture: string;
+  dateFinTravaux: string;
+  dateNotificationApprobation: string;
+
+  rubrique?: Rubrique;
+  rubriqueId?: number;
+  typeAO?: TypeAO;
+  typeAOId?: number;
+
+  marches?: Marche[];
+}
+
 export interface Marche {
   id: number;
   anneeBudgetaire: string;
   numCompte: string;
-  rubrique: string;
   referenceMarche: string;
   objet: string;
   attributaire: string;
@@ -14,7 +34,12 @@ export interface Marche {
   dateNotificationApprobation: string;
   dateOrdreService: string;
   delaiExecution: string;
-  typeBudgetId?: string;
+  typeBudgetId?: number;
+  typeBudget?: TypeBudget;
+  rubriqueId?: number;
+  rubrique?: Rubrique;
+  appelOffreId?: number;
+  appelOffre?: AppelOffre;
   situationMarches: SituationMarche[];
 }
 
@@ -36,16 +61,18 @@ export interface BonCommande {
   id: number;
   anneeBudgetaire: string;
   numCompte: string;
-  rubrique: string;
-  pmnNum: string;
-  pmnObjet: string;
   numBC: string;
   dateBC: string;
   attributaire: string;
   montant: number;
   dateNotificationBC: string;
   delaiExecution: string;
-  pmnId?: string;
+  rubrique: Rubrique;
+  rubriqueId?: number;
+  pmnId?: number;
+  pmnNum: string;
+  pmnObjet: string;
+  pmn?: PMN;
   situationBCs: SituationBC[];
 }
 
@@ -74,15 +101,21 @@ export interface Contrat {
   dateFin: string;
   statut: string;
   description?: string;
-  typeBudgetId?: string;
-  rubriqueId?: string;
+  typeBudgetId?: number;
+  rubriqueId?: number;
   numCompte?: string;
-  rubrique?: string;
+  rubrique?: Rubrique;
+  typeBudget?: TypeBudget;
 }
 
 export interface TypeBudget {
   id: number;
-  nom: string;
+  name: string;
+}
+
+export interface TypeAO {
+  id: number;
+  name: string;
 }
 
 export interface Rubrique {

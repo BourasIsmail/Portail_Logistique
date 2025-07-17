@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PMNRepository extends JpaRepository<PMN, Long> {
+    PMN findByNum(String num);
+    boolean existsByNum(String num);
 }

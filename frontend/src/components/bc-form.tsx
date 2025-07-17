@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,52 +14,29 @@ import {
 import { Plus, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
+import type {
+  BonCommande as BCData,
+  SituationBC as SituationBCData,
+} from "@/gestion_marche/types";
+import api from "@/utils/api";
+
 // Mock data for dropdowns
-const rubriques = [
-  { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
-  { id: 2, nCompte: "789012", rubrique: "Mobilier de bureau" },
-  { id: 3, nCompte: "345678", rubrique: "Fournitures de bureau" },
-];
+// const rubriques = [
+//   { id: 1, nCompte: "123456", rubrique: "Équipement informatique" },
+//   { id: 2, nCompte: "789012", rubrique: "Mobilier de bureau" },
+//   { id: 3, nCompte: "345678", rubrique: "Fournitures de bureau" },
+// ];
 
-const pmns = [
-  { id: 1, num: "PMN-2023-001", objet: "Achat de fournitures", montant: 50000 },
-  { id: 2, num: "PMN-2023-002", objet: "Équipement technique", montant: 80000 },
-  {
-    id: 3,
-    num: "PMN-2023-003",
-    objet: "Services informatiques",
-    montant: 120000,
-  },
-];
-
-type SituationBC = {
-  id: number;
-  dateLivraison: string;
-  dateReceptionProvisoire: string;
-  numFacture: string;
-  dateEnregistrement: string;
-  dateServiceFait: string;
-  dateLiquidation: string;
-  montantFacture: number;
-  paye: boolean;
-  observation: string;
-};
-
-type BCData = {
-  anneeBudgetaire: string;
-  numCompte: string;
-  rubrique: string;
-  pmnId?: string;
-  pmnNum: string;
-  pmnObjet: string;
-  numBC: string;
-  dateBC: string;
-  attributaire: string;
-  montant: number;
-  dateNotificationBC: string;
-  delaiExecution: string;
-  situationBCs: SituationBC[];
-};
+// const pmns = [
+//   { id: 1, num: "PMN-2023-001", objet: "Achat de fournitures", montant: 50000 },
+//   { id: 2, num: "PMN-2023-002", objet: "Équipement technique", montant: 80000 },
+//   {
+//     id: 3,
+//     num: "PMN-2023-003",
+//     objet: "Services informatiques",
+//     montant: 120000,
+//   },
+// ];
 
 type BCFormProps = {
   bc?: BCData | null;
@@ -68,12 +45,18 @@ type BCFormProps = {
 };
 
 export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
+  const [rubriques, setRubriques] = useState([]);
+  const [pmns, setPMNs] = useState([]);
+
   const [formData, setFormData] = useState(
     bc || {
+      id: 0, // Default ID, will be set on submit
       anneeBudgetaire: new Date().getFullYear().toString(),
       numCompte: "",
-      rubrique: "",
-      pmnId: "",
+      rubrique: null,
+      rubriqueId: undefined,
+      pmn: null,
+      pmnId: undefined,
       pmnNum: "",
       pmnObjet: "",
       numBC: "",
@@ -87,6 +70,35 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
   );
 
   const [situations, setSituations] = useState(formData.situationBCs || []);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPMN = async () => {
+      const response = await api.get("/admin/get-all-pmn");
+      if (response.status === 200) {
+        setPMNs(response.data);
+      } else {
+        console.error("Failed to fetch type budgets");
+      }
+    };
+    const fetchRubrique = async () => {
+      const response = await api.get("/admin/get-all-rubrique");
+      if (response.status === 200) {
+        setRubriques(response.data);
+      } else {
+        console.error("Failed to fetch type budgets");
+      }
+      setLoading(false);
+    };
+
+    fetchPMN();
+    fetchRubrique();
+  }, []);
+
+  if (loading) {
+    return;
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -107,8 +119,9 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
     if (selectedRubrique) {
       setFormData((prev) => ({
         ...prev,
+        rubriqueId: selectedRubrique.id,
         numCompte: selectedRubrique.nCompte,
-        rubrique: selectedRubrique.rubrique,
+        rubrique: selectedRubrique,
       }));
     }
   };
@@ -118,9 +131,10 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
     if (selectedPMN) {
       setFormData((prev) => ({
         ...prev,
-        pmnId: selectedPMN.id.toString(),
+        pmnId: selectedPMN.id,
         pmnNum: selectedPMN.num,
         pmnObjet: selectedPMN.objet,
+        pmn: selectedPMN,
       }));
     }
   };
@@ -216,7 +230,10 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
               <Label htmlFor="rubrique" className={undefined}>
                 Rubrique
               </Label>
-              <Select onValueChange={handleRubriqueChange}>
+              <Select
+                value={formData.rubrique?.id?.toString() || ""}
+                onValueChange={handleRubriqueChange}
+              >
                 <SelectTrigger className={undefined}>
                   <SelectValue placeholder="Sélectionner une rubrique" />
                 </SelectTrigger>
@@ -238,7 +255,10 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
               <Label htmlFor="pmn" className={undefined}>
                 PMN
               </Label>
-              <Select onValueChange={handlePMNChange}>
+              <Select
+                value={formData.pmnId?.toString() || ""}
+                onValueChange={handlePMNChange}
+              >
                 <SelectTrigger className={undefined}>
                   <SelectValue placeholder="Sélectionner un PMN" />
                 </SelectTrigger>

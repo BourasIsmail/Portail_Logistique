@@ -1,5 +1,6 @@
 package com.mdms.backend.gestionmarche.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,19 +23,24 @@ public class BonCommande {
 
     private String anneeBudgetaire;
     private String numCompte;
-    private String rubrique;
     private String pmnNum;
     private String pmnObjet;
     private String numBC;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateBC;
     private String attributaire;
-    private float montant;
+    private Number montant;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateNotificationBC;
-    private int delaiExecution;
+    private String delaiExecution;
 
     @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "pmnId")
     private PMN pmn;
+
+    @ManyToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "rubriqueId")
+    private Rubrique rubrique;
 
     @OneToMany(mappedBy = "bonCommande", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
     private List<SituationBC> situationBCs;

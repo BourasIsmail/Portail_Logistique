@@ -17,7 +17,9 @@ public class PMN {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String num;
+
     private String objet;
-    private float montant;
+    private Number montant;
 }

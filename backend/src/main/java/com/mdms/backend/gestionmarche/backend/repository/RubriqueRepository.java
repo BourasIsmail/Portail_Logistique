@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RubriqueRepository extends JpaRepository<Rubrique, Long> {
+    Rubrique findByRubrique(String name);
+    boolean existsByRubrique(String name);
 }
