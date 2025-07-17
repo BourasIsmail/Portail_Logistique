@@ -3,6 +3,7 @@ package com.mdms.backend.gestionmarche.backend.controller;
 import com.mdms.backend.gestionmarche.backend.dtos.*;
 import com.mdms.backend.gestionmarche.backend.entity.*;
 import com.mdms.backend.gestionmarche.backend.repository.*;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,7 +117,15 @@ class Controller {
 
         return ResponseEntity.ok().body(contract);
     }
-
+    @DeleteMapping("delete-contract/{id}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> deleteContract(@PathVariable(name = "id") Long id) {
+        if(!contratRepository.existsById(id)){
+            return ResponseEntity.badRequest().body("contract doesn't exist");
+        }
+        contratRepository.deleteById(id);
+        return ResponseEntity.ok().body("contract deleted");
+    }
 
     @GetMapping("get-all-marches")
     public ResponseEntity<?> getAllMarches() {
@@ -149,7 +158,7 @@ class Controller {
         marche.setNumCompte(request.getNumCompte());
         marche.setObjet(request.getObjet());
         marche.setReferenceMarche(request.getReferenceMarche());
-        AppelOffre appelOffre;
+        AppelOffre appelOffre = null;
         try{
             TypeBudget typeBudget = typeBudgetRepository.findById(request.getTypeBudgetId())
                     .orElseThrow(() -> new RuntimeException("type budget not found"));
@@ -159,9 +168,11 @@ class Controller {
                     .orElseThrow(() -> new RuntimeException("rubrique not found"));
             marche.setRubrique(rubrique);
 
-            appelOffre = appelOffreRepository.findById(request.getAppelOffreId())
-                    .orElseThrow(() -> new RuntimeException("appel offre not found"));
-            marche.setAppelOffre(appelOffre);
+            if(request.getAppelOffreId() != null){
+                appelOffre = appelOffreRepository.findById(request.getAppelOffreId())
+                        .orElseThrow(() -> new RuntimeException("appel offre not found"));
+                marche.setAppelOffre(appelOffre);
+            }
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -225,7 +236,7 @@ class Controller {
         marche.setObjet(request.getObjet());
         marche.setReferenceMarche(request.getReferenceMarche());
 
-        AppelOffre appelOffre;
+        AppelOffre appelOffre = null;
 
         // Set relations
         try{
@@ -237,9 +248,12 @@ class Controller {
                     .orElseThrow(() -> new RuntimeException("rubrique not found"));
             marche.setRubrique(rubrique);
 
-            appelOffre = appelOffreRepository.findById(request.getAppelOffreId())
-                    .orElseThrow(() -> new RuntimeException("appel offre not found"));
-            marche.setAppelOffre(appelOffre);
+            if(request.getAppelOffreId() != null){
+                appelOffre = appelOffreRepository.findById(request.getAppelOffreId())
+                        .orElseThrow(() -> new RuntimeException("appel offre not found"));
+                marche.setAppelOffre(appelOffre);
+            }
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -280,6 +294,7 @@ class Controller {
 
         // Save the Marche (cascades to SituationMarche if configured)
         marche = marcheRepository.save(marche);
+
         if (appelOffre != null) {
             appelOffre.getMarches().add(marche);
             appelOffreRepository.save(appelOffre);
@@ -287,7 +302,23 @@ class Controller {
 
         return ResponseEntity.ok().body(marche);
     }
+    @DeleteMapping("delete-marche/{id}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> deleteMarche(@PathVariable(name = "id") Long id) {
+        if(!marcheRepository.existsById(id)){
+            return ResponseEntity.badRequest().body("marche doesn't exist");
+        }
 
+        Marche marche = marcheRepository.findById(id).get();
+
+        if(marche.getAppelOffre() != null){
+            marche.getAppelOffre().getMarches().remove(marche);
+            appelOffreRepository.save(marche.getAppelOffre());
+        }
+
+        marcheRepository.delete(marche);
+        return ResponseEntity.ok().body("marche deleted");
+    }
 
     @GetMapping("get-all-bon-commandes")
     public ResponseEntity<?> getAllBonCommandes() {
@@ -421,7 +452,15 @@ class Controller {
 
         return ResponseEntity.ok().body(bonCommande);
     }
-
+    @DeleteMapping("delete-bon-commande/{id}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> deleteBC(@PathVariable(name = "id") Long id) {
+        if(!bonCommandeRepository.existsById(id)){
+            return ResponseEntity.badRequest().body("bon commande doesn't exist");
+        }
+        bonCommandeRepository.deleteById(id);
+        return ResponseEntity.ok().body("bon commande deleted");
+    }
 
     @GetMapping("get-all-appel-offres")
     public ResponseEntity<?> getAllAppelOffre(){return ResponseEntity.ok().body(appelOffreRepository.findAll());}
@@ -499,6 +538,15 @@ class Controller {
 
         appelOffre = appelOffreRepository.save(appelOffre);
         return ResponseEntity.ok().body(appelOffre);
+    }
+    @DeleteMapping("delete-appel-offre/{id}")
+    @RolesAllowed("ROLE_ADMIN")
+    public ResponseEntity<?> deleteAO(@PathVariable(name = "id") Long id) {
+        if(!appelOffreRepository.existsById(id)){
+            return ResponseEntity.badRequest().body("appel offre doesn't exist");
+        }
+        appelOffreRepository.deleteById(id);
+        return ResponseEntity.ok().body("appel offre deleted");
     }
 }
 

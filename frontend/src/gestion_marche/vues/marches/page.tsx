@@ -5,8 +5,9 @@ import Navbar from "@/components/navbar";
 import type { Marche, Column } from "@/gestion_marche/types";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftCircleIcon } from "lucide-react";
-import { c } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 import api from "@/utils/api";
+import { toast } from "sonner";
+import { exportToExcel } from "@/utils/ExportToExcel";
 
 // Define columns for the data table - Respecter l'ordre des champs du modèle
 const columns: Column<Marche>[] = [
@@ -115,7 +116,7 @@ export default function MarchesPage(): JSX.Element {
 
   const handleExport = (): void => {
     // Logic to export to Excel would go here
-    console.log("Export to Excel");
+    exportToExcel(marches);
   };
 
   const handleSubmit = async (formData: Marche) => {
@@ -132,7 +133,7 @@ export default function MarchesPage(): JSX.Element {
             appelOffreId: formData.appelOffre?.id,
           }
         );
-        if (response.status === 200) {
+        if (response.status === 200 && "referenceMarche" in response.data) {
           setMarches((prev) =>
             prev.map((m) =>
               m.id === currentMarche.id ? { ...(formData as Marche) } : m
@@ -142,13 +143,25 @@ export default function MarchesPage(): JSX.Element {
         }
       } else if ("referenceMarche" in formData) {
         // Add new marché with its situations
+        console.log("Adding new marché:", formData);
+
         const response = await api.post("/admin/add-marche", formData);
-        if (response.status === 200) {
+        if (response.status === 200 && "referenceMarche" in response.data) {
           setMarches((prev) => [...prev, response.data]);
           setIsModalOpen(false);
         }
       }
     } catch (error) {
+      if (error.response.data.includes("already exists")) {
+        toast.warning(
+          "Un marché avec cette référence existe déjà. Veuillez en choisir une autre.".toUpperCase()
+        );
+      } else {
+        toast.error(
+          "Erreur lors de la soumission du marché : " +
+            error.response.data?.toUpperCase()
+        );
+      }
       console.error(
         "Error submitting form:",
         error.response.data ? error.response.data : error
@@ -181,7 +194,7 @@ export default function MarchesPage(): JSX.Element {
         </div>
 
         <DataTable
-          data={marches}
+          dataT={marches}
           columns={columns}
           onAdd={handleAdd}
           onExport={handleExport}

@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { BonCommande, Column } from "@/gestion_marche/types";
 import { ArrowLeftCircleIcon } from "lucide-react";
 import api from "@/utils/api";
+import { toast } from "sonner";
+import { exportToExcel } from "@/utils/ExportToExcel";
 
 // const mockBonsCommande: BonCommande[] = [
 //   {
@@ -116,7 +118,7 @@ export default function BonsCommandePage() {
 
   const handleExport = () => {
     // Logic to export to Excel would go here
-    console.log("Export to Excel");
+    exportToExcel(bcs);
   };
 
   const handleSubmit = async (formData: BonCommande) => {
@@ -147,6 +149,16 @@ export default function BonsCommandePage() {
         }
       }
     } catch (error) {
+      if (error.response?.data?.includes("already exists")) {
+        toast.warning(
+          "Un bon de commande avec ce numéro existe déjà. Veuillez en choisir un autre.".toUpperCase()
+        );
+      } else {
+        toast.error(
+          "Erreur lors de la soumission du bon de commande : " +
+            error.response?.data?.toUpperCase()
+        );
+      }
       console.error(
         "Error submitting bon de commande:",
         error.response?.data || error
@@ -179,7 +191,7 @@ export default function BonsCommandePage() {
         </div>
 
         <DataTable
-          data={bcs}
+          dataT={bcs}
           columns={columns}
           onAdd={handleAdd}
           onExport={handleExport}

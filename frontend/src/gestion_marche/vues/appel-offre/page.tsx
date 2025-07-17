@@ -11,6 +11,8 @@ import { ArrowLeftCircleIcon } from "lucide-react";
 import api from "@/utils/api";
 import { Badge } from "@/components/ui/badge";
 import type { AppelOffre } from "@/gestion_marche/types";
+import { toast } from "sonner";
+import { exportToExcel } from "@/utils/ExportToExcel";
 // Mock data for demonstration
 
 // Define columns for the data table - Respecter l'ordre des champs du modèle
@@ -126,7 +128,7 @@ export default function ContratsPage() {
 
   const handleExport = () => {
     // Logic to export to Excel would go here
-    console.log("Export to Excel");
+    exportToExcel(appelOffres);
   };
 
   const handleSubmit = async (formData: AppelOffre) => {
@@ -153,6 +155,16 @@ export default function ContratsPage() {
         }
       }
     } catch (error) {
+      if (error.response?.data?.includes("already exists")) {
+        toast.warning(
+          "Un appel d'offre avec ce numéro existe déjà. Veuillez en choisir un autre.".toUpperCase()
+        );
+      } else {
+        toast.error(
+          "Erreur lors de la soumission de l'appel d'offre : " +
+            error.response?.data?.toUpperCase()
+        );
+      }
       console.error("Error adding AO:", error.response?.data || error);
       return;
     }
@@ -184,7 +196,7 @@ export default function ContratsPage() {
         </div>
 
         <DataTable
-          data={appelOffres}
+          dataT={appelOffres}
           columns={columns}
           onAdd={handleAdd}
           onExport={handleExport}

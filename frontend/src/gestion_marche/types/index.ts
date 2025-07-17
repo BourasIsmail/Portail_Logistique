@@ -23,38 +23,38 @@ export interface AppelOffre {
 
 export interface Marche {
   id: number;
-  anneeBudgetaire: string;
-  numCompte: string;
-  referenceMarche: string;
-  objet: string;
-  attributaire: string;
-  montantMarche: number;
-  dateApprobation: string;
-  dateVisa: string;
-  dateNotificationApprobation: string;
-  dateOrdreService: string;
-  delaiExecution: string;
-  typeBudgetId?: number;
-  typeBudget?: TypeBudget;
-  rubriqueId?: number;
-  rubrique?: Rubrique;
-  appelOffreId?: number;
-  appelOffre?: AppelOffre;
+  anneeBudgetaire: string; //done
+  numCompte: string; //done
+  referenceMarche: string; //done
+  objet: string; //done
+  attributaire: string; //done
+  montantMarche: number; //done
+  dateApprobation: string; //done
+  dateVisa: string; //done
+  dateNotificationApprobation: string; //done
+  dateOrdreService: string; //done
+  delaiExecution: string; //done
+  typeBudgetId?: number; //done
+  typeBudget?: TypeBudget; //done
+  rubriqueId?: number; //done
+  rubrique?: Rubrique; //done
+  appelOffreId?: number; //done
+  appelOffre?: AppelOffre; //done
   situationMarches: SituationMarche[];
 }
 
 export interface SituationMarche {
   id: number;
-  dateLivraison: string;
-  dateReceptionProvisoire: string;
-  numFacture: string;
-  dateEnregistrement: string;
-  numDecompte: string;
-  dateServiceFait: string;
-  dateLiquidation: string;
-  montantDecompte: number;
-  paye: boolean;
-  observation: string;
+  dateLivraison: string; //done
+  dateReceptionProvisoire: string; //done
+  numFacture: string; //done
+  dateEnregistrement: string; //done
+  numDecompte: string; //done
+  dateServiceFait: string; //done
+  dateLiquidation: string; //done
+  montantDecompte: number; //done
+  paye: boolean; //done
+  observation: string; //done
 }
 
 export interface BonCommande {

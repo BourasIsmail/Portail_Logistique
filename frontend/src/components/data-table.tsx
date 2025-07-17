@@ -1,4 +1,4 @@
-import React, { JSX, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -17,12 +17,25 @@ import {
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, Plus, Search, Pencil } from "lucide-react";
+import { Download, Plus, Search, Pencil, Trash2 } from "lucide-react";
 import type { Column } from "@/gestion_marche/types";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/utils/AuthProvider";
+import api from "@/utils/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
+import { set } from "react-hook-form";
 
 interface DataTableProps<T> {
-  data: T[];
+  dataT: T[];
   columns: Column<T>[];
   onAdd: () => void;
   onExport: () => void;
@@ -32,7 +45,7 @@ interface DataTableProps<T> {
 
 // Ajout de la navigation vers la page de détail
 export default function DataTable<T extends { id: number | string }>({
-  data,
+  dataT,
   columns,
   onAdd,
   onExport,
@@ -43,6 +56,16 @@ export default function DataTable<T extends { id: number | string }>({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const { userDetails } = useAuth();
+  const [data, setData] = useState<T[]>(dataT);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<T | null>(null);
+
+  useEffect(() => {
+    if (dataT && dataT.length > 0) {
+      setData(dataT);
+    }
+  }, [dataT]);
 
   // Filter data based on search term
   const filteredData = data.filter((item) =>
@@ -73,14 +96,38 @@ export default function DataTable<T extends { id: number | string }>({
       route = `/gm/bons-commande/${item.id}`;
     } else if ("reference" in item) {
       route = `/gm/contrats/${item.id}`;
-    } else if ("reference" in item) {
-      route = `/gm/contrats/${item.id}`;
     }
 
     if (route) {
       navigate(route, { state: { item } });
     }
   };
+
+  async function handleDelete(item) {
+    if (!item) return;
+
+    let route = "";
+    if ("referenceMarche" in item) {
+      route = `/admin/delete-marche/${item.id}`;
+    } else if ("typeAO" in item) {
+      route = `/admin/delete-appel-offre/${item.id}`;
+    } else if ("numBC" in item) {
+      route = `/admin/delete-bon-commande/${item.id}`;
+    } else if ("reference" in item) {
+      route = `/admin/delete-contract/${item.id}`;
+    }
+    if (route) {
+      try {
+        const response = await api.delete(route);
+        if (response.status === 200 && response.data.includes("deleted")) {
+          console.log("Item deleted successfully:", item);
+          setData(data.filter((i) => i.id !== item.id));
+        }
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    }
+  }
 
   return (
     <div className="space-y-4 px-4">
@@ -131,7 +178,7 @@ export default function DataTable<T extends { id: number | string }>({
                   {column.header}
                 </TableHead>
               ))}
-              <TableHead className="text-gray-700 font-medium">
+              <TableHead className="text-gray-700 font-medium text-center">
                 Actions
               </TableHead>
             </TableRow>
@@ -169,6 +216,22 @@ export default function DataTable<T extends { id: number | string }>({
                       <Pencil className="h-4 w-4 mr-1" />
                       Modifier
                     </Button>
+                    {userDetails?.role === "ROLE_ADMIN" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          setItemToDelete(item);
+                          setIsDeleteDialogOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Supprimer
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -229,6 +292,39 @@ export default function DataTable<T extends { id: number | string }>({
           </PaginationContent>
         </Pagination>
       )}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent className={undefined}>
+          <AlertDialogHeader className={undefined}>
+            <AlertDialogTitle className={undefined}>
+              Êtes-vous sûr de vouloir supprimer cet élément ?
+            </AlertDialogTitle>
+            <AlertDialogDescription className={undefined}>
+              Cette action est irréversible. Cet élément sera définitivement
+              supprimé.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className={undefined}>
+            <AlertDialogCancel
+              className={undefined}
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setItemToDelete(null);
+              }}
+            >
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDelete(itemToDelete)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

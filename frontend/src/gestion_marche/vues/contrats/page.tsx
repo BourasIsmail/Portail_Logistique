@@ -10,6 +10,8 @@ import { ArrowLeftCircleIcon } from "lucide-react";
 
 import api from "@/utils/api";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { exportToExcel } from "@/utils/ExportToExcel";
 
 // Define columns for the data table - Respecter l'ordre des champs du modèle
 const columns: Column<Contrat>[] = [
@@ -124,7 +126,7 @@ export default function ContratsPage() {
 
   const handleExport = () => {
     // Logic to export to Excel would go here
-    console.log("Export to Excel");
+    exportToExcel(contrats);
   };
 
   const handleSubmit = async (formData: Contrat) => {
@@ -153,8 +155,17 @@ export default function ContratsPage() {
         }
       }
     } catch (error) {
-      console.error("Error adding contrat:", error);
-      return;
+      if (error.response?.data?.includes("already exists")) {
+        toast.warning(
+          "Une contrat avec ce numéro existe déjà. Veuillez en choisir un autre.".toUpperCase()
+        );
+      } else {
+        toast.error(
+          "Erreur lors de la soumission du contrat : " +
+            error.response?.data?.toUpperCase()
+        );
+      }
+      console.error("Error submitting contrat:", error.response?.data || error);
     }
   };
 
@@ -183,7 +194,7 @@ export default function ContratsPage() {
         </div>
 
         <DataTable
-          data={contrats}
+          dataT={contrats}
           columns={columns}
           onAdd={handleAdd}
           onExport={handleExport}
