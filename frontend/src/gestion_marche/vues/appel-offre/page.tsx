@@ -201,7 +201,7 @@ export default function ContratsPage() {
           onAdd={handleAdd}
           onExport={handleExport}
           onEdit={handleEdit}
-          title="Liste des contrats"
+          title="Liste des appels d'offres"
         />
 
         <FormModal
