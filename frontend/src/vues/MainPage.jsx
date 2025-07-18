@@ -24,24 +24,27 @@ export default function MainPage() {
   const { userDetails } = useAuth();
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
-  const [role, setRole] = React.useState("");
+  // const [role, setRole] = React.useState("");
 
   useEffect(() => {
     if (!getTokenFromCookie()) {
       console.log("redirecting to login page from MainPage");
       return navigate("/login", { replace: true });
     } else {
-      console.log(
-        "userDetails is not null, redirecting to dashboard from MainPage"
-      );
+      // console.log(
+      //   "userDetails is not null, redirecting to dashboard from MainPage"
+      // );
 
-      if (userDetails.role === "ROLE_ADMIN") {
-        setRole("/admin");
-      } else if (userDetails.role === "ROLE_INFO") {
-        setRole("/info");
-      } else if (userDetails.role === "ROLE_LOGISTICS") {
-        setRole("/logistics");
-      } else if (userDetails.role === "ROLE_USER") {
+      // if (userDetails.role === "ROLE_ADMIN") {
+      //   setRole("/admin");
+      // } else if (userDetails.role === "ROLE_INFO") {
+      //   setRole("/info");
+      // } else if (userDetails.role === "ROLE_LOGISTICS") {
+      //   setRole("/logistics");
+      // } else if (userDetails.role === "ROLE_USER") {
+      //   return navigate("/dashboard", { replace: true });
+      // }
+      if (userDetails.role === "ROLE_USER") {
         return navigate("/dashboard", { replace: true });
       }
       setLoading(false);

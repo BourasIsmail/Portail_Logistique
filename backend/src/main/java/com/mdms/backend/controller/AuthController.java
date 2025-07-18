@@ -5,9 +5,12 @@ import com.mdms.backend.request.AuthRequest;
 import com.mdms.backend.respository.UserRepository;
 import com.mdms.backend.security.jwt.JwtUtils;
 import com.mdms.backend.security.service.UserDetailsImp;
+import com.mdms.backend.security.service.UserDetailsServiceImp;
 import com.mdms.backend.service.TicketService;
 import com.mdms.backend.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -20,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -48,10 +52,12 @@ public class AuthController {
 
     @Autowired
     private TicketService ticketService;
+    @Autowired
+    private UserDetailsServiceImp userDetailsServiceImp;
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         Authentication authentication;
         try {
             authentication = authenticationManager
@@ -74,14 +80,59 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
 
-        Map<String, Object> response = new HashMap<>();
+        String RefreshjwtToken = jwtUtils.generateToken(userDetails);
+        ResponseCookie cookie2 = ResponseCookie.from("refreshToken", RefreshjwtToken)
+                .path("/")
+                .maxAge(7*24*60*60)
+                .sameSite("Lax")
+                .build();
 
-        response.put("username", userDetails.getUsername());
-        response.put("email", userDetails.getEmail());
-        response.put("role", userDetails.getAuthorities().stream().toList().get(0).getAuthority());
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("username", userDetails.getUsername());
+        res.put("email", userDetails.getEmail());
+        res.put("role", userDetails.getAuthorities().stream().toList().get(0).getAuthority());
 
 
-        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(res);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
+        try {
+            if (refreshToken != null && jwtUtils.validateJwtToken(refreshToken)) {
+
+                String username = jwtUtils.getUserNameFromJwtToken(refreshToken);
+                UserDetailsImp userDetails = (UserDetailsImp) userDetailsServiceImp.loadUserByUsername(username);
+
+                String jwt = jwtUtils.generateToken(userDetails);
+                ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
+                        .path("/")
+                        .maxAge(Duration.ofDays(1))
+                        .sameSite("Lax")
+                        .build();
+
+                return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString()).body(Map.of("refreshToken", jwt));
+            } else {
+                throw new ExpiredJwtException(null, null, "refresh token expired");
+            }
+        } catch (ExpiredJwtException e) {
+            ResponseCookie deleteCookie = ResponseCookie.from("jwt", "")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            ResponseCookie deleteRefreshCookie = ResponseCookie.from("refreshToken", "")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+
+            response.setHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+            response.setHeader(HttpHeaders.SET_COOKIE, deleteRefreshCookie.toString());
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @GetMapping("/user")

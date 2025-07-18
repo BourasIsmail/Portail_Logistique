@@ -39,6 +39,22 @@ public class JwtUtils {
                 .compact();
     }
 
+    public String generateRefreshToken(UserDetailsImp userDetails) {
+        String username = userDetails.getUsername();
+        String email = userDetails.getEmail();
+        String role = userDetails.getAuthorities().stream().toList().get(0).getAuthority();
+
+        return Jwts.builder()
+                .subject(email)
+                .claim("username", username)
+                .claim("email", email)
+                .claim("role", role)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7))
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
+                .compact();
+    }
+
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
@@ -76,4 +92,6 @@ public class JwtUtils {
         }
         return false;
     }
+
+
 }

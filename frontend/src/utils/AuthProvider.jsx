@@ -9,7 +9,9 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function getTokenFromCookie() {
-  const match = document.cookie.match(new RegExp("(^| )jwt=([^;]+)"));
+  const match =
+    document.cookie.match(new RegExp("(^| )jwt=([^;]+)")) ||
+    document.cookie.match(new RegExp("(^| )refreshToken=([^;]+)"));
   return match ? match[2] : null;
 }
 

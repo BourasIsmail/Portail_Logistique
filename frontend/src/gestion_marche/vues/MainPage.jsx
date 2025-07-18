@@ -31,13 +31,16 @@ export default function MainPage() {
       console.log("redirecting to login page from MainPage");
       return navigate("/login", { replace: true });
     } else {
-      if (userDetails.role === "ROLE_ADMIN") {
-        setRole("/admin");
-      } else if (userDetails.role === "ROLE_INFO") {
-        setRole("/info");
-      } else if (userDetails.role === "ROLE_LOGISTICS") {
-        setRole("/logistics");
-      } else if (userDetails.role === "ROLE_USER") {
+      // if (userDetails.role === "ROLE_ADMIN") {
+      //   setRole("/admin");
+      // } else if (userDetails.role === "ROLE_INFO") {
+      //   setRole("/info");
+      // } else if (userDetails.role === "ROLE_LOGISTICS") {
+      //   setRole("/logistics");
+      // } else if (userDetails.role === "ROLE_USER") {
+      //   return navigate("/dashboard", { replace: true });
+      // }
+      if (userDetails.role === "ROLE_USER") {
         return navigate("/dashboard", { replace: true });
       }
       setLoading(false);

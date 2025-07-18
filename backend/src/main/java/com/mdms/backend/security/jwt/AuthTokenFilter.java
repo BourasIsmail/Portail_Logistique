@@ -70,7 +70,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e){
             logger.error("JWT token is expired: {}", e.getMessage());
 
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ResponseCookie deleteCookie = ResponseCookie.from("jwt", "")
                     .path("/")
                     .maxAge(0)
