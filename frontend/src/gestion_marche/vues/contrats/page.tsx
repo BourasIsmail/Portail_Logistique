@@ -64,14 +64,14 @@ const columns: Column<Contrat>[] = [
       <Badge
         className={
           item.statut === "En cours"
-            ? "bg-blue-100 text-blue-800"
+            ? "bg-sky-100 text-sky-800"
             : item.statut === "Terminé"
-            ? "bg-green-100 text-green-800"
+            ? "bg-emerald-100 text-emerald-800"
             : item.statut === "Suspendu"
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-gray-100 text-gray-800"
+            ? "bg-amber-100 text-amber-800"
+            : "bg-slate-100 text-slate-800"
         }
-        variant={"default"}
+        variant={undefined}
       >
         {item.statut || "-"}
       </Badge>
@@ -80,7 +80,7 @@ const columns: Column<Contrat>[] = [
 ];
 
 export default function ContratsPage() {
-  const [contrats, setContrats] = useState([]);
+  const [contrats, setContrats] = useState<Contrat[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentContrat, setCurrentContrat] = useState<Contrat | null>(null);
   const [modalTitle, setModalTitle] = useState("");
@@ -170,46 +170,46 @@ export default function ContratsPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
+    <main className="flex min-h-screen flex-col bg-slate-50">
       <Navbar title="Gestion des marchés" showBackButton />
-      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
-        <button
-          className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftCircleIcon className="w-5 h-5" />
-          <span className="text-lg font-bold text-gray-900">Retour</span>
-        </button>
-      </div>
-      <div className="container mx-auto py-2 px-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Gestion des contrats
-          </h1>
-          <p className="text-gray-600">
-            Cette section vous permet de gérer l&apos;ensemble des contrats de
-            votre organisation. Les contrats représentent des engagements sur
-            une période définie avec vos prestataires et fournisseurs.
-          </p>
+      <div className="flex-1 p-4 sm:p-6 md:p-8">
+        <div className="mx-auto grid max-w-4/5 gap-6">
+          <button
+            className="flex items-center w-fit gap-2 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-100"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeftCircleIcon className="h-4 w-4" />
+            <span>Retour</span>
+          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">
+                Gestion des Contrats
+              </h1>
+              <p className="text-slate-500">
+                Gérez l'ensemble des contrats de votre organisation.
+              </p>
+            </div>
+          </div>
+
+          <DataTable
+            dataT={contrats}
+            columns={columns}
+            onAdd={handleAdd}
+            onExport={handleExport}
+            onEdit={handleEdit}
+            title="Liste des contrats"
+          />
+
+          <FormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            formType="contrat"
+            title={modalTitle}
+            data={currentContrat}
+            onSubmit={handleSubmit}
+          />
         </div>
-
-        <DataTable
-          dataT={contrats}
-          columns={columns}
-          onAdd={handleAdd}
-          onExport={handleExport}
-          onEdit={handleEdit}
-          title="Liste des contrats"
-        />
-
-        <FormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          formType="contrat"
-          title={modalTitle}
-          data={currentContrat}
-          onSubmit={handleSubmit}
-        />
       </div>
     </main>
   );

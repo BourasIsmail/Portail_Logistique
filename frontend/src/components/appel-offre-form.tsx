@@ -111,15 +111,17 @@ export default function AOForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Card className={undefined}>
-        <CardHeader className={undefined}>
-          <CardTitle className={undefined}>Informations du contrat</CardTitle>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Card className="overflow-hidden border-slate-200/80 bg-white shadow-sm pt-0">
+        <CardHeader className="border rounded-t-xl border-slate-200/80 bg-slate-50/80 py-2.5 px-6">
+          <CardTitle className="text-lg font-semibold text-slate-800">
+            Informations de l'appel d'offre
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="px-6">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="reference" className={undefined}>
+              <Label htmlFor="reference" className="font-medium text-slate-700">
                 Référence
               </Label>
               <Input
@@ -128,13 +130,16 @@ export default function AOForm({
                 value={formData.reference}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="anneeBudgetaire" className={undefined}>
+              <Label
+                htmlFor="anneeBudgetaire"
+                className="font-medium text-slate-700"
+              >
                 Année budgétaire
               </Label>
               <Input
@@ -143,20 +148,20 @@ export default function AOForm({
                 value={formData.anneeBudgetaire}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="typeAO" className={undefined}>
+              <Label htmlFor="typeAO" className="font-medium text-slate-700">
                 Type d'appel d'offre
               </Label>
               <Select
                 value={formData.typeAOId?.toString() || ""}
                 onValueChange={(value) => handleSelectChange("typeAOId", value)}
               >
-                <SelectTrigger className={undefined}>
+                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner un type d'appel d'offre" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
@@ -174,14 +179,14 @@ export default function AOForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rubrique" className={undefined}>
+              <Label htmlFor="rubrique" className="font-medium text-slate-700">
                 Rubrique
               </Label>
               <Select
                 value={formData.rubriqueId?.toString() || ""}
                 onValueChange={(value) => handleRubriqueChange(value)}
               >
-                <SelectTrigger className={undefined}>
+                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner une rubrique" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
@@ -199,7 +204,7 @@ export default function AOForm({
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="objet" className={undefined}>
+              <Label htmlFor="objet" className="font-medium text-slate-700">
                 Objet
               </Label>
               <Textarea
@@ -208,12 +213,15 @@ export default function AOForm({
                 value={formData.objet ? formData.objet : ""}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="min-h-[100px] rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="estimation" className={undefined}>
+              <Label
+                htmlFor="estimation"
+                className="font-medium text-slate-700"
+              >
                 Estimation (DH)
               </Label>
               <Input
@@ -223,12 +231,15 @@ export default function AOForm({
                 value={formData.estimation}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="datePublication" className={undefined}>
+              <Label
+                htmlFor="datePublication"
+                className="font-medium text-slate-700"
+              >
                 Date de publication dans le portail
               </Label>
               <Input
@@ -238,12 +249,15 @@ export default function AOForm({
                 value={formData.datePublication}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateOuverture" className={undefined}>
+              <Label
+                htmlFor="dateOuverture"
+                className="font-medium text-slate-700"
+              >
                 Date de ouverture des plis
               </Label>
               <Input
@@ -253,12 +267,15 @@ export default function AOForm({
                 value={formData.dateOuverture}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateFinTravaux" className={undefined}>
+              <Label
+                htmlFor="dateFinTravaux"
+                className="font-medium text-slate-700"
+              >
                 Date de fin des travaux de la commission
               </Label>
               <Input
@@ -268,14 +285,14 @@ export default function AOForm({
                 value={formData.dateFinTravaux}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
               <Label
                 htmlFor="dateNotificationApprobation"
-                className={undefined}
+                className="font-medium text-slate-700"
               >
                 Date de notification de l'approbation
               </Label>
@@ -286,30 +303,30 @@ export default function AOForm({
                 value={formData.dateNotificationApprobation}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="mt-6 flex justify-end space-x-4">
+      <div className="flex justify-end gap-4 mb-4">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
-          className={undefined}
+          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-300"
+          variant={undefined}
           size={undefined}
         >
           Annuler
         </Button>
         <Button
           type="submit"
-          className={undefined}
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          Enregistrer
+          {appelOffre ? "Enregistrer" : "Créer"}
         </Button>
       </div>
     </form>

@@ -80,11 +80,13 @@ export default function FormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto ">
-        <DialogHeader className={undefined}>
-          <DialogTitle className={undefined}>{title}</DialogTitle>
+      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-lg bg-white p-0 shadow-xl sm:max-w-2xl">
+        <DialogHeader className="border-b border-slate-200/80 px-6 py-4">
+          <DialogTitle className="text-xl font-bold text-slate-900">
+            {title}
+          </DialogTitle>
         </DialogHeader>
-        {renderForm()}
+        <div className="px-6">{renderForm()}</div>
       </DialogContent>
     </Dialog>
   );

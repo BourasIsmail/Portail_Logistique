@@ -44,9 +44,9 @@ export default function TypeAOForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name" className={undefined}>
+    <form onSubmit={handleSubmit} className="grid gap-2">
+      <div className="space-y-4">
+        <Label htmlFor="name" className="font-medium text-slate-700">
           Nom du type d'appel d'offre
         </Label>
         <Input
@@ -56,28 +56,28 @@ export default function TypeAOForm({
           onChange={handleChange}
           required
           placeholder="Ex: Offre ouverte"
-          className={undefined}
-          type={undefined}
+          className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+          type="text"
         />
       </div>
 
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end gap-4 pt-4">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
-          className={undefined}
+          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-300"
+          variant={undefined}
           size={undefined}
         >
           Annuler
         </Button>
         <Button
           type="submit"
-          className={undefined}
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          Enregistrer
+          {typeAO ? "Enregistrer" : "Créer"}
         </Button>
       </div>
     </form>

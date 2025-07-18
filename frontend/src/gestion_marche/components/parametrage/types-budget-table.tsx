@@ -30,12 +30,6 @@ import {
 import type { TypeBudget } from "@/gestion_marche/types";
 import api from "@/utils/api";
 
-// Mock data
-const mockTypesBudget: TypeBudget[] = [
-  { id: 1, name: "Budget d'investissement" },
-  { id: 2, name: "Budget de fonctionnement" },
-];
-
 export default function TypesBudgetTable(): JSX.Element {
   const [typesBudget, setTypesBudget] = useState<TypeBudget[]>([]);
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
@@ -129,56 +123,73 @@ export default function TypesBudgetTable(): JSX.Element {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Types de budget</h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold text-slate-800">
+            Gestion des Types de Budget
+          </h2>
+          <p className="text-sm text-slate-500">
+            Ajoutez, modifiez ou supprimez les types de budget.
+          </p>
+        </div>
         <Button
           onClick={handleAdd}
+          className="flex items-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
-          className={undefined}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Ajouter
+          <Plus className="h-4 w-4" />
+          Ajouter un type
         </Button>
       </div>
 
-      <div className="border border-gray-200 rounded-md overflow-hidden bg-white shadow-sm">
+      <div className="rounded-lg border border-slate-200/80 bg-white shadow-sm">
         <Table className={undefined}>
-          <TableHeader className="bg-gray-50">
+          <TableHeader className="bg-slate-50">
             <TableRow className={undefined}>
-              <TableHead className="text-gray-700 font-medium">ID</TableHead>
-              <TableHead className="text-gray-700 font-medium">Nom</TableHead>
-              <TableHead className="text-right text-gray-700 font-medium">
+              <TableHead className="w-20 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                ID
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                Nom
+              </TableHead>
+              <TableHead className="w-48 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-600">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className={undefined}>
+          <TableBody className="divide-y divide-slate-200/80">
             {typesBudget.length > 0 ? (
               typesBudget.map((typeBudget) => (
-                <TableRow key={typeBudget.id} className="hover:bg-gray-50">
-                  <TableCell className={undefined}>{typeBudget.id}</TableCell>
-                  <TableCell className={undefined}>{typeBudget.name}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(typeBudget)}
-                      className="text-blue-600 hover:bg-blue-100 hover:text-blue-700"
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Modifier
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(typeBudget)}
-                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Supprimer
-                    </Button>
+                <TableRow key={typeBudget.id} className="hover:bg-slate-50">
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
+                    {typeBudget.id}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm font-medium text-slate-800">
+                    {typeBudget.name}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(typeBudget)}
+                        className="flex items-center gap-1 rounded-md border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(typeBudget)}
+                        className="flex items-center gap-1 rounded-md border-red-300 bg-white text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Supprimer
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -186,7 +197,7 @@ export default function TypesBudgetTable(): JSX.Element {
               <TableRow className={undefined}>
                 <TableCell
                   colSpan={3}
-                  className="h-24 text-center text-gray-500"
+                  className="py-10 text-center text-sm text-slate-500"
                 >
                   Aucun type de budget trouvé.
                 </TableCell>
@@ -198,15 +209,19 @@ export default function TypesBudgetTable(): JSX.Element {
 
       {/* Form Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="border-gray-200">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader className={undefined}>
-            <DialogTitle className="text-gray-900">{formTitle}</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-800">
+              {formTitle}
+            </DialogTitle>
           </DialogHeader>
-          <TypeBudgetForm
-            typeBudget={currentTypeBudget}
-            onSubmit={handleSubmit}
-            onCancel={() => setIsFormOpen(false)}
-          />
+          <div className="py-2 pb-0">
+            <TypeBudgetForm
+              typeBudget={currentTypeBudget}
+              onSubmit={handleSubmit}
+              onCancel={() => setIsFormOpen(false)}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -215,23 +230,21 @@ export default function TypesBudgetTable(): JSX.Element {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent className="border-gray-200">
+        <AlertDialogContent className={undefined}>
           <AlertDialogHeader className={undefined}>
-            <AlertDialogTitle className="text-gray-900">
+            <AlertDialogTitle className="text-lg font-bold text-slate-900">
               Êtes-vous sûr de vouloir supprimer ce type de budget ?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
+            <AlertDialogDescription className="text-slate-500">
               Cette action est irréversible. Ce type de budget sera
               définitivement supprimé.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className={undefined}>
-            <AlertDialogCancel className="border-gray-200 text-gray-600">
-              Annuler
-            </AlertDialogCancel>
+            <AlertDialogCancel className={undefined}>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               Supprimer
             </AlertDialogAction>

@@ -144,66 +144,88 @@ export default function RubriquesTable() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold ">Rubriques</h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold text-slate-800">
+            Gestion des Rubriques
+          </h2>
+          <p className="text-sm text-slate-500">
+            Ajoutez, modifiez ou supprimez les rubriques budgétaires.
+          </p>
+        </div>
         <Button
           onClick={handleAdd}
+          className="flex items-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
-          className={undefined}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Ajouter
+          <Plus className="h-4 w-4" />
+          Ajouter une rubrique
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
+      <div className="rounded-lg border border-slate-200/80 bg-white shadow-sm">
         <Table className={undefined}>
-          <TableHeader className={undefined}>
+          <TableHeader className="bg-slate-50">
             <TableRow className={undefined}>
-              <TableHead className="font-medium">ID</TableHead>
-              <TableHead className="font-medium">N° Compte</TableHead>
-              <TableHead className="font-medium">Rubrique</TableHead>
-              <TableHead className="text-right font-medium">Actions</TableHead>
+              <TableHead className="w-20 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                ID
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                N° Compte
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                Rubrique
+              </TableHead>
+              <TableHead className="w-48 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-600">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className={undefined}>
+          <TableBody className="divide-y divide-slate-200/80">
             {rubriques.length > 0 ? (
               rubriques.map((rubrique) => (
-                <TableRow key={rubrique.id} className={undefined}>
-                  <TableCell className={undefined}>{rubrique.id}</TableCell>
-                  <TableCell className={undefined}>
+                <TableRow key={rubrique.id} className="hover:bg-slate-50">
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
+                    {rubrique.id}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm font-medium text-slate-800">
                     {rubrique.nCompte}
                   </TableCell>
-                  <TableCell className={undefined}>
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
                     {rubrique.rubrique}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(rubrique)}
-                      className="text-blue-600 hover:bg-blue-100 hover:text-blue-700"
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Modifier
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(rubrique)}
-                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Supprimer
-                    </Button>
+                  <TableCell className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(rubrique)}
+                        className="flex items-center gap-1 rounded-md border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(rubrique)}
+                        className="flex items-center gap-1 rounded-md border-red-300 bg-white text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Supprimer
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow className={undefined}>
-                <TableCell colSpan={4} className="h-24 text-center">
+                <TableCell
+                  colSpan={4}
+                  className="py-10 text-center text-sm text-slate-500"
+                >
                   Aucune rubrique trouvée.
                 </TableCell>
               </TableRow>
@@ -214,15 +236,19 @@ export default function RubriquesTable() {
 
       {/* Form Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="border-blue-200">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader className={undefined}>
-            <DialogTitle className={undefined}>{formTitle}</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-800">
+              {formTitle}
+            </DialogTitle>
           </DialogHeader>
-          <RubriqueForm
-            rubrique={currentRubrique}
-            onSubmit={handleSubmit}
-            onCancel={() => setIsFormOpen(false)}
-          />
+          <div className="py-2 pb-0">
+            <RubriqueForm
+              rubrique={currentRubrique}
+              onSubmit={handleSubmit}
+              onCancel={() => setIsFormOpen(false)}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -231,12 +257,12 @@ export default function RubriquesTable() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent className="border-blue-200">
+        <AlertDialogContent className={undefined}>
           <AlertDialogHeader className={undefined}>
-            <AlertDialogTitle className={undefined}>
+            <AlertDialogTitle className="text-lg font-bold text-slate-900">
               Êtes-vous sûr de vouloir supprimer cette rubrique ?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
+            <AlertDialogDescription className="text-slate-500">
               Cette action est irréversible. Cette rubrique sera définitivement
               supprimée.
             </AlertDialogDescription>
@@ -245,7 +271,7 @@ export default function RubriquesTable() {
             <AlertDialogCancel className={undefined}>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               Supprimer
             </AlertDialogAction>

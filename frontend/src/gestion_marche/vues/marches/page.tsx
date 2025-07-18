@@ -24,12 +24,12 @@ const columns: Column<Marche>[] = [
   },
   {
     key: "appelOffre",
-    header: "Appel d'offre",
+    header: <span className="whitespace-normal">Appel d'offre</span>,
     render: (item: Marche) => item.appelOffre?.reference || "-",
   },
   {
     key: "anneeBudgetaire",
-    header: <span className="whitespace-break-spaces">Année budgétaire</span>,
+    header: <span className="whitespace-normal">Année budgétaire</span>,
   },
   { key: "numCompte", header: "N° Compte" },
   {
@@ -41,7 +41,15 @@ const columns: Column<Marche>[] = [
       </div>
     ),
   },
-  { key: "attributaire", header: "Attributaire" },
+  {
+    key: "attributaire",
+    header: "Attributaire",
+    render: (item: Marche) => (
+      <span className="max-w-32 overflow-hidden text-ellipsis whitespace-nowrap">
+        {item.attributaire}
+      </span>
+    ),
+  },
   {
     key: "montantMarche",
     header: "Montant",
@@ -49,23 +57,23 @@ const columns: Column<Marche>[] = [
   },
   {
     key: "dateApprobation",
-    header: <span className="whitespace-break-spaces">Date d'approbation</span>,
+    header: <span className="whitespace-normal">Date approbation</span>,
   },
   {
     key: "dateVisa",
-    header: <span className="whitespace-break-spaces">Date de visa</span>,
+    header: <span className="whitespace-normal">Date visa</span>,
   },
   {
     key: "dateNotificationApprobation",
-    header: <span className="whitespace-break-spaces">Date notification</span>,
+    header: <span className="whitespace-normal">Date notification</span>,
   },
   {
     key: "dateOrdreService",
-    header: <span className="whitespace-break-spaces">Date ordre service</span>,
+    header: <span className="whitespace-normal">Date ordre service</span>,
   },
   {
     key: "delaiExecution",
-    header: <span className="whitespace-break-spaces">Délai d'exécution</span>,
+    header: <span className="whitespace-normal">Délai d'exécution</span>,
   },
 ];
 
@@ -170,46 +178,45 @@ export default function MarchesPage(): JSX.Element {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50 ">
+    <main className="flex min-h-screen flex-col bg-slate-50">
       <Navbar title="Gestion des marchés" showBackButton />
-      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
-        <button
-          className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftCircleIcon className="w-5 h-5" />
-          <span className="text-lg font-bold text-gray-900">Retour</span>
-        </button>
-      </div>
-      <div className="container mx-auto py-2 px-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Gestion des marchés
-          </h1>
-          <p className="text-gray-600">
-            Cette section vous permet de gérer l&apos;ensemble des marchés de
-            votre organisation. Vous pouvez consulter, ajouter, modifier et
-            exporter les informations relatives aux marchés.
-          </p>
+      <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
+        <div className="w-full max-w-4/5 space-y-6">
+          <button
+            className="flex items-center w-fit gap-2 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-100"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeftCircleIcon className="h-4 w-4" />
+            <span>Retour</span>
+          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">
+                Gestion des Marchés
+              </h1>
+              <p className="text-slate-500">
+                Gérez l'ensemble des marchés de votre organisation.
+              </p>
+            </div>
+          </div>
+          <DataTable
+            dataT={marches}
+            columns={columns}
+            onAdd={handleAdd}
+            onExport={handleExport}
+            onEdit={handleEdit}
+            title="Liste des marchés"
+          />
+
+          <FormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            formType="marche"
+            title={modalTitle}
+            data={currentMarche}
+            onSubmit={handleSubmit}
+          />
         </div>
-
-        <DataTable
-          dataT={marches}
-          columns={columns}
-          onAdd={handleAdd}
-          onExport={handleExport}
-          onEdit={handleEdit}
-          title="Liste des marchés"
-        />
-
-        <FormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          formType="marche"
-          title={modalTitle}
-          data={currentMarche}
-          onSubmit={handleSubmit}
-        />
       </div>
     </main>
   );

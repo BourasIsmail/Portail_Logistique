@@ -17,130 +17,130 @@ export default function ParametragePage() {
   const navigate = useNavigate();
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
-      <Navbar title="Gestion des marchés" showBackButton />
-      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
-        <button
-          className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftCircleIcon className="w-5 h-5" />
-          <span className="text-lg font-bold text-gray-900">Retour</span>
-        </button>
-      </div>
-      <div className="container mx-auto py-2 px-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Paramétrage du système
-          </h1>
-          <p className="text-gray-600">
-            Cette section vous permet de configurer les éléments de base
-            utilisés dans l&apos;application. Vous pouvez gérer les types de
-            budget, les rubriques comptables et les PMN.
-          </p>
-        </div>
+    <main className="flex min-h-screen flex-col bg-slate-50">
+      <Navbar title="Paramétrage" showBackButton />
+      <div className="flex-1 p-4 sm:p-6 md:p-8">
+        <div className="mx-auto grid max-w-4/5 gap-6">
+          <button
+            className="flex items-center w-fit gap-2 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-100"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeftCircleIcon className="h-4 w-4" />
+            <span>Retour</span>
+          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">
+                Paramétrage du Système
+              </h1>
+              <p className="text-slate-500">
+                Configurez les éléments de base de l'application.
+              </p>
+            </div>
+          </div>
 
-        <Tabs
-          defaultValue="types-budget"
-          onValueChange={setActiveTab}
-          value={activeTab}
-          className="space-y-4"
-        >
-          <TabsList className="bg-white border border-gray-200">
-            <TabsTrigger
+          <Tabs
+            defaultValue="types-budget"
+            onValueChange={setActiveTab}
+            value={activeTab}
+            className="space-y-6"
+          >
+            <TabsList className="grid w-full grid-cols-4 rounded-lg bg-slate-100 p-1">
+              <TabsTrigger
+                value="types-budget"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+              >
+                Types de budget
+              </TabsTrigger>
+              <TabsTrigger
+                value="rubriques"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+              >
+                Rubriques
+              </TabsTrigger>
+              <TabsTrigger
+                value="pmn"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+              >
+                PMN
+              </TabsTrigger>
+              <TabsTrigger
+                value="types-appel-offre"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+              >
+                Type d'appel d'offre
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent
               value="types-budget"
-              className="data-[state=active]:bg-black data-[state=active]:text-white text-gray-700"
+              className="rounded-lg border-slate-200/80 bg-transparent p-6 shadow-sm"
             >
-              Types de budget
-            </TabsTrigger>
-            <TabsTrigger
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-slate-800">
+                  Types de Budget
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Les types de budget permettent de catégoriser les dépenses
+                  selon leur nature (investissement, fonctionnement, etc.).
+                </p>
+              </div>
+              <TypesBudgetTable />
+            </TabsContent>
+
+            <TabsContent
               value="rubriques"
-              className="data-[state=active]:bg-black data-[state=active]:text-white text-gray-700"
+              className="rounded-lg border-slate-200/80 bg-transparent p-6 shadow-sm"
             >
-              Rubriques
-            </TabsTrigger>
-            <TabsTrigger
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-slate-800">
+                  Rubriques Budgétaires
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Les rubriques budgétaires correspondent aux lignes de votre
+                  plan comptable. Elles permettent d&apos;affecter les dépenses
+                  aux bons comptes.
+                </p>
+              </div>
+              <RubriquesTable />
+            </TabsContent>
+
+            <TabsContent
               value="pmn"
-              className="data-[state=active]:bg-black data-[state=active]:text-white text-gray-700"
+              className="rounded-lg border-slate-200/80 bg-transparent p-6 shadow-sm"
             >
-              PMN
-            </TabsTrigger>
-            <TabsTrigger
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-slate-800">
+                  Programmes de Marchés Négociés (PMN)
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Les PMN sont des programmes qui regroupent plusieurs achats de
+                  même nature. Ils permettent de planifier les acquisitions et
+                  servent de référence pour la création des bons de commande.
+                </p>
+              </div>
+              <PMNTable />
+            </TabsContent>
+
+            <TabsContent
               value="types-appel-offre"
-              className="data-[state=active]:bg-black data-[state=active]:text-white text-gray-700"
+              className="rounded-lg border-slate-200/80 bg-transparent p-6 shadow-sm"
             >
-              Type d'appel d'offre
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent
-            value="types-budget"
-            className="border-gray-200 border rounded-md p-4 bg-white shadow-sm"
-          >
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Types de Budget
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Les types de budget permettent de catégoriser les dépenses selon
-                leur nature (investissement, fonctionnement, etc.).
-              </p>
-            </div>
-            <TypesBudgetTable />
-          </TabsContent>
-
-          <TabsContent
-            value="rubriques"
-            className="border-gray-200 border rounded-md p-4 bg-white shadow-sm"
-          >
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Rubriques Budgétaires
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Les rubriques budgétaires correspondent aux lignes de votre plan
-                comptable. Elles permettent d&apos;affecter les dépenses aux
-                bons comptes.
-              </p>
-            </div>
-            <RubriquesTable />
-          </TabsContent>
-
-          <TabsContent
-            value="pmn"
-            className="border-gray-200 border rounded-md p-4 bg-white shadow-sm"
-          >
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Programmes de Marchés Négociés (PMN)
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Les PMN sont des programmes qui regroupent plusieurs achats de
-                même nature. Ils permettent de planifier les acquisitions et
-                servent de référence pour la création des bons de commande.
-              </p>
-            </div>
-            <PMNTable />
-          </TabsContent>
-
-          <TabsContent
-            value="types-appel-offre"
-            className="border-gray-200 border rounded-md p-4 bg-white shadow-sm"
-          >
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 mb-2">
-                Types d'Appel d'Offre
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Les types d'appel d'offre définissent les catégories de
-                procédures de passation des marchés. Ils permettent de
-                standardiser les processus et de faciliter la gestion des appels
-                d'offres.
-              </p>
-            </div>
-            <TypesAOTable />
-          </TabsContent>
-        </Tabs>
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-slate-800">
+                  Types d'Appel d'Offre
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Les types d'appel d'offre définissent les catégories de
+                  procédures de passation des marchés. Ils permettent de
+                  standardiser les processus et de faciliter la gestion des
+                  appels d'offres.
+                </p>
+              </div>
+              <TypesAOTable />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </main>
   );

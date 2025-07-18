@@ -53,51 +53,57 @@ export default function MainPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
+    <main className="flex min-h-screen flex-col bg-slate-50">
       <Navbar />
 
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
               Menu principal
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-slate-500 max-w-2xl mx-auto">
               Bienvenue dans votre application de gestion. Cette plateforme vous
               permet de gérer vos besoins logistiques.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="hover:shadow-md transition-shadow border-gray-200">
+          <div className="flex flex-wrap justify-center gap-6">
+            <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
-                <PackageIcon className="w-12 h-12 mx-auto" />
-                <CardTitle className="text-gray-900">
+                <PackageIcon className="w-12 h-12 mx-auto text-slate-700" />
+                <CardTitle className="text-slate-900">
                   Gestion des Demandes
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-slate-500">
                   Gérez les demandes de materiéls et suivez leur statut
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <Button asChild>
+                <Button
+                  asChild
+                  className="bg-slate-800 text-white hover:bg-slate-900"
+                >
                   <Link to="/md/dashboard">Accéder</Link>
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow border-gray-200 flex flex-col">
+            <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 flex flex-col w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
-                <FileText className="w-12 h-12 mx-auto" />
-                <CardTitle className="text-gray-900">
+                <FileText className="w-12 h-12 mx-auto text-slate-700" />
+                <CardTitle className="text-slate-900">
                   Gestion de marchés
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-slate-500">
                   Gérez les marchés et leurs situations
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center h-full items-end">
-                <Button asChild>
+                <Button
+                  asChild
+                  className="bg-slate-800 text-white hover:bg-slate-900"
+                >
                   <Link to="/gm">Accéder</Link>
                 </Button>
               </CardContent>

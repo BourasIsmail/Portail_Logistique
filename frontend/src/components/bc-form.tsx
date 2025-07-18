@@ -186,17 +186,20 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Informations générales du BC */}
-      <Card className={undefined}>
-        <CardHeader className={undefined}>
-          <CardTitle className={undefined}>
+      <Card className="overflow-hidden border-slate-200/80 bg-white shadow-sm pt-0">
+        <CardHeader className="border rounded-t-xl border-slate-200/80 bg-slate-50/80 py-2.5 px-6">
+          <CardTitle className="text-lg font-semibold text-slate-800">
             Informations du bon de commande
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="px-6">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             {/* Respecter l'ordre des champs du modèle BC */}
             <div className="space-y-2">
-              <Label htmlFor="anneeBudgetaire" className={undefined}>
+              <Label
+                htmlFor="anneeBudgetaire"
+                className="font-medium text-slate-700"
+              >
                 Année budgétaire
               </Label>
               <Input
@@ -205,13 +208,13 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.anneeBudgetaire}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="numCompte" className={undefined}>
+              <Label htmlFor="numCompte" className="font-medium text-slate-700">
                 Numéro de compte
               </Label>
               <Input
@@ -221,28 +224,28 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 onChange={handleChange}
                 readOnly
                 disabled
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-slate-100 shadow-sm"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rubrique" className={undefined}>
+              <Label htmlFor="rubrique" className="font-medium text-slate-700">
                 Rubrique
               </Label>
               <Select
                 value={formData.rubrique?.id?.toString() || ""}
                 onValueChange={handleRubriqueChange}
               >
-                <SelectTrigger className={undefined}>
+                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner une rubrique" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
                   {rubriques.map((rubrique) => (
                     <SelectItem
+                      className={undefined}
                       key={rubrique.id}
                       value={rubrique.id.toString()}
-                      className={undefined}
                     >
                       {rubrique.nCompte} - {rubrique.rubrique}
                     </SelectItem>
@@ -252,14 +255,14 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pmn" className={undefined}>
+              <Label htmlFor="pmn" className="font-medium text-slate-700">
                 PMN
               </Label>
               <Select
                 value={formData.pmnId?.toString() || ""}
                 onValueChange={handlePMNChange}
               >
-                <SelectTrigger className={undefined}>
+                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner un PMN" />
                 </SelectTrigger>
                 <SelectContent className={undefined}>
@@ -277,7 +280,7 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="numBC" className={undefined}>
+              <Label htmlFor="numBC" className="font-medium text-slate-700">
                 Numéro du BC
               </Label>
               <Input
@@ -286,13 +289,13 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.numBC}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateBC" className={undefined}>
+              <Label htmlFor="dateBC" className="font-medium text-slate-700">
                 Date du BC
               </Label>
               <Input
@@ -302,12 +305,15 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.dateBC}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="attributaire" className={undefined}>
+              <Label
+                htmlFor="attributaire"
+                className="font-medium text-slate-700"
+              >
                 Attributaire
               </Label>
               <Input
@@ -316,13 +322,13 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.attributaire}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="montant" className={undefined}>
+              <Label htmlFor="montant" className="font-medium text-slate-700">
                 Montant (DH)
               </Label>
               <Input
@@ -332,12 +338,15 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.montant}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateNotificationBC" className={undefined}>
+              <Label
+                htmlFor="dateNotificationBC"
+                className="font-medium text-slate-700"
+              >
                 Date de notification BC
               </Label>
               <Input
@@ -347,12 +356,15 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.dateNotificationBC}
                 onChange={handleChange}
                 required
-                className={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="delaiExecution" className={undefined}>
+              <Label
+                htmlFor="delaiExecution"
+                className="font-medium text-slate-700"
+              >
                 Délai d&apos;exécution
               </Label>
               <Input
@@ -361,8 +373,8 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 value={formData.delaiExecution}
                 onChange={handleChange}
                 required
-                className={undefined}
-                type={undefined}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
               />
             </div>
           </div>
@@ -370,61 +382,69 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
       </Card>
 
       {/* Séparateur entre les sections */}
-      <Separator className="my-6" />
+      <Separator className="my-4 mb-5 bg-slate-200/80" />
 
       {/* Situations du BC */}
       <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-800">
             Situations du bon de commande
           </h2>
           <Button
             type="button"
             onClick={addSituation}
-            variant="outline"
-            className={undefined}
+            className="flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-200"
+            variant={undefined}
             size={undefined}
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Ajouter une situation
           </Button>
         </div>
 
         {situations.length === 0 ? (
-          <Card className={undefined}>
-            <CardContent className="text-center py-6 text-muted-foreground">
-              Aucune situation ajoutée. Cliquez sur &quot;Ajouter une
-              situation&quot; pour commencer.
+          <Card className="mt-4 border-dashed border-slate-300 bg-slate-50/80 shadow-none">
+            <CardContent className="py-10 text-center text-sm text-slate-500">
+              <p>Aucune situation ajoutée.</p>
+              <p className="mt-1">
+                Cliquez sur &quot;Ajouter une situation&quot; pour commencer.
+              </p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-6">
             {situations.map((situation, index) => (
-              <Card key={situation.id} className={undefined}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-base">
-                      Situation #{index + 1}
-                    </CardTitle>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeSituation(index)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+              <Card
+                key={situation.id}
+                className="pt-0 overflow-hidden border-slate-200/80 bg-white shadow-sm"
+              >
+                <CardHeader className="rounded-t-xl flex flex-row items-center justify-between border border-slate-200/80 bg-slate-50/80 px-4 py-3">
+                  <CardTitle className="text-base font-semibold text-slate-800">
+                    Situation #{index + 1}
+                  </CardTitle>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeSituation(index)}
+                    className="h-8 w-8 p-0 text-slate-500 hover:bg-slate-200/80 hover:text-slate-900"
+                  >
+                    <span className="sr-only">Supprimer</span>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </CardHeader>
-                <CardContent className={undefined}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CardContent className="px-6">
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                     {/* Respecter l'ordre des champs du modèle SituationBC */}
                     <div className="space-y-2">
-                      <Label className={undefined}>
+                      <Label
+                        htmlFor={`dateLivraison-${index}`}
+                        className="font-medium text-slate-700"
+                      >
                         Date livraison / exécution
                       </Label>
                       <Input
+                        id={`dateLivraison-${index}`}
                         type="date"
                         value={situation.dateLivraison}
                         onChange={(e) =>
@@ -434,15 +454,19 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>
+                      <Label
+                        htmlFor={`dateReception-${index}`}
+                        className="font-medium text-slate-700"
+                      >
                         Date réception provisoire
                       </Label>
                       <Input
+                        id={`dateReception-${index}`}
                         type="date"
                         value={situation.dateReceptionProvisoire}
                         onChange={(e) =>
@@ -452,13 +476,19 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>Numéro facture</Label>
+                      <Label
+                        htmlFor={`numFacture-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Numéro facture
+                      </Label>
                       <Input
+                        id={`numFacture-${index}`}
                         value={situation.numFacture}
                         onChange={(e) =>
                           handleSituationChange(
@@ -467,16 +497,20 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
-                        type={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                        type="text"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>
+                      <Label
+                        htmlFor={`dateEnregistrement-${index}`}
+                        className="font-medium text-slate-700"
+                      >
                         Date d&apos;enregistrement
                       </Label>
                       <Input
+                        id={`dateEnregistrement-${index}`}
                         type="date"
                         value={situation.dateEnregistrement}
                         onChange={(e) =>
@@ -486,13 +520,19 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>Date service fait</Label>
+                      <Label
+                        htmlFor={`dateServiceFait-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Date service fait
+                      </Label>
                       <Input
+                        id={`dateServiceFait-${index}`}
                         type="date"
                         value={situation.dateServiceFait}
                         onChange={(e) =>
@@ -502,13 +542,19 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>Date de liquidation</Label>
+                      <Label
+                        htmlFor={`dateLiquidation-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Date liquidation
+                      </Label>
                       <Input
+                        id={`dateLiquidation-${index}`}
                         type="date"
                         value={situation.dateLiquidation}
                         onChange={(e) =>
@@ -518,13 +564,19 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className={undefined}>Montant facture (DH)</Label>
+                      <Label
+                        htmlFor={`montantFacture-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Montant facture (DH)
+                      </Label>
                       <Input
+                        id={`montantFacture-${index}`}
                         type="number"
                         value={situation.montantFacture}
                         onChange={(e) =>
@@ -534,31 +586,37 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
-                    <div className="space-y-2 flex items-center">
-                      <Label className="flex items-center space-x-2">
-                        <Input
-                          type="checkbox"
-                          className="w-4 h-4"
-                          checked={situation.paye}
-                          onChange={(e) =>
-                            handleSituationChange(
-                              index,
-                              "paye",
-                              e.target.checked
-                            )
-                          }
-                        />
-                        <span>Payé</span>
+                    <div className="flex items-center space-x-2 pt-5">
+                      <Input
+                        type="checkbox"
+                        id={`paye-${index}`}
+                        checked={situation.paye}
+                        onChange={(e) =>
+                          handleSituationChange(index, "paye", e.target.checked)
+                        }
+                        className="h-4 w-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
+                      />
+                      <Label
+                        htmlFor={`paye-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Payé
                       </Label>
                     </div>
 
                     <div className="space-y-2 md:col-span-2">
-                      <Label className={undefined}>Observation</Label>
+                      <Label
+                        htmlFor={`observation-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Observation
+                      </Label>
                       <Textarea
+                        id={`observation-${index}`}
                         value={situation.observation}
                         onChange={(e) =>
                           handleSituationChange(
@@ -567,7 +625,7 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                             e.target.value
                           )
                         }
-                        className={undefined}
+                        className="min-h-[80px] rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
                   </div>
@@ -578,23 +636,24 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
         )}
       </div>
 
-      <div className="mt-6 flex justify-end space-x-4">
+      {/* Actions */}
+      <div className="flex justify-end gap-4  mb-4">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
-          className={undefined}
+          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-300"
+          variant={undefined}
           size={undefined}
         >
           Annuler
         </Button>
         <Button
           type="submit"
-          className={undefined}
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          Enregistrer
+          {bc ? "Enregistrer" : "Créer"}
         </Button>
       </div>
     </form>

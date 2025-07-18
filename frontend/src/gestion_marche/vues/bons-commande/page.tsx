@@ -77,7 +77,7 @@ const columns: Column<BonCommande>[] = [
 ];
 
 export default function BonsCommandePage() {
-  const [bcs, setBCs] = useState([]);
+  const [bcs, setBCs] = useState<BonCommande[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentBC, setCurrentBC] = useState<BonCommande | null>(null);
   const [modalTitle, setModalTitle] = useState("");
@@ -167,46 +167,46 @@ export default function BonsCommandePage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-gray-50">
+    <main className="flex min-h-screen flex-col bg-slate-50">
       <Navbar title="Gestion des marchés" showBackButton />
-      <div className="sm:pl-2 pt-4 md:container md:mx-auto">
-        <button
-          className="flex items-center gap-2 rounded-md hover:bg-gray-200 px-1 py-0.5"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeftCircleIcon className="w-5 h-5" />
-          <span className="text-lg font-bold text-gray-900">Retour</span>
-        </button>
-      </div>
-      <div className="container mx-auto py-2 px-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Gestion des bons de commande
-          </h1>
-          <p className="text-gray-600">
-            Cette section vous permet de gérer l&apos;ensemble des bons de
-            commande (BC) de votre organisation. Les bons de commande sont liés
-            à des PMN et permettent de suivre les achats.
-          </p>
+      <div className="flex-1 p-4 sm:p-6 md:p-8">
+        <div className="mx-auto grid max-w-4/5 gap-6">
+          <button
+            className="flex items-center w-fit gap-2 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-100"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeftCircleIcon className="h-4 w-4" />
+            <span>Retour</span>
+          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">
+                Gestion des Bons de Commande
+              </h1>
+              <p className="text-slate-500">
+                Gérez l'ensemble des bons de commande de votre organisation.
+              </p>
+            </div>
+          </div>
+
+          <DataTable
+            dataT={bcs}
+            columns={columns}
+            onAdd={handleAdd}
+            onExport={handleExport}
+            onEdit={handleEdit}
+            title="Liste des bons de commande"
+          />
+
+          <FormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            formType="bc"
+            title={modalTitle}
+            data={currentBC}
+            onSubmit={handleSubmit}
+          />
         </div>
-
-        <DataTable
-          dataT={bcs}
-          columns={columns}
-          onAdd={handleAdd}
-          onExport={handleExport}
-          onEdit={handleEdit}
-          title="Liste des bons de commande"
-        />
-
-        <FormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          formType="bc"
-          title={modalTitle}
-          data={currentBC}
-          onSubmit={handleSubmit}
-        />
       </div>
     </main>
   );

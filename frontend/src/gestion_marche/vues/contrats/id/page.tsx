@@ -87,18 +87,20 @@ export default function ContratDetailPage() {
 
   if (!contrat) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50">
-        <div className="container mx-auto py-6 px-4">Chargement...</div>
+      <div className="flex min-h-screen flex-col bg-slate-50">
+        <div className="container mx-auto flex h-full flex-grow items-center justify-center">
+          <p className="text-slate-500">Chargement des détails...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-50">
       <DetailView
         type="contrat"
         data={contrat}
-        backUrl="/contrats"
+        backUrl="/gm/contrats"
         onEdit={handleEdit}
       />
 
@@ -110,6 +112,6 @@ export default function ContratDetailPage() {
         data={contrat}
         onSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }

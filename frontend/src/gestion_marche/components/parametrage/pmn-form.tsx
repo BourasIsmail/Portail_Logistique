@@ -48,9 +48,9 @@ export default function PMNForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="space-y-2">
-        <Label htmlFor="num" className={undefined}>
+        <Label htmlFor="num" className="font-medium text-slate-700">
           Numéro du PMN
         </Label>
         <Input
@@ -60,13 +60,13 @@ export default function PMNForm({
           onChange={handleChange}
           required
           placeholder="Ex: PMN-2023-001"
-          className={undefined}
-          type={undefined}
+          className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+          type="text"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="objet" className={undefined}>
+        <Label htmlFor="objet" className="font-medium text-slate-700">
           Objet
         </Label>
         <Textarea
@@ -75,13 +75,13 @@ export default function PMNForm({
           value={formData.objet}
           onChange={handleChange}
           required
-          placeholder="Ex: Achat de fournitures"
-          className={undefined}
+          placeholder="Ex: Achat de fournitures de bureau"
+          className="min-h-[100px] rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="montant" className={undefined}>
+        <Label htmlFor="montant" className="font-medium text-slate-700">
           Montant (DH)
         </Label>
         <Input
@@ -92,27 +92,27 @@ export default function PMNForm({
           onChange={handleChange}
           required
           placeholder="Ex: 50000"
-          className={undefined}
+          className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
         />
       </div>
 
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end gap-4 pt-4">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
-          className={undefined}
+          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-300"
+          variant={undefined}
           size={undefined}
         >
           Annuler
         </Button>
         <Button
           type="submit"
-          className={undefined}
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          Enregistrer
+          {pmn ? "Enregistrer" : "Créer"}
         </Button>
       </div>
     </form>

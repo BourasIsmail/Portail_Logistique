@@ -137,69 +137,92 @@ export default function PMNTable() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold ">
-          PMN (Programme de Marchés Négociés)
-        </h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold text-slate-800">Gestion des PMN</h2>
+          <p className="text-sm text-slate-500">
+            Ajoutez, modifiez ou supprimez les Programmes de Marchés Négociés.
+          </p>
+        </div>
         <Button
           onClick={handleAdd}
-          //   className="bg-blue-600 hover:bg-blue-700"
-          className={undefined}
+          className="flex items-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Ajouter
+          <Plus className="h-4 w-4" />
+          Ajouter un PMN
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
+      <div className="rounded-lg border border-slate-200/80 bg-white shadow-sm">
         <Table className={undefined}>
-          <TableHeader className={undefined}>
+          <TableHeader className="bg-slate-50">
             <TableRow className={undefined}>
-              <TableHead className="font-medium">ID</TableHead>
-              <TableHead className="font-medium">Numéro</TableHead>
-              <TableHead className="font-medium">Objet</TableHead>
-              <TableHead className="font-medium">Montant</TableHead>
-              <TableHead className="text-right font-medium">Actions</TableHead>
+              <TableHead className="w-20 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                ID
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                Numéro
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                Objet
+              </TableHead>
+              <TableHead className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                Montant
+              </TableHead>
+              <TableHead className="w-48 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-600">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className={undefined}>
+          <TableBody className="divide-y divide-slate-200/80">
             {pmns.length > 0 ? (
               pmns.map((pmn) => (
-                <TableRow key={pmn.id} className={undefined}>
-                  <TableCell className={undefined}>{pmn.id}</TableCell>
-                  <TableCell className={undefined}>{pmn.num}</TableCell>
-                  <TableCell className={undefined}>{pmn.objet}</TableCell>
-                  <TableCell className={undefined}>
+                <TableRow key={pmn.id} className="hover:bg-slate-50">
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
+                    {pmn.id}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm font-medium text-slate-800">
+                    {pmn.num}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
+                    {pmn.objet}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-slate-700">
                     {formatMontant(pmn.montant)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(pmn)}
-                      className="text-blue-600 hover:bg-blue-100 hover:text-blue-600"
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Modifier
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(pmn)}
-                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Supprimer
-                    </Button>
+                  <TableCell className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(pmn)}
+                        className="flex items-center gap-1 rounded-md border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(pmn)}
+                        className="flex items-center gap-1 rounded-md border-red-300 bg-white text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Supprimer
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow className={undefined}>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell
+                  colSpan={5}
+                  className="py-10 text-center text-sm text-slate-500"
+                >
                   Aucun PMN trouvé.
                 </TableCell>
               </TableRow>
@@ -210,15 +233,19 @@ export default function PMNTable() {
 
       {/* Form Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className={undefined}>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader className={undefined}>
-            <DialogTitle className={undefined}>{formTitle}</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-800">
+              {formTitle}
+            </DialogTitle>
           </DialogHeader>
-          <PMNForm
-            pmn={currentPMN}
-            onSubmit={handleSubmit}
-            onCancel={() => setIsFormOpen(false)}
-          />
+          <div className="py-2 pb-0">
+            <PMNForm
+              pmn={currentPMN}
+              onSubmit={handleSubmit}
+              onCancel={() => setIsFormOpen(false)}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -229,10 +256,10 @@ export default function PMNTable() {
       >
         <AlertDialogContent className={undefined}>
           <AlertDialogHeader className={undefined}>
-            <AlertDialogTitle className={undefined}>
+            <AlertDialogTitle className="text-lg font-bold text-slate-900">
               Êtes-vous sûr de vouloir supprimer ce PMN ?
             </AlertDialogTitle>
-            <AlertDialogDescription className={undefined}>
+            <AlertDialogDescription className="text-slate-500">
               Cette action est irréversible. Ce PMN sera définitivement
               supprimé.
             </AlertDialogDescription>
@@ -241,7 +268,7 @@ export default function PMNTable() {
             <AlertDialogCancel className={undefined}>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               Supprimer
             </AlertDialogAction>

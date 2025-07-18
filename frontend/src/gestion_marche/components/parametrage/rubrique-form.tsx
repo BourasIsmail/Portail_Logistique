@@ -38,9 +38,9 @@ export default function RubriqueForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="space-y-2">
-        <Label htmlFor="nCompte" className={undefined}>
+        <Label htmlFor="nCompte" className="font-medium text-slate-700">
           Numéro de compte
         </Label>
         <Input
@@ -50,13 +50,13 @@ export default function RubriqueForm({
           onChange={handleChange}
           required
           placeholder="Ex: 123456"
-          className={undefined}
-          type={undefined}
+          className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+          type="text"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="rubrique" className={undefined}>
+        <Label htmlFor="rubrique" className="font-medium text-slate-700">
           Nom de la rubrique
         </Label>
         <Input
@@ -66,28 +66,28 @@ export default function RubriqueForm({
           onChange={handleChange}
           required
           placeholder="Ex: Équipement informatique"
-          className={undefined}
-          type={undefined}
+          className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+          type="text"
         />
       </div>
 
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end gap-4 pt-4">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
-          className={undefined}
+          className="rounded-md bg-slate-200 px-4 py-2 text-sm font-medium text-slate-800 shadow-sm hover:bg-slate-300"
+          variant={undefined}
           size={undefined}
         >
           Annuler
         </Button>
         <Button
           type="submit"
-          className={undefined}
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
           variant={undefined}
           size={undefined}
         >
-          Enregistrer
+          {rubrique ? "Enregistrer" : "Créer"}
         </Button>
       </div>
     </form>

@@ -69,12 +69,15 @@ export default function DataTable<T extends { id: number | string }>({
 
   // Filter data based on search term
   const filteredData = data.filter((item) =>
-    Object.values(item).some(
-      (value) =>
-        value !== null &&
-        value !== undefined &&
+    columns.some((column) => {
+      const value = column.render
+        ? column.render(item)
+        : (item as Record<string, any>)[column.key];
+      return (
+        value &&
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
+      );
+    })
   );
 
   // Calculate pagination
@@ -130,118 +133,119 @@ export default function DataTable<T extends { id: number | string }>({
   }
 
   return (
-    <div className="space-y-4 px-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+    <div className="space-y-4 rounded-lg border border-slate-200/80 bg-white p-4 shadow-sm">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <h2 className="text-xl font-bold text-slate-800">{title}</h2>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Rechercher..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 border-gray-300"
-              type={undefined}
+              className="w-full rounded-md border-slate-300 bg-white pl-9 focus:ring-slate-500"
+              type="search"
             />
           </div>
           <Button
             onClick={onAdd}
-            className={undefined}
-            // className="bg-blue-600 hover:bg-blue-700"
-            variant={undefined}
-            size={undefined}
+            className="flex items-center justify-center gap-2 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
+            variant="default"
+            size="default"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Ajouter
           </Button>
           <Button
             variant="outline"
             onClick={onExport}
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
-            size={undefined}
+            className="flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-green-600 hover:text-white"
+            size="default"
           >
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="h-4 w-4" />
             Exporter
           </Button>
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-md overflow-hidden bg-white shadow-sm">
-        <Table className={undefined}>
-          <TableHeader className="bg-gray-50">
-            <TableRow className={undefined}>
+      <div className="overflow-hidden rounded-md border border-slate-200/80">
+        <Table className="table-auto">
+          <TableHeader className="bg-slate-50">
+            <TableRow className="">
               {columns.map((column) => (
                 <TableHead
-                  key={column.key}
-                  className="text-gray-700 font-medium"
+                  key={column.key as string}
+                  className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-600"
                 >
                   {column.header}
                 </TableHead>
               ))}
-              <TableHead className="text-gray-700 font-medium text-center">
+              <TableHead className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider text-slate-600">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className={undefined}>
+          <TableBody className="divide-y divide-slate-200/80 bg-white">
             {paginatedData.length > 0 ? (
               paginatedData.map((item) => (
                 <TableRow
                   key={item.id}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="cursor-pointer transition-colors hover:bg-slate-50"
                   onClick={() => handleViewDetails(item)}
                 >
                   {columns.map((column) => (
                     <TableCell
-                      key={`${item.id}-${column.key}`}
-                      className={undefined}
+                      key={`${item.id}-${column.key as string}`}
+                      className="px-2 py-2 text-sm text-slate-700"
                     >
                       {column.render
                         ? column.render(item)
-                        : String((item as Record<string, unknown>)[column.key])}
+                        : String(
+                            (item as Record<string, unknown>)[
+                              column.key as string
+                            ]
+                          )}
                     </TableCell>
                   ))}
                   <TableCell
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (onEdit) onEdit(item);
                     }}
-                    className={undefined}
+                    className="px-2 py-2 text-center"
                   >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Modifier
-                    </Button>
-                    {userDetails?.role === "ROLE_ADMIN" && (
+                    <div className="flex items-center justify-center gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-
-                          setItemToDelete(item);
-                          setIsDeleteDialogOpen(true);
-                        }}
+                        className="h-8 w-8 p-0 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                        onClick={() => onEdit && onEdit(item)}
                       >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Supprimer
+                        <Pencil className="h-4 w-4" />
                       </Button>
-                    )}
+                      {userDetails.role === "ADMIN" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-red-500 hover:bg-red-100 hover:text-red-700"
+                          onClick={() => {
+                            setIsDeleteDialogOpen(true);
+                            setItemToDelete(item);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
-              <TableRow className={undefined}>
+              <TableRow className="">
                 <TableCell
                   colSpan={columns.length + 1}
-                  className="h-24 text-center text-gray-500"
+                  className="py-10 text-center text-slate-500"
                 >
-                  Aucune donnée trouvée.
+                  Aucun résultat trouvé.
                 </TableCell>
               </TableRow>
             )}
@@ -250,43 +254,49 @@ export default function DataTable<T extends { id: number | string }>({
       </div>
 
       {totalPages > 1 && (
-        <Pagination className={undefined}>
-          <PaginationContent className={undefined}>
+        <Pagination className="">
+          <PaginationContent className="">
             <PaginationItem>
               <PaginationPrevious
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                aria-disabled={currentPage === 1}
-                className={`text-gray-600 hover:bg-gray-50 ${
-                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                }`}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage((prev) => Math.max(prev - 1, 1));
+                }}
+                className={
+                  currentPage === 1
+                    ? "pointer-events-none text-slate-400"
+                    : "text-slate-700"
+                }
               />
             </PaginationItem>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <PaginationItem key={page}>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <PaginationItem key={i}>
                 <PaginationLink
-                  isActive={page === currentPage}
-                  onClick={() => setCurrentPage(page)}
-                  className={
-                    page === currentPage
-                      ? "bg-black"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage(i + 1);
+                  }}
+                  isActive={currentPage === i + 1}
+                  className="rounded-md"
                 >
-                  {page}
+                  {i + 1}
                 </PaginationLink>
               </PaginationItem>
             ))}
             <PaginationItem>
               <PaginationNext
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                aria-disabled={currentPage === totalPages}
-                className={`text-gray-600 hover:bg-gray-50 ${
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                }}
+                className={
                   currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }`}
+                    ? "pointer-events-none text-slate-400"
+                    : "text-slate-700"
+                }
               />
             </PaginationItem>
           </PaginationContent>
@@ -296,29 +306,22 @@ export default function DataTable<T extends { id: number | string }>({
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent className={undefined}>
-          <AlertDialogHeader className={undefined}>
-            <AlertDialogTitle className={undefined}>
-              Êtes-vous sûr de vouloir supprimer cet élément ?
-            </AlertDialogTitle>
-            <AlertDialogDescription className={undefined}>
-              Cette action est irréversible. Cet élément sera définitivement
-              supprimé.
+        <AlertDialogContent className="">
+          <AlertDialogHeader className="">
+            <AlertDialogTitle className="">Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogDescription className="">
+              Cette action est irréversible. Cela supprimera définitivement
+              l'élément sélectionné.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className={undefined}>
-            <AlertDialogCancel
-              className={undefined}
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                setItemToDelete(null);
-              }}
-            >
-              Annuler
-            </AlertDialogCancel>
+          <AlertDialogFooter className="">
+            <AlertDialogCancel className="">Annuler</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => handleDelete(itemToDelete)}
-              className="bg-red-600 hover:bg-red-700"
+              onClick={() => {
+                handleDelete(itemToDelete);
+                setIsDeleteDialogOpen(false);
+              }}
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               Supprimer
             </AlertDialogAction>
