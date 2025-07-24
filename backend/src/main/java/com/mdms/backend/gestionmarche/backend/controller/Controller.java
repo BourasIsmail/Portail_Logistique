@@ -156,6 +156,7 @@ class Controller {
         marche.setDelaiExecution(request.getDelaiExecution());
         marche.setMontantMarche(request.getMontantMarche());
         marche.setNumCompte(request.getNumCompte());
+        marche.setTypeBudgetInv(request.getTypeBudgetInv());
         marche.setObjet(request.getObjet());
         marche.setReferenceMarche(request.getReferenceMarche());
         AppelOffre appelOffre = null;
@@ -232,6 +233,7 @@ class Controller {
         marche.setDateVisa(request.getDateVisa());
         marche.setDelaiExecution(request.getDelaiExecution());
         marche.setMontantMarche(request.getMontantMarche());
+        marche.setTypeBudgetInv(request.getTypeBudgetInv());
         marche.setNumCompte(request.getNumCompte());
         marche.setObjet(request.getObjet());
         marche.setReferenceMarche(request.getReferenceMarche());
@@ -483,6 +485,8 @@ class Controller {
         appelOffre.setAnneeBudgetaire(request.getAnneeBudgetaire());
         appelOffre.setEstimation(request.getEstimation());
         appelOffre.setObjet(request.getObjet());
+        appelOffre.setAttributaire(request.getAttributaire());
+        appelOffre.setMontant(request.getMontant());
 
         appelOffre.setDatePublication(request.getDatePublication());
         appelOffre.setDateOuverture(request.getDateOuverture());
@@ -519,6 +523,8 @@ class Controller {
             appelOffre.setAnneeBudgetaire(request.getAnneeBudgetaire());
             appelOffre.setEstimation(request.getEstimation());
             appelOffre.setObjet(request.getObjet());
+            appelOffre.setAttributaire(request.getAttributaire());
+            appelOffre.setMontant(request.getMontant());
 
             appelOffre.setDatePublication(request.getDatePublication());
             appelOffre.setDateOuverture(request.getDateOuverture());

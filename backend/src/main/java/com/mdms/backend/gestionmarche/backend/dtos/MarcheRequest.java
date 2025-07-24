@@ -28,6 +28,7 @@ public class MarcheRequest {
     private String numCompte;
     private String objet;
     private String referenceMarche;
+    private String typeBudgetInv;
 
     private Long appelOffreId;
     private Long typeBudgetId;

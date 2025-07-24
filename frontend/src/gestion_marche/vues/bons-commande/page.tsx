@@ -49,7 +49,10 @@ import { exportToExcel } from "@/utils/ExportToExcel";
 const columns: Column<BonCommande>[] = [
   // { key: "id", header: "ID" },
   { key: "numBC", header: "N° BC" },
-  { key: "anneeBudgetaire", header: "Année budgétaire" },
+  {
+    key: "anneeBudgetaire",
+    header: <span className="whitespace-normal">Année budgétaire</span>,
+  },
   { key: "numCompte", header: "N° Compte" },
   {
     key: "rubrique",
@@ -72,8 +75,14 @@ const columns: Column<BonCommande>[] = [
     header: "Montant",
     render: (item: BonCommande) => `${item.montant.toLocaleString()} DH`,
   },
-  { key: "dateNotificationBC", header: "Date notification" },
-  { key: "delaiExecution", header: "Délai d'exécution" },
+  {
+    key: "dateNotificationBC",
+    header: <span className="whitespace-normal">Date notification</span>,
+  },
+  {
+    key: "delaiExecution",
+    header: <span className="whitespace-normal">Délai d'exécution</span>,
+  },
 ];
 
 export default function BonsCommandePage() {

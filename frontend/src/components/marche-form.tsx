@@ -49,6 +49,7 @@ export default function MarcheForm({
       dateNotificationApprobation: "",
       dateOrdreService: "",
       delaiExecution: "",
+      typeBudgetInv: "",
       typeBudgetId: undefined,
       typeBudget: null,
       rubriqueId: undefined,
@@ -110,11 +111,17 @@ export default function MarcheForm({
     const selectedTypeBudget = typeBudget.find(
       (tb) => tb.id.toString() === value
     );
+
     if (selectedTypeBudget) {
       setFormData((prev) => ({
         ...prev,
         [name]: Number(value),
         typeBudget: selectedTypeBudget,
+        typeBudgetInv: selectedTypeBudget.name.includes(
+          "Budget d'investissement"
+        )
+          ? prev.typeBudgetInv
+          : "",
       }));
     }
   };
@@ -138,7 +145,11 @@ export default function MarcheForm({
         ...prev,
         appelOffreId: Number(value),
         appelOffre: selectedAO,
+        rubriqueId: selectedAO.rubriqueId,
+        rubrique: selectedAO.rubrique,
         objet: selectedAO.objet,
+        attributaire: selectedAO.attributaire,
+        montantMarche: selectedAO.montant,
       }));
     }
   };
@@ -233,6 +244,24 @@ export default function MarcheForm({
 
             <div className="space-y-2">
               <Label
+                htmlFor="referenceMarche"
+                className="font-medium text-slate-700"
+              >
+                Référence du marché
+              </Label>
+              <Input
+                id="referenceMarche"
+                name="referenceMarche"
+                value={formData.referenceMarche}
+                onChange={handleChange}
+                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label
                 htmlFor="anneeBudgetaire"
                 className="font-medium text-slate-700"
               >
@@ -245,22 +274,6 @@ export default function MarcheForm({
                 onChange={handleChange}
                 required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                type="text"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="numCompte" className="font-medium text-slate-700">
-                Numéro de compte
-              </Label>
-              <Input
-                id="numCompte"
-                name="numCompte"
-                value={formData.numCompte}
-                onChange={handleChange}
-                readOnly
-                disabled
-                className="rounded-md border-slate-300/80 bg-slate-100 shadow-sm"
                 type="text"
               />
             </div>
@@ -292,21 +305,68 @@ export default function MarcheForm({
 
             <div className="space-y-2">
               <Label
-                htmlFor="referenceMarche"
+                htmlFor="typeBudget"
                 className="font-medium text-slate-700"
               >
-                Référence du marché
+                Type de budget
               </Label>
-              <Input
-                id="referenceMarche"
-                name="referenceMarche"
-                value={formData.referenceMarche}
-                onChange={handleChange}
-                required
-                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                type="text"
-              />
+              <Select
+                value={formData.typeBudgetId?.toString() || ""}
+                onValueChange={(value) =>
+                  handleSelectChange("typeBudgetId", value)
+                }
+              >
+                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                  <SelectValue placeholder="Sélectionner un type de budget" />
+                </SelectTrigger>
+                <SelectContent className={undefined}>
+                  {typeBudget.map((budget) => (
+                    <SelectItem
+                      key={budget.id}
+                      value={budget.id.toString()}
+                      className={undefined}
+                    >
+                      {budget.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+
+            {formData.typeBudget?.name.includes("Budget d'investissement") && (
+              <div className="space-y-2">
+                <Label
+                  htmlFor="typeBudgetInv"
+                  className="font-medium text-slate-700"
+                >
+                  Type de budget d'investissement
+                </Label>
+                <Select
+                  value={formData.typeBudgetInv || ""}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      typeBudgetInv: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                    <SelectValue placeholder="Sélectionner un type" />
+                  </SelectTrigger>
+                  <SelectContent className={undefined}>
+                    <SelectItem value="Equipement" className={undefined}>
+                      Equipement
+                    </SelectItem>
+                    <SelectItem value="Travaux" className={undefined}>
+                      Travaux
+                    </SelectItem>
+                    <SelectItem value="Fournitures" className={undefined}>
+                      Fournitures
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="objet" className="font-medium text-slate-700">
@@ -327,7 +387,7 @@ export default function MarcheForm({
                 htmlFor="attributaire"
                 className="font-medium text-slate-700"
               >
-                Attributaire
+                Titulaire de marché
               </Label>
               <Input
                 id="attributaire"
@@ -377,21 +437,6 @@ export default function MarcheForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateVisa" className="font-medium text-slate-700">
-                Date de visa
-              </Label>
-              <Input
-                id="dateVisa"
-                name="dateVisa"
-                type="date"
-                value={formData.dateVisa}
-                onChange={handleChange}
-                required
-                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label
                 htmlFor="dateNotificationApprobation"
                 className="font-medium text-slate-700"
@@ -404,7 +449,6 @@ export default function MarcheForm({
                 type="date"
                 value={formData.dateNotificationApprobation}
                 onChange={handleChange}
-                required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
@@ -422,7 +466,19 @@ export default function MarcheForm({
                 type="date"
                 value={formData.dateOrdreService}
                 onChange={handleChange}
-                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dateVisa" className="font-medium text-slate-700">
+                Date de visa
+              </Label>
+              <Input
+                id="dateVisa"
+                name="dateVisa"
+                type="date"
+                value={formData.dateVisa}
+                onChange={handleChange}
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
@@ -439,40 +495,9 @@ export default function MarcheForm({
                 name="delaiExecution"
                 value={formData.delaiExecution}
                 onChange={handleChange}
-                required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                 type="text"
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="typeBudget"
-                className="font-medium text-slate-700"
-              >
-                Type de budget
-              </Label>
-              <Select
-                value={formData.typeBudgetId?.toString() || ""}
-                onValueChange={(value) =>
-                  handleSelectChange("typeBudgetId", value)
-                }
-              >
-                <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
-                  <SelectValue placeholder="Sélectionner un type de budget" />
-                </SelectTrigger>
-                <SelectContent className={undefined}>
-                  {typeBudget.map((budget) => (
-                    <SelectItem
-                      key={budget.id}
-                      value={budget.id.toString()}
-                      className={undefined}
-                    >
-                      {budget.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
         </CardContent>

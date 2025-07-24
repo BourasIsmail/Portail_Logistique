@@ -222,7 +222,7 @@ export default function DataTable<T extends { id: number | string }>({
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      {userDetails.role === "ADMIN" && (
+                      {userDetails.role.includes("ROLE_ADMIN") && (
                         <Button
                           variant="ghost"
                           size="sm"

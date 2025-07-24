@@ -46,6 +46,8 @@ export default function AOForm({
       datePublication: new Date().toISOString().split("T")[0],
       dateOuverture: "",
       dateFinTravaux: "",
+      attributaire: "",
+      montant: 0,
       dateNotificationApprobation: "",
       rubrique: null,
       rubriqueId: undefined,
@@ -107,6 +109,7 @@ export default function AOForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with data:", formData);
     onSubmit(formData);
   };
 
@@ -203,6 +206,24 @@ export default function AOForm({
               </Select>
             </div>
 
+            <div className="space-y-2">
+              <Label
+                htmlFor="estimation"
+                className="font-medium text-slate-700"
+              >
+                Estimation (DH)
+              </Label>
+              <Input
+                id="estimation"
+                name="estimation"
+                type="number"
+                value={formData.estimation}
+                onChange={handleChange}
+                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+              />
+            </div>
+
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="objet" className="font-medium text-slate-700">
                 Objet
@@ -219,16 +240,31 @@ export default function AOForm({
 
             <div className="space-y-2">
               <Label
-                htmlFor="estimation"
+                htmlFor="attributaire"
                 className="font-medium text-slate-700"
               >
-                Estimation (DH)
+                Attributaire
               </Label>
               <Input
-                id="estimation"
-                name="estimation"
+                id="attributaire"
+                name="attributaire"
+                value={formData.attributaire}
+                onChange={handleChange}
+                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="montant" className="font-medium text-slate-700">
+                Montant demander par l'attributaire (DH)
+              </Label>
+              <Input
+                id="montant"
+                name="montant"
                 type="number"
-                value={formData.estimation}
+                value={formData.montant}
                 onChange={handleChange}
                 required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
@@ -258,7 +294,7 @@ export default function AOForm({
                 htmlFor="dateOuverture"
                 className="font-medium text-slate-700"
               >
-                Date de ouverture des plis
+                Date d'ouverture des plis
               </Label>
               <Input
                 id="dateOuverture"
@@ -284,7 +320,6 @@ export default function AOForm({
                 type="date"
                 value={formData.dateFinTravaux}
                 onChange={handleChange}
-                required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
@@ -294,7 +329,7 @@ export default function AOForm({
                 htmlFor="dateNotificationApprobation"
                 className="font-medium text-slate-700"
               >
-                Date de notification de l'approbation
+                Date de publication de PV
               </Label>
               <Input
                 id="dateNotificationApprobation"
@@ -302,7 +337,6 @@ export default function AOForm({
                 type="date"
                 value={formData.dateNotificationApprobation}
                 onChange={handleChange}
-                required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>

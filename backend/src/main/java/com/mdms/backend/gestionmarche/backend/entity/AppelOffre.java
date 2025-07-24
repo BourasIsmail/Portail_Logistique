@@ -28,6 +28,8 @@ public class AppelOffre {
     private String anneeBudgetaire;
     private String objet;
     private Number estimation;
+    private String attributaire;
+    private Number montant;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date datePublication;

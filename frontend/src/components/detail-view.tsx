@@ -102,10 +102,10 @@ export default function DetailView({
             </div>
             <div>
               <h3 className="text-sm font-medium text-slate-500">
-                Numéro de compte
+                Type de budget
               </h3>
               <p className="mt-1 text-base text-slate-900">
-                {data.numCompte || "-"}
+                {data.typeBudget?.name || "-"}
               </p>
             </div>
             <div>
@@ -114,6 +114,16 @@ export default function DetailView({
                 {data.rubrique.rubrique || "-"}
               </p>
             </div>
+            {data.typeBudgetInv && (
+              <div>
+                <h3 className="text-sm font-medium text-slate-500">
+                  Type de budget d'investissement
+                </h3>
+                <p className="mt-1 text-base text-slate-900">
+                  {data.typeBudgetInv || "-"}
+                </p>
+              </div>
+            )}
             <div className="md:col-span-2">
               <h3 className="text-sm font-medium text-slate-500">Objet</h3>
               <p className="mt-1 text-base text-slate-900">
@@ -144,14 +154,7 @@ export default function DetailView({
                 {formatDate(data.dateApprobation)}
               </p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-slate-500">
-                Date de visa
-              </h3>
-              <p className="mt-1 text-base text-slate-900">
-                {formatDate(data.dateVisa)}
-              </p>
-            </div>
+
             <div>
               <h3 className="text-sm font-medium text-slate-500">
                 Date notification d&apos;approbation
@@ -174,6 +177,14 @@ export default function DetailView({
               </h3>
               <p className="mt-1 text-base text-slate-900">
                 {data.delaiExecution || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Date de visa
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {formatDate(data.dateVisa)}
               </p>
             </div>
           </div>
@@ -577,81 +588,196 @@ export default function DetailView({
   );
 
   const renderAppelOffreDetails = () => (
-    <Card className="overflow-hidden border-slate-200/80 bg-white shadow-sm pt-0">
-      <CardHeader className="border rounded-t-xl py-4 border-slate-200/80 bg-slate-50/80 ">
-        <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-          <Info className="h-5 w-5" />
-          Détails de l'appel d'offre
-        </CardTitle>
-      </CardHeader>
-      <CardContent className={undefined}>
-        <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">Référence</h3>
-            <p className="mt-1 text-base text-slate-900">
-              {data.reference || "-"}
-            </p>
+    <>
+      <Card className="overflow-hidden border-slate-200/80 bg-white shadow-sm pt-0">
+        <CardHeader className="border rounded-t-xl py-4 border-slate-200/80 bg-slate-50/80 ">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-800">
+            <Info className="h-5 w-5" />
+            Détails de l'appel d'offre
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={undefined}>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">Référence</h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.reference || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Année budgétaire
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.anneeBudgetaire || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Type d'appel d'offre
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.typeAO.name || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Montant estimé
+              </h3>
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {formatMoney(data.estimation)}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">Rubrique</h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.rubrique.rubrique || "-"}
+              </p>
+            </div>
+            <div className="md:col-span-2">
+              <h3 className="text-sm font-medium text-slate-500">Objet</h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.objet || "-"}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Attributaire
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {data.attributaire || "-"}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">Montant</h3>
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {formatMoney(data.montant)}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Date de publication dans le portail
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {formatDate(data.datePublication)}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Date d'ouverture des plis
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {formatDate(data.dateOuverture)}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Date de fin des travaux de la commission
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {formatDate(data.dateFinTravaux)}
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-slate-500">
+                Date de publication de PV
+              </h3>
+              <p className="mt-1 text-base text-slate-900">
+                {formatDate(data.dateNotificationApprobation)}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">
-              Année budgétaire
-            </h3>
-            <p className="mt-1 text-base text-slate-900">
-              {data.anneeBudgetaire || "-"}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">
-              Type d'appel d'offre
-            </h3>
-            <p className="mt-1 text-base text-slate-900">
-              {data.typeAO.name || "-"}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">Rubrique</h3>
-            <p className="mt-1 text-base text-slate-900">
-              {data.rubrique.rubrique || "-"}
-            </p>
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-sm font-medium text-slate-500">Objet</h3>
-            <p className="mt-1 text-base text-slate-900">{data.objet || "-"}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">
-              Date de publication
-            </h3>
-            <p className="mt-1 text-base text-slate-900">
-              {formatDate(data.datePublication)}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">
-              Date limite de soumission
-            </h3>
-            <p className="mt-1 text-base text-slate-900">
-              {formatDate(data.dateLimite)}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500">Statut</h3>
-            <Badge
-              className={
-                data.statut === "Ouvert"
-                  ? "border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200/80"
-                  : data.statut === "Fermé"
-                  ? "border-transparent bg-green-100 text-green-800 hover:bg-green-200/80"
-                  : "border-transparent bg-slate-100 text-slate-800 hover:bg-slate-200/80"
-              }
-              variant={"default"}
-            >
-              {data.statut || "-"}
-            </Badge>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Séparateur */}
+      <Separator className="my-8 bg-slate-200/80" />
+
+      {/* Situations du marché */}
+      <Card className="overflow-hidden border-slate-200/80 bg-white shadow-sm pt-0">
+        <CardHeader className="border rounded-t-xl py-4 border-slate-200/80 bg-slate-50/80 ">
+          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-slate-800">
+            <FileText className="h-5 w-5" />
+            Marchés associés
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={undefined}>
+          {!data.marches || data.marches.length === 0 ? (
+            <div className="py-10 text-center text-sm text-slate-500">
+              Aucun marché n'est associé à cet appel d'offre.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table className={undefined}>
+                <TableHeader className="bg-slate-50/80">
+                  <TableRow className={undefined}>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      N°
+                    </TableHead>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      Reférence
+                    </TableHead>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      Montant Marché
+                    </TableHead>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      Date Approbation
+                    </TableHead>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      Date Ordre Service
+                    </TableHead>
+                    <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                      Delai Execution
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-slate-200/80">
+                  {data.marches.map(
+                    (
+                      marche: {
+                        id: string | number;
+                        referenceMarche: string;
+                        montantMarche: number;
+                        dateApprobation: string;
+                        dateOrdreService: string;
+                        delaiExecution: string;
+                      },
+                      index: number
+                    ) => (
+                      <TableRow
+                        key={marche.id}
+                        className="hover:bg-slate-50/50"
+                        onClick={() => navigate(`/gm/marches/${marche.id}`)}
+                      >
+                        <TableCell className="px-6 py-4 font-medium text-slate-800">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-slate-600">
+                          {marche.referenceMarche.toString()}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-slate-600">
+                          {marche.montantMarche?.toString()}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-slate-600">
+                          {formatDate(marche.dateApprobation)}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-slate-600">
+                          {formatDate(marche.dateOrdreService)}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-slate-600">
+                          {marche.delaiExecution?.toString()}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </>
   );
 
   const renderContent = () => {
