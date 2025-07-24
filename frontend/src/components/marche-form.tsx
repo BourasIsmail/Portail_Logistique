@@ -199,7 +199,7 @@ export default function MarcheForm({
     onSubmit({
       ...formData,
       typeBudgetId: Number(formData.typeBudgetId),
-      rubriqueId: Number(formData.rubriqueId),
+      rubriqueId: Number(formData.rubrique?.id),
       appelOffreId: Number(formData.appelOffreId),
       situationMarches: situations,
     });

@@ -153,7 +153,12 @@ export default function MarchesPage(): JSX.Element {
         // Add new marché with its situations
         console.log("Adding new marché:", formData);
 
-        const response = await api.post("/admin/add-marche", formData);
+        const response = await api.post("/admin/add-marche", {
+          ...formData,
+          rubriqueId: formData.rubrique.id,
+          typeBudgetId: formData.typeBudget.id,
+          appelOffreId: formData.appelOffre?.id,
+        });
         if (response.status === 200 && "referenceMarche" in response.data) {
           setMarches((prev) => [...prev, response.data]);
           setIsModalOpen(false);
