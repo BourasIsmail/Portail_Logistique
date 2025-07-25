@@ -24,7 +24,7 @@ public class MarcheRequest {
     private Date dateVisa;
 
     private String delaiExecution;
-    private Number montantMarche;
+    private Double montantMarche;
     private String numCompte;
     private String objet;
     private String referenceMarche;

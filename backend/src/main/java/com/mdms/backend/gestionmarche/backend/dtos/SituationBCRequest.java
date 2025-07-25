@@ -25,7 +25,7 @@ public class SituationBCRequest {
     private Date dateReceptionProvisoire;
     private Date dateServiceFait;
 
-    private Number montantFacture;
+    private Double montantFacture;
     private String numFacture;
     private String observation;
     private boolean paye;

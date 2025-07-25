@@ -17,7 +17,7 @@ public class SituationMarcheRequest {
 
     private String numFacture;
     private String numDecompte;
-    private Number montantDecompte;
+    private Double montantDecompte;
 
     private Boolean paye;
     private String observation;

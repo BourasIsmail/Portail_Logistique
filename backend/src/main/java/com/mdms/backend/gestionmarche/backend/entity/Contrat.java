@@ -26,7 +26,7 @@ public class Contrat {
     private String objet;
     private String description; // optional
     private String attributaire;
-    private Number montant;
+    private Double montant;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateSignature;

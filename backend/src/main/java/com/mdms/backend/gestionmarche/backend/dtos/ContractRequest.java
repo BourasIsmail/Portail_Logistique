@@ -13,7 +13,7 @@ public class ContractRequest {
     private String objet;
     private String description; // optional
     private String attributaire;
-    private Number montant;
+    private Double montant;
     private Date dateSignature;
     private Date dateDebut;
     private Date dateFin;

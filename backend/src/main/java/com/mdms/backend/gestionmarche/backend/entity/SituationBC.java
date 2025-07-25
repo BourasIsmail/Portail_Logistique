@@ -33,7 +33,7 @@ public class SituationBC {
     private Date dateServiceFait;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateLiquidation;
-    private Number montantFacture;
+    private Double montantFacture;
     private boolean paye;
     private String observation;
 

@@ -141,7 +141,7 @@ class ParametrageController {
         PMN pmn = new PMN();
         pmn.setNum((String) request.get("num"));
         pmn.setObjet((String) request.get("objet"));
-        pmn.setMontant((Number) request.get("montant"));
+        pmn.setMontant((Double) request.get("montant"));
 
         pmn = pmnRepository.save(pmn);
 
@@ -156,7 +156,7 @@ class ParametrageController {
         PMN pmn = pmnRepository.findByNum(num);
         pmn.setNum((String) request.get("num"));
         pmn.setObjet((String) request.get("objet"));
-        pmn.setMontant((Number) request.get("montant"));
+        pmn.setMontant((Double) request.get("montant"));
 
         pmn = pmnRepository.save(pmn);
         return ResponseEntity.ok().body(pmn);

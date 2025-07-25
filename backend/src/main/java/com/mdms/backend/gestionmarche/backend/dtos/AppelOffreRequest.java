@@ -17,9 +17,9 @@ public class AppelOffreRequest {
     private String reference;
     private String anneeBudgetaire;
     private String objet;
-    private Number estimation;
+    private Double estimation;
     private String attributaire;
-    private Number montant;
+    private Double montant;
 
     private Date datePublication;
     private Date dateOuverture;

@@ -29,7 +29,7 @@ public class BonCommande {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateBC;
     private String attributaire;
-    private Number montant;
+    private Double montant;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateNotificationBC;
     private String delaiExecution;

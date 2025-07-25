@@ -50,8 +50,8 @@ public class DbInitializer implements CommandLineRunner {
             rubriqueRepository.save(new Rubrique(null, "345678", "Fournitures de bureau"));
         }
         if(pMNRepository.count() == 0L){
-            pMNRepository.save(new PMN(null, "PMN-2023-001", "Achat de fourniture", 50000));
-            pMNRepository.save(new PMN(null, "PMN-2023-002", "Équipement technique", 80000));
+            pMNRepository.save(new PMN(null, "PMN-2023-001", "Achat de fourniture", 50000.0));
+            pMNRepository.save(new PMN(null, "PMN-2023-002", "Équipement technique", 80000.0));
         }
         if(typeAORepository.count() == 0L){
             typeAORepository.save(new TypeAO(null, "Ouvert"));

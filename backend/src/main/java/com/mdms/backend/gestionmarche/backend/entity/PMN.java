@@ -21,5 +21,5 @@ public class PMN {
     private String num;
 
     private String objet;
-    private Number montant;
+    private Double montant;
 }

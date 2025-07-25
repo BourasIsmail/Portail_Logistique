@@ -19,7 +19,7 @@ public class BonCommandeRequest {
     private String delaiExecution;
     private String numBC;
     private String numCompte;
-    private Number montant;
+    private Double montant;
 
     private String pmnNum;
     private String pmnObjet;

@@ -30,7 +30,7 @@ public class Marche {
     private String referenceMarche;
     private String objet;
     private String attributaire;
-    private Number montantMarche;
+    private Double montantMarche;
     private String typeBudgetInv;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
