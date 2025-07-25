@@ -217,6 +217,24 @@ export default function MarcheForm({
         <CardContent className="px-6">
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             {/* Respecter l'ordre des champs du modèle */}
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="referenceMarche"
+                className="font-medium text-slate-700"
+              >
+                Référence du marché
+              </Label>
+              <Input
+                id="referenceMarche"
+                name="referenceMarche"
+                value={formData.referenceMarche}
+                onChange={handleChange}
+                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="rubrique" className="font-medium text-slate-700">
                 Appel d'offre
@@ -240,24 +258,6 @@ export default function MarcheForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="referenceMarche"
-                className="font-medium text-slate-700"
-              >
-                Référence du marché
-              </Label>
-              <Input
-                id="referenceMarche"
-                name="referenceMarche"
-                value={formData.referenceMarche}
-                onChange={handleChange}
-                required
-                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                type="text"
-              />
             </div>
 
             <div className="space-y-2">
@@ -559,6 +559,86 @@ export default function MarcheForm({
                   <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label
+                        htmlFor={`numFacture-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        N° de facture
+                      </Label>
+                      <Input
+                        id={`numFacture-${index}`}
+                        value={situation.numFacture}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "numFacture",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                        type={undefined}
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-5">
+                      <Input
+                        type="checkbox"
+                        id={`paye-${index}`}
+                        checked={situation.paye}
+                        onChange={(e) =>
+                          handleSituationChange(index, "paye", e.target.checked)
+                        }
+                        className="h-4 w-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
+                      />
+                      <Label
+                        htmlFor={`paye-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Payé
+                      </Label>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`numDecompte-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        N° de décompte
+                      </Label>
+                      <Input
+                        id={`numDecompte-${index}`}
+                        value={situation.numDecompte}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "numDecompte",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                        type={undefined}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`montantDecompte-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Montant du décompte (DH)
+                      </Label>
+                      <Input
+                        id={`montantDecompte-${index}`}
+                        type="number"
+                        value={situation.montantDecompte}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "montantDecompte",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label
                         htmlFor={`dateLivraison-${index}`}
                         className="font-medium text-slate-700"
                       >
@@ -599,64 +679,92 @@ export default function MarcheForm({
                         className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label
-                        htmlFor={`numFacture-${index}`}
+                        htmlFor={`dateReception-${index}`}
                         className="font-medium text-slate-700"
                       >
-                        N° de facture
+                        Date d'enregistrement
                       </Label>
                       <Input
-                        id={`numFacture-${index}`}
-                        value={situation.numFacture}
+                        id={`dateEnregistrement-${index}`}
+                        type="date"
+                        value={situation.dateEnregistrement}
                         onChange={(e) =>
                           handleSituationChange(
                             index,
-                            "numFacture",
-                            e.target.value
-                          )
-                        }
-                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                        type={undefined}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor={`montantDecompte-${index}`}
-                        className="font-medium text-slate-700"
-                      >
-                        Montant du décompte (DH)
-                      </Label>
-                      <Input
-                        id={`montantDecompte-${index}`}
-                        type="number"
-                        value={situation.montantDecompte}
-                        onChange={(e) =>
-                          handleSituationChange(
-                            index,
-                            "montantDecompte",
+                            "dateEnregistrement",
                             e.target.value
                           )
                         }
                         className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
-                    <div className="flex items-center space-x-2 pt-5">
-                      <Input
-                        type="checkbox"
-                        id={`paye-${index}`}
-                        checked={situation.paye}
-                        onChange={(e) =>
-                          handleSituationChange(index, "paye", e.target.checked)
-                        }
-                        className="h-4 w-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
-                      />
+
+                    <div className="space-y-2">
                       <Label
-                        htmlFor={`paye-${index}`}
+                        htmlFor={`dateReception-${index}`}
                         className="font-medium text-slate-700"
                       >
-                        Payé
+                        Date de service fait
                       </Label>
+                      <Input
+                        id={`dateServiceFait-${index}`}
+                        type="date"
+                        value={situation.dateServiceFait}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "dateServiceFait",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`dateReception-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Date de liquidation
+                      </Label>
+                      <Input
+                        id={`dateLiquidation-${index}`}
+                        type="date"
+                        value={situation.dateLiquidation}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "dateLiquidation",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                      />
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <Label
+                        htmlFor="observation"
+                        className="font-medium text-slate-700"
+                      >
+                        Observation
+                      </Label>
+                      <Textarea
+                        id={`observation-${index}`}
+                        value={situation.observation}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "observation",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                      />
                     </div>
                   </div>
                 </CardContent>

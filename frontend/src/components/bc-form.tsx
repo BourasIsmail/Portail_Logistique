@@ -196,6 +196,20 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
           <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
             {/* Respecter l'ordre des champs du modèle BC */}
             <div className="space-y-2">
+              <Label htmlFor="numBC" className="font-medium text-slate-700">
+                Numéro du BC
+              </Label>
+              <Input
+                id="numBC"
+                name="numBC"
+                value={formData.numBC}
+                onChange={handleChange}
+                required
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                type="text"
+              />
+            </div>
+            <div className="space-y-2">
               <Label
                 htmlFor="anneeBudgetaire"
                 className="font-medium text-slate-700"
@@ -214,28 +228,13 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="numCompte" className="font-medium text-slate-700">
-                Numéro de compte
-              </Label>
-              <Input
-                id="numCompte"
-                name="numCompte"
-                value={formData.numCompte}
-                onChange={handleChange}
-                readOnly
-                disabled
-                className="rounded-md border-slate-300/80 bg-slate-100 shadow-sm"
-                type="text"
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="rubrique" className="font-medium text-slate-700">
                 Rubrique
               </Label>
               <Select
                 value={formData.rubrique?.id?.toString() || ""}
                 onValueChange={handleRubriqueChange}
+                required
               >
                 <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner une rubrique" />
@@ -261,6 +260,7 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
               <Select
                 value={formData.pmnId?.toString() || ""}
                 onValueChange={handlePMNChange}
+                required
               >
                 <SelectTrigger className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500">
                   <SelectValue placeholder="Sélectionner un PMN" />
@@ -278,37 +278,6 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="numBC" className="font-medium text-slate-700">
-                Numéro du BC
-              </Label>
-              <Input
-                id="numBC"
-                name="numBC"
-                value={formData.numBC}
-                onChange={handleChange}
-                required
-                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                type="text"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="dateBC" className="font-medium text-slate-700">
-                Date du BC
-              </Label>
-              <Input
-                id="dateBC"
-                name="dateBC"
-                type="date"
-                value={formData.dateBC}
-                onChange={handleChange}
-                required
-                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-              />
-            </div>
-
             <div className="space-y-2">
               <Label
                 htmlFor="attributaire"
@@ -343,17 +312,14 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label
-                htmlFor="dateNotificationBC"
-                className="font-medium text-slate-700"
-              >
-                Date de notification BC
+              <Label htmlFor="dateBC" className="font-medium text-slate-700">
+                Date du BC
               </Label>
               <Input
-                id="dateNotificationBC"
-                name="dateNotificationBC"
+                id="dateBC"
+                name="dateBC"
                 type="date"
-                value={formData.dateNotificationBC}
+                value={formData.dateBC}
                 onChange={handleChange}
                 required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
@@ -375,6 +341,23 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 required
                 className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
                 type="text"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="dateNotificationBC"
+                className="font-medium text-slate-700"
+              >
+                Date de notification BC
+              </Label>
+              <Input
+                id="dateNotificationBC"
+                name="dateNotificationBC"
+                type="date"
+                value={formData.dateNotificationBC}
+                onChange={handleChange}
+                className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
               />
             </div>
           </div>
@@ -436,6 +419,50 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                 <CardContent className="px-6">
                   <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                     {/* Respecter l'ordre des champs du modèle SituationBC */}
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`numFacture-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Numéro facture
+                      </Label>
+                      <Input
+                        id={`numFacture-${index}`}
+                        value={situation.numFacture}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "numFacture",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                        type="text"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor={`montantFacture-${index}`}
+                        className="font-medium text-slate-700"
+                      >
+                        Montant facture (DH)
+                      </Label>
+                      <Input
+                        id={`montantFacture-${index}`}
+                        type="number"
+                        value={situation.montantFacture}
+                        onChange={(e) =>
+                          handleSituationChange(
+                            index,
+                            "montantFacture",
+                            e.target.value
+                          )
+                        }
+                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
+                      />
+                    </div>
                     <div className="space-y-2">
                       <Label
                         htmlFor={`dateLivraison-${index}`}
@@ -477,28 +504,6 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                           )
                         }
                         className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor={`numFacture-${index}`}
-                        className="font-medium text-slate-700"
-                      >
-                        Numéro facture
-                      </Label>
-                      <Input
-                        id={`numFacture-${index}`}
-                        value={situation.numFacture}
-                        onChange={(e) =>
-                          handleSituationChange(
-                            index,
-                            "numFacture",
-                            e.target.value
-                          )
-                        }
-                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                        type="text"
                       />
                     </div>
 
@@ -561,28 +566,6 @@ export default function BCForm({ bc, onSubmit, onCancel }: BCFormProps) {
                           handleSituationChange(
                             index,
                             "dateLiquidation",
-                            e.target.value
-                          )
-                        }
-                        className="rounded-md border-slate-300/80 bg-white shadow-sm focus:border-slate-500 focus:ring-slate-500"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor={`montantFacture-${index}`}
-                        className="font-medium text-slate-700"
-                      >
-                        Montant facture (DH)
-                      </Label>
-                      <Input
-                        id={`montantFacture-${index}`}
-                        type="number"
-                        value={situation.montantFacture}
-                        onChange={(e) =>
-                          handleSituationChange(
-                            index,
-                            "montantFacture",
                             e.target.value
                           )
                         }
