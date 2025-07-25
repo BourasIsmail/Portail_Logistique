@@ -20,6 +20,7 @@ const getNewAccessToken = async (config) => {
     return config;
   } catch (error) {
     console.error("Failed to refresh access token", error);
+    window.location.href = "/login"; // force login
   }
 };
 
