@@ -27,6 +27,10 @@ import GMDashboardPage from "./gestion_marche/vues/tableau-de-bord/page";
 import AOPage from "./gestion_marche/vues/appel-offre/page";
 import AOByIdPage from "./gestion_marche/vues/appel-offre/id/page";
 
+import ParcAutoLayout from "./gestion_parc_auto/pages/ParcAutoLayout";
+import VehiculesList from "./gestion_parc_auto/pages/VehiculesList";
+import VehiculeForm from "./gestion_parc_auto/pages/VehiculeForm";
+
 function gestionDemandeRoutes() {
   return (
     <>
@@ -214,6 +218,31 @@ function gestionMarcheRoutes() {
   );
 }
 
+function gestionParcAutoRoutes() {
+  return (
+    <Route
+      path="/parc-auto"
+      element={
+        <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ParcAutoLayout />
+        </ProtectedRoute>
+      }
+    >
+      {/* Routes enfants qui s'afficheront à l'intérieur de <Outlet /> */}
+      <Route index element={<Navigate to="vehicules" replace />} />{" "}
+      {/* Redirige /parc-auto vers /parc-auto/vehicules */}
+      <Route path="vehicules" element={<VehiculesList />} />
+      <Route path="vehicules/ajouter" element={<VehiculeForm />} />
+      <Route
+        path="*"
+        element={<Navigate to="/parc-auto/vehicules" replace />}
+      />
+      {/* <Route path="chauffeurs" element={<ChauffeursList />} /> */}
+      {/* <Route path="missions" element={<MissionsList />} /> */}
+    </Route>
+  );
+}
+
 function App() {
   const { userDetails, login } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -258,6 +287,9 @@ function App() {
 
           {/* gestion marchée routes */}
           {gestionMarcheRoutes()}
+
+          {/* --- APPEL À VOTRE NOUVELLE FONCTION DE ROUTES --- */}
+          {gestionParcAutoRoutes()}
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

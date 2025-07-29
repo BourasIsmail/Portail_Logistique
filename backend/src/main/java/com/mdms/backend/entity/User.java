@@ -1,8 +1,9 @@
 package com.mdms.backend.entity;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mdms.backend.parcauto.entity.CentreRattachement;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +41,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "role")
+    //a modifier(length = 50)
+    @Column(name = "role" , length = 50)
     @Enumerated(EnumType.STRING)
     private Roles role = Roles.ROLE_USER;
 
@@ -67,6 +70,22 @@ public class User {
         this.email = email;
         this.password = password;
         this.service = service;
+    }
+
+    //element ajoute(MODIF)
+
+
+     @ManyToOne(fetch = FetchType.LAZY) 
+     @JoinColumn(name = "centre_rattachement_id", nullable = true)
+    private CentreRattachement centreRattachement;
+
+     
+        public User(String userName, String email, String password, Service service, CentreRattachement centreRattachement) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.service = service;
+        this.centreRattachement = centreRattachement;
     }
 
 }

@@ -17,6 +17,7 @@ import {
   FileCodeIcon as FileContract,
   Settings,
   PackageIcon,
+  Car,
 } from "lucide-react";
 import Navbar from "@/components/navbar";
 
@@ -108,6 +109,23 @@ export default function MainPage() {
                   className="bg-slate-800 text-white hover:bg-slate-900"
                 >
                   <Link to="/gm">Accéder</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-md transition-shadow border-gray-200 flex flex-col">
+              <CardHeader className="text-center">
+                <Car className="w-12 h-12 mx-auto text-black-600" />
+                <CardTitle className="text-gray-900">
+                  Gestion du parc auto
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  Gérez les véhicules, missions et chauffeurs
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-center h-full items-end">
+                <Button asChild>
+                  <Link to="/parc-auto/vehicules">Accéder</Link>
                 </Button>
               </CardContent>
             </Card>
