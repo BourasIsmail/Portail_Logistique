@@ -72,7 +72,7 @@ export default function MainPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex  justify-center gap-6">
             <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
                 <PackageIcon className="w-12 h-12 mx-auto text-slate-700" />
@@ -113,18 +113,20 @@ export default function MainPage() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow border-gray-200 flex flex-col">
+            <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 flex flex-col w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
-                <Car className="w-12 h-12 mx-auto text-black-600" />
-                <CardTitle className="text-gray-900">
+                <FileText className="w-12 h-12 mx-auto text-slate-700" />
+                <CardTitle className="text-slate-900">
                   Gestion du parc auto
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-slate-500">
                   Gérez les véhicules, missions et chauffeurs
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center h-full items-end">
-                <Button asChild>
+                <Button
+                  className="bg-slate-800 text-white hover:bg-slate-900"
+                 asChild>
                   <Link to="/parc-auto/vehicules">Accéder</Link>
                 </Button>
               </CardContent>
