@@ -99,14 +99,14 @@ export default function ActionDropdownMenu({ row, refreshTable }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent className="w-fit px-8">
         <DialogHeader>
           <DialogTitle className={"text-center text-xl"}>
             Modifier Demande
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col justify-center items-center gap-1">
-          <div className="flex flex-col w-md">
+          <div className="flex flex-col w-full">
             <ul>
               <li className="text-md font-medium mb-2 ">
                 <span className="font-bold max-w-32 break-words whitespace-normal">
@@ -138,9 +138,9 @@ export default function ActionDropdownMenu({ row, refreshTable }) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Besion</TableHead>
-                      <TableHead>Quantité</TableHead>
-                      <TableHead>Affectation</TableHead>
+                      <TableHead className="italic">Besoins</TableHead>
+                      <TableHead className="italic">Quantité</TableHead>
+                      <TableHead className="italic">Affectation</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

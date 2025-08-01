@@ -13,6 +13,7 @@ import {
   WarehouseIcon,
   UserRoundCogIcon,
   UserRoundIcon,
+  UserMinus2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -352,6 +353,37 @@ export const columns = (refreshTable: () => void): ColumnDef<Material>[] => [
                 >
                   <ShieldUserIcon className="h-4 w-4" />
                   Modifier rôle
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className={undefined} />
+                <DropdownMenuItem
+                  className="w-full cursor-pointer focus:bg-red-800 focus:text-red-500"
+                  inset={undefined}
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+                      )
+                    ) {
+                      try {
+                        const res = await api.delete(
+                          `/admin/delete-user/${row.getValue("id")}`
+                        );
+                        if (res.status !== 200) {
+                          throw new Error("Failed to delete user");
+                        }
+                        toast.success("Utilisateur supprimé avec succès");
+                        refreshTable();
+                      } catch (error) {
+                        console.error("Error deleting user:", error);
+                        toast.error(
+                          "Erreur lors de la suppression de l'utilisateur."
+                        );
+                      }
+                    }
+                  }}
+                >
+                  <UserMinus2 className="h-4 w-4 hover:bg-red-800 hover:text-red-500" />
+                  Supprimer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
