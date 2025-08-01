@@ -31,7 +31,6 @@ const columns: Column<Marche>[] = [
     key: "anneeBudgetaire",
     header: <span className="whitespace-normal">Année budgétaire</span>,
   },
-  { key: "numCompte", header: "N° Compte" },
   {
     key: "objet",
     header: "Objet",
