@@ -48,14 +48,17 @@ const columns: Column<Contrat>[] = [
   {
     key: "dateSignature",
     header: <span className="whitespace-break-spaces">Date de signature</span>,
+    render: (item: Contrat) => item.dateSignature || "-",
   },
   {
     key: "dateDebut",
     header: <span className="whitespace-break-spaces">Date de début</span>,
+    render: (item: Contrat) => item.dateDebut || "-",
   },
   {
     key: "dateFin",
     header: <span className="whitespace-break-spaces">Date de fin</span>,
+    render: (item: Contrat) => item.dateFin || "-",
   },
   {
     key: "statut",

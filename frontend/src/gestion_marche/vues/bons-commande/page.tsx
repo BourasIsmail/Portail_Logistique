@@ -68,8 +68,15 @@ const columns: Column<BonCommande>[] = [
     header: "N° PMN",
     render: (item: BonCommande) => item.pmn?.num,
   },
-  { key: "dateBC", header: "Date BC" },
-  { key: "attributaire", header: "Attributaire" },
+  {
+    key: "dateBC",
+    header: "Date BC",
+    render: (item: BonCommande) => item.dateBC || "-",
+  },
+  {
+    key: "attributaire",
+    header: "Attributaire",
+  },
   {
     key: "montant",
     header: "Montant",
@@ -78,10 +85,12 @@ const columns: Column<BonCommande>[] = [
   {
     key: "dateNotificationBC",
     header: <span className="whitespace-normal">Date notification</span>,
+    render: (item: BonCommande) => item.dateNotificationBC || "-",
   },
   {
     key: "delaiExecution",
     header: <span className="whitespace-normal">Délai d'exécution</span>,
+    render: (item: BonCommande) => item.delaiExecution || "-",
   },
 ];
 
