@@ -90,86 +90,100 @@ export default function VehiculesList() {
     };
 
     return (
-      <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Liste des Véhicules</h1>
-          <Button
-            asChild
-            className={
-              "rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
-            }
-          >
-            <Link to="/parc-auto/vehicules/ajouter">Ajouter un Véhicule</Link>
-          </Button>
-        </div>
+        <div className="container mx-auto py-8 px-6">
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-800">Gestion des Véhicules</h1>
+                    <p className="text-gray-500 mt-1">{totalElements} véhicules trouvés</p>
+                </div>
+                <Button asChild className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900">
+                    <Link to="/parc-auto/vehicules/ajouter"><PlusCircle className="mr-2 h-4 w-4" /> Ajouter un Véhicule</Link>
+                </Button>
+            </div>
+            
+            <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                    <Input 
+                        type="text"
+                        placeholder="Rechercher par immatriculation..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 w-full md:w-1/3"
+                    />
+                </div>
+            </div>
+            
+            {error && <div className="p-4 text-center text-red-600 bg-red-50 rounded-lg m-4">{error}</div>}
 
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Immatriculation
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Marque & Modèle
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Kilométrage
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {vehicules.map((vehicule) => (
-                <tr key={vehicule.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                    {vehicule.immatriculation}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {vehicule.marque} {vehicule.modele}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        vehicule.statut === "EN_SERVICE"
-                          ? "bg-green-100 text-green-800"
-                          : vehicule.statut === "EN_MISSION"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {vehicule.statut}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {vehicule.kilometrage} km
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="mr-2 hover:bg-blue-100"
-                    >
-                      <Pencil className="h-4 w-4 text-blue-600" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hover:bg-red-100"
-                    >
-                      <Trash2 className="h-4 w-4 text-red-600" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <div className="bg-white rounded-lg shadow-md border border-gray-200">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">Immatriculation</TableHead>
+                            <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">Marque & Modèle</TableHead>
+                            <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">Centre</TableHead>
+                            <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider text-center">Statut</TableHead>
+                            <TableHead className="px-6 py-4 text-right font-bold text-gray-600 uppercase tracking-wider">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan="5" className="text-center py-10">
+                                    <div className="flex justify-center items-center text-gray-500">
+                                        <Loader2 className="h-6 w-6 animate-spin mr-3" />
+                                        <span>Chargement des données...</span>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : vehicules.length > 0 ? (
+                            vehicules.map((vehicule) => (
+                                <TableRow key={vehicule.id} className="hover:bg-gray-50 border-b border-gray-200">
+                                    <TableCell className="px-6 py-4 font-mono text-gray-800">{vehicule.immatriculation}</TableCell>
+                                    <TableCell className="px-6 py-4 font-medium text-gray-900">{vehicule.marque} {vehicule.modele}</TableCell>
+                                    <TableCell className="px-6 py-4 text-gray-600">{vehicule.centreRattachementNom}</TableCell>
+                                    <TableCell className="px-6 py-4 text-center">
+                                        <Badge variant={getStatusVariant(vehicule.statut)}>
+                                            {vehicule.statut ? vehicule.statut.replace('_', ' ') : 'N/A'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="px-6 py-4 text-right">
+                                        <Button variant="ghost" size="icon" className="group" onClick={() => navigate(`/parc-auto/vehicules/modifier/${vehicule.id}`)}>
+                                            <Pencil className="h-4 w-4 text-blue-600 group-hover:text-blue-600" />
+                                        </Button>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild><Button variant="ghost" size="icon" className="group"><Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-600" /></Button></AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader><AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle><AlertDialogDescription>Le véhicule "{vehicule.immatriculation}" sera définitivement supprimé.</AlertDialogDescription></AlertDialogHeader>
+                                                <AlertDialogFooter><AlertDialogCancel>Annuler</AlertDialogCancel><AlertDialogAction onClick={() => handleDelete(vehicule.id)} className="bg-red-600 hover:bg-red-700">Supprimer</AlertDialogAction></AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan="5" className="text-center py-10 text-gray-500">
+                                    {searchTerm ? `Aucun véhicule trouvé pour "${searchTerm}"` : "Aucun véhicule à afficher."}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+            
+            <div className="flex items-center justify-between mt-4">
+                <span className="text-sm text-gray-600">
+                    Affichage de {vehicules.length} sur {totalElements} véhicules
+                </span>
+                <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={currentPage === 0}>Précédent</Button>
+                    <span className="text-sm font-medium p-2">{totalPages > 0 ? currentPage + 1 : 0} / {totalPages}</span>
+                    <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage >= totalPages - 1}>Suivant</Button>
+                </div>
+            </div>
+            <Toaster richColors />
         </div>
-      </div>
     );
 }
