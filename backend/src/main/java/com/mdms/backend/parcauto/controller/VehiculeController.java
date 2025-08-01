@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import jakarta.validation.Valid;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable; 
 @RestController
 @RequestMapping("/api/admin/parcauto/vehicules")
 public class VehiculeController {
@@ -18,10 +19,14 @@ public class VehiculeController {
     private VehiculeService vehiculeService;
 
 
-    @GetMapping
-    public ResponseEntity<List<VehiculeDto>> getAllVehicules() {
-        return ResponseEntity.ok(vehiculeService.findAll());
-    }
+     @GetMapping
+public ResponseEntity<Page<VehiculeDto>> getAllVehicules(
+        @RequestParam(required = false) String query, 
+        Pageable pageable
+) {
+    Page<VehiculeDto> vehiculePage = vehiculeService.findAllPaginated(query, pageable);
+    return ResponseEntity.ok(vehiculePage);
+}
 
 
     @GetMapping("/{id}")

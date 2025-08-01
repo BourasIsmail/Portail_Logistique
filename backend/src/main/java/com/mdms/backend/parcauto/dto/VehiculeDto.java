@@ -19,6 +19,7 @@ public class VehiculeDto {
     @NotBlank(message = "La marque ne peut pas être vide.")
     private String marque;
     private String modele;
+    private String referenceMarche;
     private String genre;
     @NotNull(message = "Le type de carburant est obligatoire.")
     private TypeCarburant typeCarburant;

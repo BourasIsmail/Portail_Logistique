@@ -11,7 +11,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,6 +71,7 @@ public class VehiculeService {
         vehicule.setImmatriculation(dto.getImmatriculation());
         vehicule.setMarque(dto.getMarque());
         vehicule.setModele(dto.getModele());
+        vehicule.setReferenceMarche(dto.getReferenceMarche());
         vehicule.setGenre(dto.getGenre());
         vehicule.setTypeCarburant(dto.getTypeCarburant());
         vehicule.setPuissanceFiscale(dto.getPuissanceFiscale());
@@ -103,6 +105,7 @@ public class VehiculeService {
         dto.setImmatriculation(vehicule.getImmatriculation());
         dto.setMarque(vehicule.getMarque());
         dto.setModele(vehicule.getModele());
+        dto.setReferenceMarche(vehicule.getReferenceMarche()); 
         dto.setGenre(vehicule.getGenre());
         dto.setTypeCarburant(vehicule.getTypeCarburant());
         dto.setPuissanceFiscale(vehicule.getPuissanceFiscale());
@@ -125,4 +128,21 @@ public class VehiculeService {
         }
         return dto;
     }
+    // --- NOUVELLE MÉTHODE POUR LA PAGINATION ---
+
+   @Transactional(readOnly = true)
+public Page<VehiculeDto> findAllPaginated(String query,Pageable pageable) {
+     Page<Vehicule> vehiculePage;
+    
+        if (query != null && !query.trim().isEmpty()) {
+        vehiculePage = vehiculeRepository.searchByImmatriculationContainingIgnoreCase(query.trim(), pageable);
+    } else {
+
+        vehiculePage = vehiculeRepository.findAllWithDetails(pageable);
+    }
+    
+    return vehiculePage.map(this::convertToDto);
+}
+    
+
 }

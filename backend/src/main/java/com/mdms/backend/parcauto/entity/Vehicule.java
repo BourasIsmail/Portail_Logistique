@@ -71,6 +71,9 @@ public class Vehicule {
     private String observations;
 
 
+    @Column(name = "reference_marche")
+    private String referenceMarche;
+    
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "centre_rattachement_id")

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { createVehicule, getAllCentres, getAllChauffeurs } from '@/services/parcAutoService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,16 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Toaster, toast } from 'sonner';
 import { Car, Wrench, Users, Info, Loader2 } from 'lucide-react';
+import { updateVehicule, getVehiculeById} from '@/services/parcAutoService'; 
 
 export default function VehiculeForm() {
     const navigate = useNavigate();
+    const { vehiculeId } = useParams();
     
-    const [vehiculeData, setVehiculeData] = useState({
-        immatriculation: '', marque: '', modele: '', referenceMarche: '', genre: '', typeCarburant: 'DIESEL',
-        puissanceFiscale: 0, dateMiseEnCirculation: '', statut: 'EN_SERVICE', kilometrage: 0,
-        dateExpirationAssurance: '', dateProchainControleTechnique: '', aFaitAccident: false,
-        etat: '', observations: '', centreRattachementId: null, chauffeurAttitreId: null,
-    });
+    const [vehiculeData, setVehiculeData] = useState(null); 
 
     const [centres, setCentres] = useState([]);
     const [chauffeurs, setChauffeurs] = useState([]);
@@ -28,24 +25,34 @@ export default function VehiculeForm() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const loadDependencies = async () => {
+        const loadAllData = async () => {
             try {
-                const [centresRes, chauffeursRes] = await Promise.all([
+                
+                const [vehiculeRes, centresRes, chauffeursRes] = await Promise.all([
+                    getVehiculeById(vehiculeId),
                     getAllCentres(),
                     getAllChauffeurs()
                 ]);
+                const data = vehiculeRes.data;
+                setVehiculeData({
+                    ...data,
+                    centreRattachementId: data.centreRattachementId?.toString() || null,
+                    chauffeurAttitreId: data.chauffeurAttitreId?.toString() || null,
+                });
+                
                 setCentres(centresRes.data);
                 setChauffeurs(chauffeursRes.data);
             } catch (err) {
-                console.error("Erreur de chargement des dépendances:", err);
-                setError("Impossible de charger les listes de centres et chauffeurs. Veuillez vérifier la connexion au serveur.");
-                toast.error("Erreur de chargement des données initiales.");
+                console.error("Erreur de chargement des données:", err);
+                setError("Impossible de charger les données du véhicule.");
+                toast.error("Erreur de chargement des données.");
             } finally {
                 setLoading(false);
             }
         };
-        loadDependencies();
-    }, []);
+        loadAllData();
+    }, [vehiculeId]); 
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -57,15 +64,11 @@ export default function VehiculeForm() {
         setVehiculeData(prev => ({ ...prev, [name]: finalValue }));
     };
 
-    const handleSubmit = async (e) => {
+       const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!vehiculeData.centreRattachementId) {
             toast.error("Veuillez sélectionner un centre de rattachement.");
-            return;
-        }
-        if (!vehiculeData.immatriculation || !vehiculeData.marque) {
-            toast.error("L'immatriculation et la marque sont obligatoires.");
             return;
         }
 
@@ -75,15 +78,13 @@ export default function VehiculeForm() {
                 ...vehiculeData,
                 centreRattachementId: parseInt(vehiculeData.centreRattachementId, 10),
                 chauffeurAttitreId: vehiculeData.chauffeurAttitreId ? parseInt(vehiculeData.chauffeurAttitreId, 10) : null,
-                kilometrage: parseInt(vehiculeData.kilometrage, 10) || 0,
-                puissanceFiscale: parseInt(vehiculeData.puissanceFiscale, 10) || 0,
             };
             
-            await createVehicule(dataToSend);
-            toast.success('Véhicule ajouté avec succès !');
+            await updateVehicule(vehiculeId, dataToSend); // <-- CHANGEMENT : On appelle updateVehicule
+            toast.success('Véhicule mis à jour avec succès !');
             setTimeout(() => navigate('/parc-auto/vehicules'), 1500);
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Erreur lors de la création du véhicule.');
+            toast.error(err.response?.data?.message || 'Erreur lors de la mise à jour du véhicule.');
             console.error(err);
         } finally {
             setSubmitting(false);
@@ -91,16 +92,11 @@ export default function VehiculeForm() {
     };
     
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
-                <span className="ml-4 text-lg">Chargement du formulaire...</span>
-            </div>
-        );
+        return <div className="p-8 text-center">Chargement des données du véhicule...</div>;
     }
     
     if (error) {
-        return <div className="p-8 text-center text-red-600 bg-red-50 rounded-lg m-4">{error}</div>;
+        return <div className="p-8 text-center text-red-500">{error}</div>;
     }
 
     return (
@@ -108,7 +104,7 @@ export default function VehiculeForm() {
             <form onSubmit={handleSubmit}>
                 <Card className="max-w-5xl mx-auto border-gray-300 shadow-lg">
                     <CardHeader className="bg-gray-50 border-b rounded-t-lg">
-                        <CardTitle className="text-2xl font-bold text-gray-800">Ajouter un Nouveau Véhicule</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-gray-800"> Modifier le Véhicule</CardTitle>
                         <CardDescription>Remplissez les informations ci-dessous pour enregistrer un nouveau véhicule dans le parc.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 space-y-10">
@@ -141,12 +137,48 @@ export default function VehiculeForm() {
                         </section>
 
                         {/* Section 3: Affectation et Statut */}
-                         <section className="space-y-6">
-                            <div className="flex items-center space-x-3 border-b pb-3"><Users className="h-6 w-6 text-purple-600" /><h3 className="text-xl font-semibold text-gray-700">Affectation et Statut</h3></div>
+                             <section className="space-y-6">
+                             <h3 className="text-xl font-semibold text-gray-700">Affectation et Statut</h3>
                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="space-y-2"><Label htmlFor="centreRattachementId">Centre de Rattachement</Label><Select onValueChange={(v) => handleSelectChange('centreRattachementId', v)} required><SelectTrigger><SelectValue placeholder="Sélectionner..." /></SelectTrigger><SelectContent>{centres.map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.nom}</SelectItem>)}</SelectContent></Select></div>
-                                <div className="space-y-2"><Label htmlFor="chauffeurAttitreId">Chauffeur Attitré (Optionnel)</Label><Select onValueChange={(v) => handleSelectChange('chauffeurAttitreId', v)}><SelectTrigger><SelectValue placeholder="Sélectionner..." /></SelectTrigger><SelectContent><SelectItem value="none">Aucun</SelectItem>{chauffeurs.map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.prenom} {c.nom}</SelectItem>)}</SelectContent></Select></div>
-                                <div className="space-y-2"><Label htmlFor="statut">Statut Opérationnel</Label><Select onValueChange={(v) => handleSelectChange('statut', v)} defaultValue="EN_SERVICE"><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="EN_SERVICE">En Service</SelectItem><SelectItem value="EN_MISSION">En Mission</SelectItem><SelectItem value="EN_MAINTENANCE">En Maintenance</SelectItem><SelectItem value="HORS_SERVICE">Hors Service</SelectItem></SelectContent></Select></div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="centreRattachementId">Centre de Rattachement</Label>
+                                    <Select 
+                                        value={vehiculeData.centreRattachementId?.toString()} 
+                                        onValueChange={(v) => handleSelectChange('centreRattachementId', v)} 
+                                        required
+                                    >
+                                        <SelectTrigger><SelectValue placeholder="Sélectionner..." /></SelectTrigger>
+                                        <SelectContent>{centres.map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.nom}</SelectItem>)}</SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="chauffeurAttitreId">Chauffeur Attitré (Optionnel)</Label>
+                                    <Select 
+                                        value={vehiculeData.chauffeurAttitreId?.toString() || "none"}
+                                        onValueChange={(v) => handleSelectChange('chauffeurAttitreId', v)}
+                                    >
+                                        <SelectTrigger><SelectValue placeholder="Sélectionner..." /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Aucun</SelectItem>
+                                            {chauffeurs.map(c => <SelectItem key={c.id} value={c.id.toString()}>{c.prenom} {c.nom}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="statut">Statut Opérationnel</Label>
+                                    <Select 
+                                        value={vehiculeData.statut} 
+                                        onValueChange={(v) => handleSelectChange('statut', v)}
+                                    >
+                                        <SelectTrigger><SelectValue /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="EN_SERVICE">En Service</SelectItem>
+                                            <SelectItem value="EN_MISSION">En Mission</SelectItem>
+                                            <SelectItem value="EN_MAINTENANCE">En Maintenance</SelectItem>
+                                            <SelectItem value="HORS_SERVICE">Hors Service</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                              </div>
                         </section>
 
@@ -160,9 +192,9 @@ export default function VehiculeForm() {
                              <div className="space-y-2"><Label htmlFor="observations">Observations</Label><Textarea id="observations" name="observations" value={vehiculeData.observations} onChange={handleChange} placeholder="Ajouter des remarques..."/></div>
                         </section>
                     </CardContent>
-                    <CardFooter className="flex justify-end gap-4 bg-gray-50 border-t rounded-b-lg p-4">
-                        <Button type="button" variant="outline" onClick={() => navigate('/parc-auto/vehicules')}>Annuler</Button>
-                        <Button type="submit" disabled={submitting}>{submitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : 'Enregistrer le Véhicule'}</Button>
+ <CardFooter className="flex justify-end gap-4 bg-slate-50 border-t p-6">
+                        <Button type="button" variant="outline" size="lg" onClick={() => navigate('/parc-auto/vehicules')}>Annuler</Button>
+                        <Button type="submit" size="lg" disabled={submitting}>{submitting ? 'Mise à jour...' : 'Enregistrer les Modifications'}</Button>
                     </CardFooter>
                 </Card>
             </form>

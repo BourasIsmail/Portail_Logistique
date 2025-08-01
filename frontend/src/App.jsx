@@ -30,6 +30,7 @@ import AOByIdPage from "./gestion_marche/vues/appel-offre/id/page";
 import ParcAutoLayout from "./gestion_parc_auto/pages/ParcAutoLayout";
 import VehiculesList from "./gestion_parc_auto/pages/VehiculesList";
 import VehiculeForm from "./gestion_parc_auto/pages/VehiculeForm";
+import VehiculeEditForm from "./gestion_parc_auto/pages/VehiculeEditForm";
 
 function gestionDemandeRoutes() {
   return (
@@ -233,6 +234,7 @@ function gestionParcAutoRoutes() {
       {/* Redirige /parc-auto vers /parc-auto/vehicules */}
       <Route path="vehicules" element={<VehiculesList />} />
       <Route path="vehicules/ajouter" element={<VehiculeForm />} />
+      <Route path="vehicules/modifier/:vehiculeId" element={<VehiculeEditForm />} />
       <Route
         path="*"
         element={<Navigate to="/parc-auto/vehicules" replace />}

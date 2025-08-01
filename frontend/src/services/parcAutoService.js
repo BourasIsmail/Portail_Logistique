@@ -24,8 +24,15 @@ import api from "@/utils/api";
 //   }
 // );
 // --- API pour les Véhicules ---
-export const getAllVehicules = () => {
-  return api.get("/admin/parcauto/vehicules");
+export const getAllVehicules = (page = 0, size = 10, query = '') => {
+    return api.get('/admin/parcauto/vehicules', {
+        params: {
+            page,
+            size,
+            query,
+            sort: 'marque,asc'
+        }
+    }); 
 };
 
 export const getVehiculeById = (id) => {
