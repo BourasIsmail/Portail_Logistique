@@ -43,7 +43,7 @@ export default function VehiculesList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const VEHICULES_PER_PAGE = 10;
+  const VEHICULES_PER_PAGE = 8;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
@@ -124,7 +124,7 @@ export default function VehiculesList() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-6">
+    <div className="container mx-auto pt-6 px-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
@@ -144,7 +144,7 @@ export default function VehiculesList() {
         </Button>
       </div>
 
-      <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <div className="mb-4 bg-white w-sm rounded-lg shadow-sm border border-gray-200">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
           <Input
@@ -152,7 +152,7 @@ export default function VehiculesList() {
             placeholder="Rechercher par immatriculation..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-full md:w-1/3"
+            className="pl-10 "
           />
         </div>
       </div>
