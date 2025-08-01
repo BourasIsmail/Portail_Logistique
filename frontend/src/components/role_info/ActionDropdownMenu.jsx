@@ -99,7 +99,7 @@ export default function ActionDropdownMenu({ row, refreshTable }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent className="w-fit px-8">
         <DialogHeader>
           <DialogTitle className={"text-center text-xl"}>
             Modifier Demande

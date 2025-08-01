@@ -78,6 +78,40 @@ public class AdminController {
 
         return ResponseEntity.ok(userRepository.save(user));
     }
+    @DeleteMapping("/delete-user/{id}")
+    private ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        Service service = user.getService();
+
+        // Step 1: Unlink children to prevent cascading delete
+        if (service != null && service.getChildren() != null && !service.getChildren().isEmpty()) {
+            for (Service child : service.getChildren()) {
+                child.setParent(null); // detach child from parent
+            }
+            service.getChildren().clear(); // clear parent's children list
+        }
+
+        // Step 2: Unlink user <-> service to avoid FK issues
+        if (service != null) {
+            service.setUser(null);
+            user.setService(null);
+            serviceRepository.save(service);
+        }
+
+        // Step 3: Delete user
+        userRepository.delete(user);
+
+        // Step 4: Delete the now-detached service
+        if (service != null) {
+            serviceRepository.delete(service);
+        }
+        return ResponseEntity.ok().build();
+    }
 
 
     @PostMapping("/add-material")

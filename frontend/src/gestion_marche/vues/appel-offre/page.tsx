@@ -70,6 +70,7 @@ const columns: Column<AppelOffre>[] = [
         Date de fin des travaux de la commission
       </span>
     ),
+    render: (item: AppelOffre) => item.dateFinTravaux || "-",
   },
   {
     key: "dateNotificationApprobation",
@@ -78,6 +79,7 @@ const columns: Column<AppelOffre>[] = [
         Date notification de l'approbation
       </span>
     ),
+    render: (item: AppelOffre) => item.dateNotificationApprobation || "-",
   },
 ];
 

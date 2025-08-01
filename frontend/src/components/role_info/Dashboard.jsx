@@ -10,7 +10,7 @@ import {
   ArchiveIcon,
   PackageIcon,
   UsersIcon,
-  ChartColumnBigIcon,
+  FileClockIcon,
   TicketPlusIcon,
 } from "lucide-react";
 
@@ -19,7 +19,7 @@ const data = {
     {
       title: "Demandes",
       url: "/md/demandes",
-      icon: TicketsIcon,
+      icon: FileClockIcon,
       isActive: true,
     },
     {

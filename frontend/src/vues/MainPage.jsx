@@ -115,7 +115,7 @@ export default function MainPage() {
 
             <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 flex flex-col w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
-                <FileText className="w-12 h-12 mx-auto text-slate-700" />
+                <Car className="w-12 h-12 mx-auto text-slate-700" />
                 <CardTitle className="text-slate-900">
                   Gestion du parc auto
                 </CardTitle>
@@ -125,8 +125,9 @@ export default function MainPage() {
               </CardHeader>
               <CardContent className="flex justify-center h-full items-end">
                 <Button
+                  asChild
                   className="bg-slate-800 text-white hover:bg-slate-900"
-                 asChild>
+                >
                   <Link to="/parc-auto/vehicules">Accéder</Link>
                 </Button>
               </CardContent>
