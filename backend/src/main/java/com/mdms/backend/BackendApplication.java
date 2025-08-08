@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 // a ajouter
 //Un "robot" qui s'exécute automatiquement à des moments précis
 @EnableScheduling
-
 public class BackendApplication {
 
     public static void main(String[] args) {

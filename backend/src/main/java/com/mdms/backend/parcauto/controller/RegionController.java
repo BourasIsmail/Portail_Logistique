@@ -13,7 +13,7 @@ import com.mdms.backend.parcauto.dto.CentreRattachementDto;
 import com.mdms.backend.parcauto.service.CentreRattachementService;
 import org.springframework.web.bind.annotation.*;
 import com.mdms.backend.parcauto.entity.Region;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/admin/parcauto")
 public class RegionController {
@@ -57,6 +57,7 @@ public class RegionController {
     }
 
         @DeleteMapping("/regions/{id}")
+        @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRegion(@PathVariable Long id) {
         regionService.deleteRegion(id);
         return ResponseEntity.noContent().build();

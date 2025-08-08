@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable; 
+import java.util.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/admin/parcauto/vehicules")
 public class VehiculeController {
@@ -52,8 +53,32 @@ public ResponseEntity<Page<VehiculeDto>> getAllVehicules(
 
    
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')") 
     public ResponseEntity<Void> deleteVehicule(@PathVariable Long id) {
         vehiculeService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
+       @GetMapping("/disponibles")
+    public ResponseEntity<List<VehiculeDto>> getVehiculesDisponibles(
+        @RequestParam(name = "centre", required = false) String nomCentre
+    ) {
+        List<VehiculeDto> vehicules;
+        if (nomCentre != null && !nomCentre.trim().isEmpty()) {
+            // Si le paramètre "centre" est fourni, on filtre
+            vehicules = vehiculeService.findVehiculesDisponiblesByCentre(nomCentre);
+        } else {
+            // Sinon, on retourne tous les véhicules disponibles comme avant
+            vehicules = vehiculeService.findVehiculesDisponibles();
+        }
+        return ResponseEntity.ok(vehicules);
+    }
+
+
+    @GetMapping("/all")
+    public ResponseEntity<List<VehiculeDto>> getAllVehiculesForSelect() {
+        return ResponseEntity.ok(vehiculeService.findAllForSelect()); 
+    }
+
 }

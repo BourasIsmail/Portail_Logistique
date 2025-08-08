@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 @Service
 public class DepenseService {
 
@@ -22,9 +24,18 @@ public class DepenseService {
     @Autowired private MoyenPaiementRepository moyenPaiementRepository;
 
     // --- READ ---
+    
     @Transactional(readOnly = true)
-    public List<DepenseDto> findAll() {
-        return depenseRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+    public Page<DepenseDto> findAll(String query, Pageable pageable) {
+        Page<Depense> depensePage;
+        
+        if (query != null && !query.trim().isEmpty()) {
+            depensePage = depenseRepository.searchByTerm(query.trim(), pageable);
+        } else {
+            depensePage = depenseRepository.findAllWithDetails(pageable);
+        }
+        
+        return depensePage.map(this::convertToDto);
     }
 
     @Transactional(readOnly = true)

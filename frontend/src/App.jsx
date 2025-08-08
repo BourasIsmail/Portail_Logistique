@@ -31,6 +31,21 @@ import ParcAutoLayout from "./gestion_parc_auto/pages/ParcAutoLayout";
 import VehiculesList from "./gestion_parc_auto/pages/VehiculesList";
 import VehiculeForm from "./gestion_parc_auto/pages/VehiculeForm";
 import VehiculeEditForm from "./gestion_parc_auto/pages/VehiculeEditForm";
+import ChauffeursList from "./gestion_parc_auto/pages/ChauffeursList";
+import ChauffeurForm from "./gestion_parc_auto/pages/ChauffeurForm";
+import ChauffeurEditForm from "./gestion_parc_auto/pages/ChauffeurEditForm";
+import MissionsList from "./gestion_parc_auto/pages/MissionsList";
+import MissionForm from "./gestion_parc_auto/pages/MissionForm";
+import MissionEditForm from "./gestion_parc_auto/pages/MissionEditForm";
+import { NotificationProvider } from "./utils/NotificationProvider";
+import NotificationsPage from "./gestion_parc_auto/pages/NotificationsPage";
+
+import DepensesList from "./gestion_parc_auto/pages/DepensesList";
+import MoyensPaiementList from "./gestion_parc_auto/pages/MoyensPaiementList";
+import DepenseForm from "./gestion_parc_auto/pages/DepenseForm";
+import MoyenPaiementForm from "./gestion_parc_auto/pages/MoyenPaiementForm";
+import DepenseEditForm from "./gestion_parc_auto/pages/DepenseEditForm";
+import MoyenPaiementEditForm from "./gestion_parc_auto/pages/MoyenPaiementEditForm";
 
 function gestionDemandeRoutes() {
   return (
@@ -230,17 +245,43 @@ function gestionParcAutoRoutes() {
       }
     >
       {/* Routes enfants qui s'afficheront à l'intérieur de <Outlet /> */}
-      <Route index element={<Navigate to="vehicules" replace />} />{" "}
+      <Route index element={<Navigate to="vehicules" replace />} />
       {/* Redirige /parc-auto vers /parc-auto/vehicules */}
       <Route path="vehicules" element={<VehiculesList />} />
       <Route path="vehicules/ajouter" element={<VehiculeForm />} />
-      <Route path="vehicules/modifier/:vehiculeId" element={<VehiculeEditForm />} />
+      <Route
+        path="vehicules/modifier/:vehiculeId"
+        element={<VehiculeEditForm />}
+      />
+      <Route path="chauffeurs" element={<ChauffeursList />} />
+      <Route path="chauffeurs/ajouter" element={<ChauffeurForm />} />
+      <Route
+        path="chauffeurs/modifier/:chauffeurId"
+        element={<ChauffeurEditForm />}
+      />
+      <Route path="missions" element={<MissionsList />} />
+      <Route path="missions/ajouter" element={<MissionForm />} />
+      <Route
+        path="missions/modifier/:missionId"
+        element={<MissionEditForm />}
+      />
+      <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="depenses" element={<DepensesList />} />
+      <Route path="moyens-paiement" element={<MoyensPaiementList />} />
+      <Route path="depenses/ajouter" element={<DepenseForm />} />
+      <Route path="moyens-paiement/ajouter" element={<MoyenPaiementForm />} />
+      <Route
+        path="moyens-paiement/modifier/:moyenPaiementId"
+        element={<MoyenPaiementEditForm />}
+      />
+      <Route
+        path="depenses/modifier/:depenseId"
+        element={<DepenseEditForm />}
+      />
       <Route
         path="*"
         element={<Navigate to="/parc-auto/vehicules" replace />}
       />
-      {/* <Route path="chauffeurs" element={<ChauffeursList />} /> */}
-      {/* <Route path="missions" element={<MissionsList />} /> */}
     </Route>
   );
 }
@@ -269,32 +310,34 @@ function App() {
   return (
     <>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              userDetails &&
-              (userDetails?.role == "ROLE_ADMIN" ||
-                userDetails?.role == "ROLE_LOGISTICS") ? (
-                <MainPage />
-              ) : (
-                <Navigate to="/md/dashboard" />
-              )
-            }
-          />
+        <NotificationProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                userDetails &&
+                (userDetails?.role == "ROLE_ADMIN" ||
+                  userDetails?.role == "ROLE_LOGISTICS") ? (
+                  <MainPage />
+                ) : (
+                  <Navigate to="/md/dashboard" />
+                )
+              }
+            />
 
-          {/* material demande routes */}
-          {gestionDemandeRoutes()}
+            {/* material demande routes */}
+            {gestionDemandeRoutes()}
 
-          {/* gestion marchée routes */}
-          {gestionMarcheRoutes()}
+            {/* gestion marchée routes */}
+            {gestionMarcheRoutes()}
 
-          {/* --- APPEL À VOTRE NOUVELLE FONCTION DE ROUTES --- */}
-          {gestionParcAutoRoutes()}
+            {/* --- APPEL À VOTRE NOUVELLE FONCTION DE ROUTES --- */}
+            {gestionParcAutoRoutes()}
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </NotificationProvider>
         <Toaster
           richColors
           visibleToasts={1}

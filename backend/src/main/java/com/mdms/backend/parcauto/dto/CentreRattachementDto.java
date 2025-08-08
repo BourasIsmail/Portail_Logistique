@@ -11,6 +11,6 @@ public class CentreRattachementDto {
     @NotBlank(message = "La ville ne peut pas être vide.")
     private String ville;
     @NotNull(message = "L'ID de la région est obligatoire.")
-    private long region_id;
+    private long regionId;
     private String regionNom;
 }

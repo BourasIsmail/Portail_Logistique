@@ -22,6 +22,7 @@ public class Mission {
     
     private Long kilometrageDepart;
     private Long kilometrageFin;
+    private String numeroSuiviRh;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicule_id", nullable = false)

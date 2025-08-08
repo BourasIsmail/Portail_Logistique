@@ -9,7 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder; 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 @RestController
 @RequestMapping("/api/notifications") 
 
@@ -49,5 +50,15 @@ public class NotificationController {
         notificationService.deleteNotification(id);
         return ResponseEntity.noContent().build();
     }
+    
 
+        @GetMapping("/all")
+    public ResponseEntity<Page<NotificationDto>> getAllMyNotifications(Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImp userDetails = (UserDetailsImp) authentication.getPrincipal();
+        Long userId = userDetails.getId(); 
+
+        Page<NotificationDto> notifications = notificationService.findAllByUserId(userId, pageable);
+        return ResponseEntity.ok(notifications);
+    }
 }

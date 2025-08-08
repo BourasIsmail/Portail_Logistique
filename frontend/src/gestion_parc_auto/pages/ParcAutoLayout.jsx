@@ -15,13 +15,18 @@ import {
   Route as MissionIcon,
   LogOut,
   ArrowLeftCircleIcon,
+  Bell
 } from "lucide-react";
 import { useAuth } from "@/utils/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import VehiculesList from "./VehiculesList";
+import { Badge } from "@/components/ui/badge";
+import { useNotifications } from "@/utils/NotificationProvider";
+import { /*...,*/ CreditCard, Fuel, Settings } from 'lucide-react'; 
 
 export default function ParcAutoLayout() {
   const { userDetails, logout } = useAuth();
+  const { unreadCount } = useNotifications(); 
   const navigate = useNavigate();
   return (
     <>
@@ -42,6 +47,17 @@ export default function ParcAutoLayout() {
               <ArrowLeftCircleIcon className="h-4 w-4" />
               <span>Menu Principal</span>
             </Button>
+
+             {userDetails?.role === 'ROLE_LOGISTICS' && (
+              <Link to="/parc-auto/notifications" className="relative text-slate-300 hover:text-white transition-colors">
+                <Bell className="h-6 w-6" />
+                {unreadCount > 0 && (
+                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 justify-center rounded-full p-0 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Link>
+            )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -111,6 +127,17 @@ export default function ParcAutoLayout() {
             >
               <MissionIcon className="h-5 w-5 mr-3" />
               Missions
+            </Link>
+
+             {/* --- NOUVELLE SECTION --- */}
+            <div className="px-4 mt-4 mb-2 text-xs font-semibold text-gray-500 uppercase">Finances</div>
+            <Link to="/parc-auto/depenses" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+              <Fuel className="h-5 w-5 mr-3" />
+              Dépenses
+            </Link>
+            <Link to="/parc-auto/moyens-paiement" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+              <CreditCard className="h-5 w-5 mr-3" />
+              Moyens de Paiement
             </Link>
           </nav>
         </aside>

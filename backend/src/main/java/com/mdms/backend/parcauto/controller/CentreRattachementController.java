@@ -3,59 +3,58 @@ package com.mdms.backend.parcauto.controller;
 import com.mdms.backend.parcauto.dto.CentreRattachementDto;
 import com.mdms.backend.parcauto.entity.CentreRattachement;
 import com.mdms.backend.parcauto.service.CentreRattachementService;
-
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/parcauto")
+@RequestMapping("/api/admin/parcauto/centres")
 public class CentreRattachementController {
 
     @Autowired
     private CentreRattachementService centreService;
 
-    @GetMapping("/centres")
-    public ResponseEntity<List<CentreRattachementDto>> getAllCentres() {
-        List<CentreRattachementDto> centres = centreService.findAllCentresAsDto();
+    @GetMapping
+    public ResponseEntity<Page<CentreRattachementDto>> getAllCentres(Pageable pageable) {
+        Page<CentreRattachementDto> centres = centreService.findAllPaginated(pageable);
         return ResponseEntity.ok(centres);
     }
 
-    @GetMapping("/centres/{id}")
+    @GetMapping("/liste-complete")
+    public ResponseEntity<List<CentreRattachementDto>> getAllCentresForSelect() {
+        return ResponseEntity.ok(centreService.findAllForSelect());
+    }
+
+    @GetMapping("/{id}")
     public ResponseEntity<CentreRattachementDto> getCentreById(@PathVariable Long id) {
         return centreService.findCentreByIdAsDto(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-     @PostMapping("/centres")
+    @PostMapping
     public ResponseEntity<CentreRattachement> createCentre(@Valid @RequestBody CentreRattachementDto dto) {
         CentreRattachement nouveauCentre = centreService.createCentre(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nouveauCentre);
     }
 
-    @PutMapping("/centres/{id}")
-    public ResponseEntity<CentreRattachement> updateCentre(@PathVariable Long id,@Valid @RequestBody CentreRattachementDto dto) {
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CentreRattachement> updateCentre(@PathVariable Long id, @Valid @RequestBody CentreRattachementDto dto) {
         CentreRattachement centreMisAJour = centreService.updateCentre(id, dto);
         return ResponseEntity.ok(centreMisAJour);
     }
 
-     @DeleteMapping("/centres/{id}")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteCentre(@PathVariable Long id) {
         centreService.deleteCentre(id);
         return ResponseEntity.noContent().build();
     }
- 
 }

@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page; 
+import org.springframework.data.domain.Pageable;
 @RestController
 @RequestMapping("/api/admin/parcauto/depenses")
 public class DepenseController {
@@ -16,9 +17,14 @@ public class DepenseController {
     @Autowired
     private DepenseService depenseService;
 
+
     @GetMapping
-    public ResponseEntity<List<DepenseDto>> getAllDepenses() {
-        return ResponseEntity.ok(depenseService.findAll());
+    public ResponseEntity<Page<DepenseDto>> getAllDepenses(
+        @RequestParam(required = false) String query,
+        Pageable pageable
+    ) {
+        Page<DepenseDto> page = depenseService.findAll(query, pageable);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
@@ -35,6 +41,7 @@ public class DepenseController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteDepense(@PathVariable Long id) {
         depenseService.delete(id);
         return ResponseEntity.noContent().build();

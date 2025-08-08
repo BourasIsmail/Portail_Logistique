@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.FutureOrPresent;
 @Data
 public class MissionDto {
     private Long id;
@@ -15,6 +14,9 @@ public class MissionDto {
     private String motif;
     @NotBlank(message = "La destination ne peut pas être vide.")
     private String destination;
+
+    private String numeroSuiviRh; 
+    
     @NotNull(message = "La date de début est obligatoire.")
     @FutureOrPresent(message = "La date de début ne peut pas être dans le passé.")
     private LocalDateTime dateDebut;

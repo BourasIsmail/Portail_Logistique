@@ -1,5 +1,4 @@
 package com.mdms.backend.parcauto.controller;
-
 import com.mdms.backend.parcauto.dto.ChauffeurDto;
 import com.mdms.backend.parcauto.entity.Chauffeur;
 import com.mdms.backend.parcauto.service.ChauffeurService;
@@ -7,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import jakarta.validation.Valid;
-
+import org.springframework.data.domain.Page; 
+import org.springframework.data.domain.Pageable;
+import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/admin/parcauto/chauffeurs")
@@ -19,8 +20,12 @@ public class ChauffeurController {
     private ChauffeurService chauffeurService;
 
     @GetMapping
-    public ResponseEntity<List<ChauffeurDto>> getAllChauffeurs() {
-        return ResponseEntity.ok(chauffeurService.findAll());
+    public ResponseEntity<Page<ChauffeurDto>> getAllChauffeurs(
+            @RequestParam(required = false) String query,
+            Pageable pageable
+    ) {
+        Page<ChauffeurDto> chauffeurPage = chauffeurService.findAll(query, pageable);
+        return ResponseEntity.ok(chauffeurPage);
     }
 
     @GetMapping("/{id}")
@@ -46,8 +51,29 @@ public class ChauffeurController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')") 
     public ResponseEntity<Void> deleteChauffeur(@PathVariable Long id) {
         chauffeurService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ChauffeurDto>> getAllChauffeursForSelect() {
+        return ResponseEntity.ok(chauffeurService.findAllForSelect());
+    }
+
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<ChauffeurDto>> getChauffeursDisponibles(
+        @RequestParam(name = "centre", required = false) String nomCentre
+    ) {
+        List<ChauffeurDto> chauffeurs;
+        if (nomCentre != null && !nomCentre.trim().isEmpty()) {
+            // Si le paramètre "centre" est fourni, on filtre
+            chauffeurs = chauffeurService.findChauffeursDisponiblesByCentre(nomCentre);
+        } else {
+            // Sinon, on retourne tous les chauffeurs disponibles
+            chauffeurs = chauffeurService.findChauffeursDisponibles();
+        }
+        return ResponseEntity.ok(chauffeurs);
     }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllVehicules, deleteVehicule } from "@/services/parcAutoService";
+import { getAllDepenses, deleteDepense } from "@/services/parcAutoService"; // Assurez-vous d'avoir deleteDepense dans votre service
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,27 +36,27 @@ import { Toaster, toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { useAuth } from "@/utils/AuthProvider";
 
-export default function VehiculesList() {
-  const { userDetails } = useAuth();
+export default function DepensesList() {
   const navigate = useNavigate();
-  const [vehicules, setVehicules] = useState([]);
+  const { userDetails } = useAuth();
+  const [depenses, setDepenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const VEHICULES_PER_PAGE = 10;
+  const DEPENSES_PER_PAGE = 10;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
 
-  const fetchVehicules = useCallback(async (page, query) => {
+  const fetchDepenses = useCallback(async (page, query) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getAllVehicules(page, VEHICULES_PER_PAGE, query);
+      const response = await getAllDepenses(page, DEPENSES_PER_PAGE, query);
       if (response.data && Array.isArray(response.data.content)) {
-        setVehicules(response.data.content);
+        setDepenses(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalElements(response.data.totalElements);
         setCurrentPage(response.data.number);
@@ -64,10 +64,8 @@ export default function VehiculesList() {
         throw new Error("La réponse de l'API n'a pas le format attendu.");
       }
     } catch (err) {
-      setError(
-        "Erreur lors de la récupération des données. Le serveur est peut-être indisponible."
-      );
-      setVehicules([]);
+      setError("Erreur lors de la récupération des dépenses.");
+      setDepenses([]);
       console.error(err);
     } finally {
       setLoading(false);
@@ -75,51 +73,34 @@ export default function VehiculesList() {
   }, []);
 
   useEffect(() => {
-    if (searchTerm !== debouncedSearchTerm) {
-      setCurrentPage(0);
-    }
-    fetchVehicules(currentPage, debouncedSearchTerm);
-  }, [currentPage, debouncedSearchTerm, fetchVehicules]);
+    fetchDepenses(currentPage, debouncedSearchTerm);
+  }, [currentPage, debouncedSearchTerm, fetchDepenses]);
 
   const handleDelete = async (id) => {
     try {
-      await deleteVehicule(id);
-      toast.success("Véhicule supprimé avec succès !");
-      if (vehicules.length === 1 && currentPage > 0) {
-        setCurrentPage(currentPage - 1);
-      } else {
-        fetchVehicules(currentPage, debouncedSearchTerm);
-      }
+      await deleteDepense(id); // Assurez-vous que cette fonction existe dans le service API
+      toast.success("Dépense supprimée avec succès !");
+      fetchDepenses(currentPage, debouncedSearchTerm);
     } catch (err) {
-      toast.error(
-        err.response?.data || "Erreur lors de la suppression du véhicule."
-      );
-      console.error(err);
+      toast.error(err.response?.data || "Erreur lors de la suppression.");
     }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
-
   const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
-  const getStatusVariant = (status) => {
-    switch (status) {
-      case "EN_SERVICE":
-        return "success";
-      case "EN_MISSION":
-        return "info";
-      case "EN_MAINTENANCE":
+  const getTypeVariant = (type) => {
+    switch (type) {
+      case "Maintenance":
         return "warning";
-      case "HORS_SERVICE":
-        return "destructive";
+      case "PleinCarburant":
+        return "info";
+      case "RechargeJawaz":
+        return "success";
       default:
         return "secondary";
     }
@@ -130,28 +111,25 @@ export default function VehiculesList() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
-            Gestion des Véhicules
+            Gestion des Dépenses
           </h1>
           <p className="text-gray-500 mt-1">
-            {totalElements} véhicules trouvés
+            {totalElements} dépenses trouvées
           </p>
         </div>
-        <Button
-          asChild
-          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
-        >
-          <Link to="/parc-auto/vehicules/ajouter">
-            <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un Véhicule
+        <Button asChild className="shadow-md">
+          <Link to="/parc-auto/depenses/ajouter">
+            <PlusCircle className="mr-2 h-4 w-4" /> Ajouter une Dépense
           </Link>
         </Button>
       </div>
 
       <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <Input
             type="text"
-            placeholder="Rechercher par immatriculation..."
+            placeholder="Rechercher par type, véhicule..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full md:w-1/3"
@@ -160,28 +138,26 @@ export default function VehiculesList() {
       </div>
 
       {error && (
-        <div className="p-4 text-center text-red-600 bg-red-50 rounded-lg m-4">
-          {error}
-        </div>
+        <div className="p-4 text-center text-red-600 bg-red-50">{error}</div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md border border-gray-200">
+      <div className="bg-white rounded-lg shadow-md border">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-              <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
-                Immatriculation
+            <TableRow className="bg-gray-50 border-b-2">
+              <TableHead className="px-6 py-4 font-bold text-gray-600">
+                Type
               </TableHead>
-              <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
-                Marque & Modèle
+              <TableHead className="px-6 py-4 font-bold text-gray-600">
+                Date
               </TableHead>
-              <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
-                Centre
+              <TableHead className="px-6 py-4 font-bold text-gray-600">
+                Montant
               </TableHead>
-              <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider text-center">
-                Statut
+              <TableHead className="px-6 py-4 font-bold text-gray-600">
+                Véhicule
               </TableHead>
-              <TableHead className="px-6 py-4 text-right font-bold text-gray-600 uppercase tracking-wider">
+              <TableHead className="px-6 py-4 text-right font-bold text-gray-600">
                 Actions
               </TableHead>
             </TableRow>
@@ -190,66 +166,57 @@ export default function VehiculesList() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan="5" className="text-center py-10">
-                  <div className="flex justify-center items-center text-gray-500">
-                    <Loader2 className="h-6 w-6 animate-spin mr-3" />
-                    <span>Chargement des données...</span>
-                  </div>
+                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
-            ) : vehicules.length > 0 ? (
-              vehicules.map((vehicule) => (
-                <TableRow
-                  key={vehicule.id}
-                  className="hover:bg-gray-50 border-b border-gray-200"
-                >
-                  <TableCell className="px-6 py-4 font-mono text-gray-800">
-                    {vehicule.immatriculation}
-                  </TableCell>
-                  <TableCell className="px-6 py-4 font-medium text-gray-900">
-                    {vehicule.marque} {vehicule.modele}
-                  </TableCell>
-                  <TableCell className="px-6 py-4 text-gray-600">
-                    {vehicule.centreRattachementNom}
-                  </TableCell>
-                  <TableCell className="px-6 py-4 text-center">
-                    <Badge variant={getStatusVariant(vehicule.statut)}>
-                      {vehicule.statut
-                        ? vehicule.statut.replace("_", " ")
-                        : "N/A"}
+            ) : depenses.length > 0 ? (
+              depenses.map((depense) => (
+                <TableRow key={depense.id} className="hover:bg-gray-50">
+                  <TableCell className="px-6 py-4">
+                    <Badge variant={getTypeVariant(depense.typeDepense)}>
+                      {depense.typeDepense.replace(/([A-Z])/g, " $1").trim()}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {new Date(depense.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-medium">
+                    {depense.montant.toFixed(2)} DH
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {depense.vehiculeImmatriculation}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="group"
                       onClick={() =>
-                        navigate(`/parc-auto/vehicules/modifier/${vehicule.id}`)
+                        navigate(`/parc-auto/depenses/modifier/${depense.id}`)
                       }
                     >
-                      <Pencil className="h-4 w-4 text-blue-600 group-hover:text-blue-600" />
+                      <Pencil className="h-4 w-4 text-blue-600" />
                     </Button>
-
                     {userDetails?.role === "ROLE_ADMIN" && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="group">
-                            <Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-600" />
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Le véhicule "{vehicule.immatriculation}" sera
-                              définitivement supprimé.
+                              La dépense du{" "}
+                              {new Date(depense.date).toLocaleDateString()} sera
+                              supprimée.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => handleDelete(vehicule.id)}
-                              className="bg-red-600 hover:bg-red-700"
+                              onClick={() => handleDelete(depense.id)}
+                              className="bg-red-600"
                             >
                               Supprimer
                             </AlertDialogAction>
@@ -267,8 +234,8 @@ export default function VehiculesList() {
                   className="text-center py-10 text-gray-500"
                 >
                   {searchTerm
-                    ? `Aucun véhicule trouvé pour "${searchTerm}"`
-                    : "Aucun véhicule à afficher."}
+                    ? `Aucune dépense trouvée pour "${searchTerm}"`
+                    : "Aucune dépense à afficher."}
                 </TableCell>
               </TableRow>
             )}
@@ -278,7 +245,7 @@ export default function VehiculesList() {
 
       <div className="flex items-center justify-between mt-4">
         <span className="text-sm text-gray-600">
-          Affichage de {vehicules.length} sur {totalElements} véhicules
+          Affichage de {depenses.length} sur {totalElements} dépenses
         </span>
         <div className="flex items-center space-x-2">
           <Button

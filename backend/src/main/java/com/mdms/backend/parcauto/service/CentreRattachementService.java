@@ -1,92 +1,75 @@
 package com.mdms.backend.parcauto.service;
 
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.mdms.backend.parcauto.dto.CentreRattachementDto;
-
-
-
 import com.mdms.backend.parcauto.entity.CentreRattachement;
 import com.mdms.backend.parcauto.entity.Region;
 import com.mdms.backend.parcauto.repository.CentreRattachementRepository;
 import com.mdms.backend.parcauto.repository.RegionRepository;
-
 import jakarta.persistence.EntityNotFoundException;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CentreRattachementService {
 
     @Autowired
     private CentreRattachementRepository centreRepository;
+    
+    @Autowired
+    private RegionRepository regionRepository;
 
-    public Optional<CentreRattachementDto> findCentreByIdAsDto(Long id) {
-        Optional<CentreRattachement> centreOptional = centreRepository.findById(id);
-        return centreOptional.map(this::convertToDto);
+    // --- READ ---
+
+    public Page<CentreRattachementDto> findAllPaginated(Pageable pageable) {
+        return centreRepository.findAll(pageable).map(this::convertToDto);
     }
 
-    //liister les centres de rattachement
-    public List<CentreRattachementDto>  findAllCentresAsDto() {
-
-        return centreRepository.findAll()
-        .stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
-    }
-     private CentreRattachementDto convertToDto(CentreRattachement centre) {
-        CentreRattachementDto dto = new CentreRattachementDto();
-        dto.setId(centre.getId());
-        dto.setNom(centre.getNom());
-        dto.setVille(centre.getVille());
-        
-        if(centre.getRegion()!= null){
-            dto.setRegion_id(centre.getRegion().getId());
-            dto.setRegionNom(centre.getRegion().getNomFr());
-        }
-
-        return dto;
-     }
-
-     //creation d'un centre de rattachement
-         @Autowired
-     private RegionRepository regionRepository;
-     public CentreRattachement createCentre(CentreRattachementDto dto){
-        CentreRattachement centre = new CentreRattachement();
-         centre.setNom(dto.getNom());
-         centre.setVille(dto.getVille());
-
-          Region region = regionRepository.findById(dto.getRegion_id())
-            .orElseThrow(() -> new RuntimeException("Région non trouvée avec l'id : " + dto.getRegion_id()));
-
-        centre.setRegion(region);
-
-        return centreRepository.save(centre);
-     }
-      // chercher les centre de rattachemnet par region
-      public List<CentreRattachementDto> findCentresByRegionId(Long regionId) {
-        List<CentreRattachement> centres = centreRepository.findByRegionId(regionId);
-        return centres.stream()
+    public List<CentreRattachementDto> findAllForSelect() {
+        return centreRepository.findAll(Sort.by("nom").ascending()).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-      }
+    }
 
-          // --- UPDATE ---
+    public Optional<CentreRattachementDto> findCentreByIdAsDto(Long id) {
+        return centreRepository.findById(id).map(this::convertToDto);
+    }
+
+    public List<CentreRattachementDto> findCentresByRegionId(Long regionId) {
+        return centreRepository.findByRegionId(regionId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    // --- CREATE ---
+    public CentreRattachement createCentre(CentreRattachementDto dto) {
+        CentreRattachement centre = new CentreRattachement();
+        centre.setNom(dto.getNom());
+        centre.setVille(dto.getVille());
+
+        Region region = regionRepository.findById(dto.getRegionId()) // Correction de nom
+                .orElseThrow(() -> new EntityNotFoundException("Région non trouvée avec l'id : " + dto.getRegionId()));
+
+        centre.setRegion(region);
+        return centreRepository.save(centre);
+    }
+
+    // --- UPDATE ---
     public CentreRattachement updateCentre(Long id, CentreRattachementDto dto) {
         CentreRattachement centre = centreRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Centre non trouvé avec l'id : " + id));
 
-        Region region = regionRepository.findById(dto.getRegion_id())
-                .orElseThrow(() -> new EntityNotFoundException("Région non trouvée avec l'id : " + dto.getRegion_id()));
+        Region region = regionRepository.findById(dto.getRegionId()) // Correction de nom
+                .orElseThrow(() -> new EntityNotFoundException("Région non trouvée avec l'id : " + dto.getRegionId()));
 
         centre.setNom(dto.getNom());
         centre.setVille(dto.getVille());
         centre.setRegion(region);
-
         return centreRepository.save(centre);
     }
 
@@ -98,5 +81,17 @@ public class CentreRattachementService {
         centreRepository.deleteById(id);
     }
 
-
+    // --- UTILITAIRE DE CONVERSION ---
+    private CentreRattachementDto convertToDto(CentreRattachement centre) {
+        CentreRattachementDto dto = new CentreRattachementDto();
+        dto.setId(centre.getId());
+        dto.setNom(centre.getNom());
+        dto.setVille(centre.getVille());
+        
+        if (centre.getRegion() != null) {
+            dto.setRegionId(centre.getRegion().getId()); 
+            dto.setRegionNom(centre.getRegion().getNomFr());
+        }
+        return dto;
+    }
 }

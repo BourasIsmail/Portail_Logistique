@@ -51,9 +51,22 @@ export const deleteVehicule = (id) => {
   return api.delete(`/admin/parcauto/vehicules/${id}`);
 };
 
+export const getVehiculesDisponibles = (centre) => {
+    return api.get('/admin/parcauto/vehicules/disponibles', {
+        params: { centre } 
+    });
+};
+
+export const getAllVehiculesForSelect = () => {
+    return api.get('/admin/parcauto/vehicules/all'); 
+};
+
+
 // --- API pour les Chauffeurs ---
-export const getAllChauffeurs = () => {
-  return api.get("/admin/parcauto/chauffeurs");
+export const getAllChauffeurs = (page = 0, size = 10, query = '') => {
+    return api.get('/admin/parcauto/chauffeurs', {
+        params: { page, size, query, sort: 'nom,asc' }
+    });
 };
 
 export const getChauffeurById = (id) => {
@@ -72,21 +85,33 @@ export const deleteChauffeur = (id) => {
   return api.delete(`/admin/parcauto/chauffeurs/${id}`);
 };
 
+export const getAllChauffeursForSelect = () => {
+    return api.get('/admin/parcauto/chauffeurs/all');
+};
+
+
+export const getChauffeursDisponibles = (centre) => {
+    // On passe le centre en tant que paramètre de requête
+    return api.get('/admin/parcauto/chauffeurs/disponibles', {
+        params: { centre }
+    });
+};
+
 // ==========================================================
 //                      API pour les Missions
 // ==========================================================
 
-export const getAllMissions = () => {
-  return api.get("/admin/parcauto/missions");
+export const getAllMissions = (page = 0, size = 10, query = '') => {
+    return api.get('/admin/parcauto/missions', {
+        params: { page, size, query, sort: 'dateDebut,desc' } // Trier par date de début par défaut
+    });
 };
 
 export const getMissionById = (id) => {
   return api.get(`/admin/parcauto/missions/${id}`);
 };
 
-export const createMission = (missionData) => {
-  return api.post("/admin/parcauto/missions", missionData);
-};
+export const createMission = (missionData) => api.post('/admin/parcauto/missions', missionData);
 
 export const terminerMission = (id, kilometrageFin) => {
   return api.put(`/admin/parcauto/missions/${id}/terminer`, { kilometrageFin });
@@ -147,12 +172,18 @@ export const deleteCentre = (id) => {
   return api.delete(`/admin/parcauto/centres/${id}`);
 };
 
+export const getAllCentresForSelect = () => {
+    return api.get('/admin/parcauto/centres/liste-complete');
+};
+
 // ==========================================================
 //             API pour les Dépenses & Moyens de Paiement
 // ==========================================================
 
-export const getAllDepenses = () => {
-  return api.get("/admin/parcauto/depenses");
+export const getAllDepenses = (page = 0, size = 10, query = '') => {
+    return api.get('/admin/parcauto/depenses', {
+        params: { page, size, query, sort: 'date,desc' } 
+    });
 };
 
 export const getDepenseById = (id) => {
@@ -171,9 +202,23 @@ export const deleteDepense = (id) => {
   return api.delete(`/admin/parcauto/depenses/${id}`);
 };
 
-export const getAllMoyensPaiement = () => {
-  return api.get("/admin/parcauto/moyens-paiement");
+
+
+export const getAllMoyensPaiement = (page = 0, size = 10, query = '') => {
+    return api.get('/admin/parcauto/moyens-paiement', {
+        params: {
+            page,
+            size,
+            query, 
+            sort: 'fournisseur,asc' 
+        }
+    });
 };
+
+export const getAllMoyensPaiementForSelect = () => {
+    return api.get('/admin/parcauto/moyens-paiement/all'); // ou /liste-complete
+};
+
 
 export const getMoyenPaiementById = (id) => {
   return api.get(`/admin/parcauto/moyens-paiement/${id}`);
@@ -183,7 +228,7 @@ export const createMoyenPaiement = (moyenPaiementData) => {
   return api.post("/admin/parcauto/moyens-paiement", moyenPaiementData);
 };
 
-export const UpdateMoyenPaiemment = (id, moyenPaiementData) => {
+export const updateMoyenPaiement = (id, moyenPaiementData) => {
   return api.put(`/admin/parcauto/moyens-paiement/${id}`, moyenPaiementData);
 };
 
@@ -199,7 +244,7 @@ export const getMyUnreadNotifications = () => {
 };
 
 export const markNotificationAsRead = (id) => {
-  return api.put(`/notifications/${id}/marquer-comme-lue`);
+    return api.put(`/notifications/${id}/marquer-comme-lue`);
 };
 
 export const markAllNotificationsAsRead = (id) => {
@@ -208,4 +253,8 @@ export const markAllNotificationsAsRead = (id) => {
 
 export const deleteNotification = (id) => {
   return api.delete(`/notifications/${id}`);
+};
+
+export const getAllMyNotifications = (page = 0, size = 10) => {
+    return api.get('/notifications/all', { params: { page, size } });
 };

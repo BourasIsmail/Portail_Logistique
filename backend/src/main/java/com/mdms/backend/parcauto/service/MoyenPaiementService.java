@@ -15,6 +15,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.mdms.backend.parcauto.repository.DepenseRepository; 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 @Service
 public class MoyenPaiementService {
 
@@ -22,10 +25,22 @@ public class MoyenPaiementService {
     private MoyenPaiementRepository moyenPaiementRepository;
 
     // --- READ ---
-    public List<MoyenPaiementDto> findAll() {
-        return moyenPaiementRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<MoyenPaiementDto> findAll(String query, Pageable pageable) {
+                Page<MoyenPaiement> moyenPaiementPage;
+        
+        if (query != null && !query.trim().isEmpty()) {
+            // Si une recherche est effectuée, on utilise la nouvelle méthode
+            moyenPaiementPage = moyenPaiementRepository.searchByNumeroOrFournisseur(query.trim(), pageable);
+        } else {
+            // Sinon, on liste tout
+            moyenPaiementPage = moyenPaiementRepository.findAllWithDetails(pageable);
+        }
+        
+        return moyenPaiementPage.map(this::convertToDto);
     }
-// Optional( est comme une boîte qui peut soit etre vide ou avoir un objet) -> utilisation de map()
+
+
     public Optional<MoyenPaiementDto> findById(Long id) {
         return moyenPaiementRepository.findById(id).map(this::convertToDto);
     }
@@ -123,4 +138,13 @@ public class MoyenPaiementService {
         }
         return dto;
     }
+
+
+    @Transactional(readOnly = true)
+public List<MoyenPaiementDto> findAllForSelect() {
+    return moyenPaiementRepository.findAllForSelect(Sort.by("fournisseur").ascending())
+            .stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+}
 }

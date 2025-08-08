@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllVehicules, deleteVehicule } from "@/services/parcAutoService";
+import { getAllChauffeurs, deleteChauffeur } from "@/services/parcAutoService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,32 +31,33 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  User as UserIcon,
 } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { useAuth } from "@/utils/AuthProvider";
 
-export default function VehiculesList() {
+export default function ChauffeursList() {
   const { userDetails } = useAuth();
   const navigate = useNavigate();
-  const [vehicules, setVehicules] = useState([]);
+  const [chauffeurs, setChauffeurs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const VEHICULES_PER_PAGE = 10;
+  const CHAUFFEURS_PER_PAGE = 10;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
 
-  const fetchVehicules = useCallback(async (page, query) => {
+  const fetchChauffeurs = useCallback(async (page, query) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getAllVehicules(page, VEHICULES_PER_PAGE, query);
+      const response = await getAllChauffeurs(page, CHAUFFEURS_PER_PAGE, query);
       if (response.data && Array.isArray(response.data.content)) {
-        setVehicules(response.data.content);
+        setChauffeurs(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalElements(response.data.totalElements);
         setCurrentPage(response.data.number);
@@ -64,10 +65,8 @@ export default function VehiculesList() {
         throw new Error("La réponse de l'API n'a pas le format attendu.");
       }
     } catch (err) {
-      setError(
-        "Erreur lors de la récupération des données. Le serveur est peut-être indisponible."
-      );
-      setVehicules([]);
+      setError("Erreur lors de la récupération des données.");
+      setChauffeurs([]);
       console.error(err);
     } finally {
       setLoading(false);
@@ -75,51 +74,41 @@ export default function VehiculesList() {
   }, []);
 
   useEffect(() => {
-    if (searchTerm !== debouncedSearchTerm) {
-      setCurrentPage(0);
-    }
-    fetchVehicules(currentPage, debouncedSearchTerm);
-  }, [currentPage, debouncedSearchTerm, fetchVehicules]);
+    fetchChauffeurs(currentPage, debouncedSearchTerm);
+  }, [currentPage, debouncedSearchTerm, fetchChauffeurs]);
 
   const handleDelete = async (id) => {
     try {
-      await deleteVehicule(id);
-      toast.success("Véhicule supprimé avec succès !");
-      if (vehicules.length === 1 && currentPage > 0) {
+      await deleteChauffeur(id);
+      toast.success("Chauffeur supprimé avec succès !");
+      if (chauffeurs.length === 1 && currentPage > 0) {
         setCurrentPage(currentPage - 1);
       } else {
-        fetchVehicules(currentPage, debouncedSearchTerm);
+        fetchChauffeurs(currentPage, debouncedSearchTerm);
       }
     } catch (err) {
       toast.error(
-        err.response?.data || "Erreur lors de la suppression du véhicule."
+        err.response?.data || "Erreur lors de la suppression du chauffeur."
       );
       console.error(err);
     }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
-
   const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
   const getStatusVariant = (status) => {
     switch (status) {
-      case "EN_SERVICE":
+      case "DISPONIBLE":
         return "success";
       case "EN_MISSION":
         return "info";
-      case "EN_MAINTENANCE":
+      case "EN_CONGE":
         return "warning";
-      case "HORS_SERVICE":
-        return "destructive";
       default:
         return "secondary";
     }
@@ -130,18 +119,15 @@ export default function VehiculesList() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">
-            Gestion des Véhicules
+            Gestion des Chauffeurs
           </h1>
           <p className="text-gray-500 mt-1">
-            {totalElements} véhicules trouvés
+            {totalElements} chauffeurs trouvés
           </p>
         </div>
-        <Button
-          asChild
-          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
-        >
-          <Link to="/parc-auto/vehicules/ajouter">
-            <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un Véhicule
+        <Button asChild className="shadow-md">
+          <Link to="/parc-auto/chauffeurs/ajouter">
+            <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un Chauffeur
           </Link>
         </Button>
       </div>
@@ -151,7 +137,7 @@ export default function VehiculesList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
           <Input
             type="text"
-            placeholder="Rechercher par immatriculation..."
+            placeholder="Rechercher par nom ou prénom..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full md:w-1/3"
@@ -170,16 +156,16 @@ export default function VehiculesList() {
           <TableHeader>
             <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
               <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
-                Immatriculation
+                Nom Complet
               </TableHead>
               <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
-                Marque & Modèle
+                Permis
               </TableHead>
               <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider">
                 Centre
               </TableHead>
               <TableHead className="px-6 py-4 font-bold text-gray-600 uppercase tracking-wider text-center">
-                Statut
+                État
               </TableHead>
               <TableHead className="px-6 py-4 text-right font-bold text-gray-600 uppercase tracking-wider">
                 Actions
@@ -192,29 +178,29 @@ export default function VehiculesList() {
                 <TableCell colSpan="5" className="text-center py-10">
                   <div className="flex justify-center items-center text-gray-500">
                     <Loader2 className="h-6 w-6 animate-spin mr-3" />
-                    <span>Chargement des données...</span>
+                    <span>Chargement...</span>
                   </div>
                 </TableCell>
               </TableRow>
-            ) : vehicules.length > 0 ? (
-              vehicules.map((vehicule) => (
+            ) : chauffeurs.length > 0 ? (
+              chauffeurs.map((chauffeur) => (
                 <TableRow
-                  key={vehicule.id}
+                  key={chauffeur.id}
                   className="hover:bg-gray-50 border-b border-gray-200"
                 >
-                  <TableCell className="px-6 py-4 font-mono text-gray-800">
-                    {vehicule.immatriculation}
-                  </TableCell>
                   <TableCell className="px-6 py-4 font-medium text-gray-900">
-                    {vehicule.marque} {vehicule.modele}
+                    {chauffeur.prenom} {chauffeur.nom}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-gray-600">
-                    {vehicule.centreRattachementNom}
+                    {chauffeur.typePermis}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-gray-600">
+                    {chauffeur.centreRattachementNom}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-center">
-                    <Badge variant={getStatusVariant(vehicule.statut)}>
-                      {vehicule.statut
-                        ? vehicule.statut.replace("_", " ")
+                    <Badge variant={getStatusVariant(chauffeur.etat)}>
+                      {chauffeur.etat
+                        ? chauffeur.etat.replace("_", " ")
                         : "N/A"}
                     </Badge>
                   </TableCell>
@@ -224,31 +210,33 @@ export default function VehiculesList() {
                       size="icon"
                       className="group"
                       onClick={() =>
-                        navigate(`/parc-auto/vehicules/modifier/${vehicule.id}`)
+                        navigate(
+                          `/parc-auto/chauffeurs/modifier/${chauffeur.id}`
+                        )
                       }
                     >
-                      <Pencil className="h-4 w-4 text-blue-600 group-hover:text-blue-600" />
+                      <Pencil className="h-4 w-4 text-blue-600" />
                     </Button>
 
                     {userDetails?.role === "ROLE_ADMIN" && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="icon" className="group">
-                            <Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-600" />
+                            <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Le véhicule "{vehicule.immatriculation}" sera
-                              définitivement supprimé.
+                              Le chauffeur "{chauffeur.prenom} {chauffeur.nom}"
+                              sera supprimé.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Annuler</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => handleDelete(vehicule.id)}
+                              onClick={() => handleDelete(chauffeur.id)}
                               className="bg-red-600 hover:bg-red-700"
                             >
                               Supprimer
@@ -267,8 +255,8 @@ export default function VehiculesList() {
                   className="text-center py-10 text-gray-500"
                 >
                   {searchTerm
-                    ? `Aucun véhicule trouvé pour "${searchTerm}"`
-                    : "Aucun véhicule à afficher."}
+                    ? `Aucun chauffeur trouvé pour "${searchTerm}"`
+                    : "Aucun chauffeur à afficher."}
                 </TableCell>
               </TableRow>
             )}
@@ -278,7 +266,7 @@ export default function VehiculesList() {
 
       <div className="flex items-center justify-between mt-4">
         <span className="text-sm text-gray-600">
-          Affichage de {vehicules.length} sur {totalElements} véhicules
+          Affichage de {chauffeurs.length} sur {totalElements} chauffeurs
         </span>
         <div className="flex items-center space-x-2">
           <Button

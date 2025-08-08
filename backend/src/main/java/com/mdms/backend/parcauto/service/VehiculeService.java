@@ -4,6 +4,7 @@ import com.mdms.backend.parcauto.dto.VehiculeDto;
 import com.mdms.backend.parcauto.entity.CentreRattachement;
 import com.mdms.backend.parcauto.entity.Chauffeur;
 import com.mdms.backend.parcauto.entity.Vehicule;
+import com.mdms.backend.parcauto.enums.StatutVehicule;
 import com.mdms.backend.parcauto.repository.CentreRattachementRepository;
 import com.mdms.backend.parcauto.repository.ChauffeurRepository;
 import com.mdms.backend.parcauto.repository.VehiculeRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort; 
 
 @Service
 public class VehiculeService {
@@ -28,11 +30,6 @@ public class VehiculeService {
     @Transactional(readOnly = true) 
     public List<VehiculeDto> findAll() {
         return vehiculeRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<VehiculeDto> findById(Long id) {
-        return vehiculeRepository.findById(id).map(this::convertToDto);
     }
 
     // --- CREATE ---
@@ -143,6 +140,33 @@ public Page<VehiculeDto> findAllPaginated(String query,Pageable pageable) {
     
     return vehiculePage.map(this::convertToDto);
 }
-    
+
+    @Transactional(readOnly = true)
+    public Optional<VehiculeDto> findById(Long id) {
+        return vehiculeRepository.findByIdWithDetails(id).map(this::convertToDto);
+    }
+
+
+    @Transactional(readOnly = true)
+public List<VehiculeDto> findVehiculesDisponibles() {
+    return vehiculeRepository.findByStatut(StatutVehicule.EN_SERVICE)
+            .stream().map(this::convertToDto).collect(Collectors.toList());
+}
+
+    @Transactional(readOnly = true)
+    public List<VehiculeDto> findAllForSelect() {
+        return vehiculeRepository.findAll(Sort.by("marque").ascending()).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+public List<VehiculeDto> findVehiculesDisponiblesByCentre(String nomCentre) {
+    // Utilise la nouvelle méthode du repository
+    return vehiculeRepository.findByStatutAndCentreRattachement_Nom(StatutVehicule.EN_SERVICE, nomCentre)
+            .stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+}
 
 }

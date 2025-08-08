@@ -29,4 +29,12 @@ public interface VehiculeRepository extends JpaRepository<Vehicule, Long> {
     @Query("SELECT v FROM Vehicule v WHERE LOWER(v.immatriculation) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Vehicule> searchByImmatriculationContainingIgnoreCase(@Param("query") String query, Pageable pageable);
 
+
+     @Query("SELECT v FROM Vehicule v " +
+           "LEFT JOIN FETCH v.centreRattachement " +
+           "LEFT JOIN FETCH v.chauffeurAttitre " +
+           "WHERE v.id = :id")
+    Optional<Vehicule> findByIdWithDetails(@Param("id") Long id);
+
+     List<Vehicule> findByStatutAndCentreRattachement_Nom(StatutVehicule statut, String nomCentre);
 }
