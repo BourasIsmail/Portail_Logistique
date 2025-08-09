@@ -408,7 +408,14 @@ export default function VehiculeForm() {
             >
               Annuler
             </Button>
-            <Button type="submit" size="lg" disabled={submitting}>
+            <Button
+              className={
+                "rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
+              }
+              type="submit"
+              size="lg"
+              disabled={submitting}
+            >
               {submitting ? "Mise à jour..." : "Enregistrer les Modifications"}
             </Button>
           </CardFooter>

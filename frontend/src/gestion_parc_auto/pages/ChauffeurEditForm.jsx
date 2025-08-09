@@ -226,7 +226,14 @@ export default function ChauffeurEditForm() {
               Annuler
             </Button>
             {/* 8. Changer le texte du bouton de soumission */}
-            <Button type="submit" size="lg" disabled={submitting}>
+            <Button
+              className={
+                "rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
+              }
+              type="submit"
+              size="lg"
+              disabled={submitting}
+            >
               {submitting ? "Mise à jour..." : "Enregistrer les Modifications"}
             </Button>
           </CardFooter>

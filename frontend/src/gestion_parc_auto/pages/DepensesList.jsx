@@ -117,7 +117,10 @@ export default function DepensesList() {
             {totalElements} dépenses trouvées
           </p>
         </div>
-        <Button asChild className="shadow-md">
+        <Button
+          asChild
+          className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-900"
+        >
           <Link to="/parc-auto/depenses/ajouter">
             <PlusCircle className="mr-2 h-4 w-4" /> Ajouter une Dépense
           </Link>
