@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getTokenFromCookie } from "./AuthProvider";
 
-const baseURL = "http://localhost:8080/api";
-// const baseURL = "http://172.16.20.6:8080/api";
+// const baseURL = "http://localhost:8080/api";
+const baseURL = "http://172.16.20.6:8080/api";
 
 const getNewAccessToken = async (config) => {
   try {

@@ -30,8 +30,8 @@ public class ScheduledTasksService {
     public void checkEcheancesAndNotify() {
         log.info("--- Démarrage de la vérification des échéances ---");
 
-//        User gestionnaire = userRepository.findByEmail("a.jabran@entraide.ma").orElse(null);
-        User gestionnaire = userRepository.findByEmail("ayoubelebbar03@gmail.com").orElse(null);
+        User gestionnaire = userRepository.findByEmail("a.jabran@entraide.ma").orElse(null);
+//        User gestionnaire = userRepository.findByEmail("ayoubelebbar03@gmail.com").orElse(null);
         if (gestionnaire == null) {
             log.warn("Utilisateur gestionnaire introuvable. Impossible d'envoyer les notifications.");
             return;
