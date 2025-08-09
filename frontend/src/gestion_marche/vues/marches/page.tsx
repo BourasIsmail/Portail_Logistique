@@ -31,7 +31,6 @@ const columns: Column<Marche>[] = [
     key: "anneeBudgetaire",
     header: <span className="whitespace-normal">Année budgétaire</span>,
   },
-  { key: "numCompte", header: "N° Compte" },
   {
     key: "objet",
     header: "Objet",
@@ -58,22 +57,27 @@ const columns: Column<Marche>[] = [
   {
     key: "dateApprobation",
     header: <span className="whitespace-normal">Date approbation</span>,
+    render: (item: Marche) => item.dateApprobation || "-",
   },
   {
     key: "dateVisa",
     header: <span className="whitespace-normal">Date visa</span>,
+    render: (item: Marche) => item.dateVisa || "-",
   },
   {
     key: "dateNotificationApprobation",
     header: <span className="whitespace-normal">Date notification</span>,
+    render: (item: Marche) => item.dateNotificationApprobation || "-",
   },
   {
     key: "dateOrdreService",
     header: <span className="whitespace-normal">Date ordre service</span>,
+    render: (item: Marche) => item.dateOrdreService || "-",
   },
   {
     key: "delaiExecution",
     header: <span className="whitespace-normal">Délai d'exécution</span>,
+    render: (item: Marche) => item.delaiExecution || "-",
   },
 ];
 

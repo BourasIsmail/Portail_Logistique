@@ -322,14 +322,7 @@ export default function DetailView({
                 {data.anneeBudgetaire || "-"}
               </p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-slate-500">
-                Numéro de compte
-              </h3>
-              <p className="mt-1 text-base text-slate-900">
-                {data.numCompte || "-"}
-              </p>
-            </div>
+
             <div>
               <h3 className="text-sm font-medium text-slate-500">Rubrique</h3>
               <p className="mt-1 text-base text-slate-900">
@@ -342,7 +335,7 @@ export default function DetailView({
                 {data.pmn?.num || "-"}
               </p>
             </div>
-            <div className="md:col-span-2">
+            <div>
               <h3 className="text-sm font-medium text-slate-500">Objet PMN</h3>
               <p className="mt-1 text-base text-slate-900">
                 {data.pmn?.objet || "-"}
