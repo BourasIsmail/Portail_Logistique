@@ -7,7 +7,7 @@ export default function DashboardPage() {
   //   const { userDetails, login, logout } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    return navigate("/dashboard/tickets", { replace: true });
+    return navigate("/md/crée-demande", { replace: true });
   }, []);
 
   return null;

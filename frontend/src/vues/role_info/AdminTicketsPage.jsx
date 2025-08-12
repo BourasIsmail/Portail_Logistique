@@ -40,7 +40,7 @@ export default function AdminTicketsPage() {
     <>
       <Dashboard title="Serv. Informatique Dashboard">
         <h1 className="text-2xl font-semibold mb-1">
-          Demandes pour metériels informatiques
+          Demandes pour matériels informatiques
         </h1>
         <div className="container mx-auto px-10">
           <DataTable

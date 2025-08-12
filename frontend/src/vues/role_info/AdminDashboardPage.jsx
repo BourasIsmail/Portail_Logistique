@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
   useEffect(() => {
-    return navigate("/info/dashboard/allTickets", { replace: true });
+    return navigate("/md/demandes", { replace: true });
   }, []);
 
   return null;
