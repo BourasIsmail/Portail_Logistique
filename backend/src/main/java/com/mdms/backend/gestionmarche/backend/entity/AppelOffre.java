@@ -22,7 +22,6 @@ public class AppelOffre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String reference;
 
     private String anneeBudgetaire;

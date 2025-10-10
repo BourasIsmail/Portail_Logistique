@@ -53,9 +53,6 @@ class Controller {
     }
     @PostMapping("add-contract")
     public ResponseEntity<?> addContract(@RequestBody ContractRequest request) {
-        if(contratRepository.existsByReference(request.getReference())){
-            return ResponseEntity.badRequest().body("contract already exist");
-        }
 
         Contrat contract = new Contrat();
         contract.setReference(request.getReference());
