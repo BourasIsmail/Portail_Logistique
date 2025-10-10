@@ -258,7 +258,7 @@ export default function AOForm({
 
             <div className="space-y-2">
               <Label htmlFor="montant" className="font-medium text-slate-700">
-                Montant demander par l'attributaire (DH)
+                Montant du marché (DH)
               </Label>
               <Input
                 id="montant"
