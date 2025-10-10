@@ -473,9 +473,7 @@ class Controller {
     }
     @PostMapping("add-appel-offre")
     public ResponseEntity<?> addAO(@RequestBody AppelOffreRequest request){
-        if(appelOffreRepository.existsByReference(request.getReference())){
-            return ResponseEntity.badRequest().body("appel offre with this refrence already exist");
-        }
+    
         AppelOffre appelOffre = new AppelOffre();
 
         appelOffre.setReference(request.getReference());
