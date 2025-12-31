@@ -135,7 +135,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <GMMainPage />
           </ProtectedRoute>
         }
@@ -144,7 +144,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/appelOffres"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <AOPage />
           </ProtectedRoute>
         }
@@ -152,7 +152,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/appelOffres/:id"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <AOByIdPage />
           </ProtectedRoute>
         }
@@ -160,7 +160,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/marches"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <MarchesPage />
           </ProtectedRoute>
         }
@@ -168,7 +168,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/marches/:id"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <MarchesPerIdPage />
           </ProtectedRoute>
         }
@@ -176,7 +176,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/bons-commande"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <BDPage />
           </ProtectedRoute>
         }
@@ -184,7 +184,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/bons-commande/:id"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <BDPerIdPage />
           </ProtectedRoute>
         }
@@ -192,7 +192,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/contrats"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <ConractPage />
           </ProtectedRoute>
         }
@@ -200,7 +200,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/contrats/:id"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <ContractPerIdPage />
           </ProtectedRoute>
         }
@@ -208,7 +208,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/parametrage"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <ParametrageGMPage />
           </ProtectedRoute>
         }
@@ -216,7 +216,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/tableau-de-bord"
         element={
-          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS"]}>
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
             <GMDashboardPage />
           </ProtectedRoute>
         }
@@ -225,7 +225,7 @@ function gestionMarcheRoutes() {
       <Route
         path="/gm/*"
         element={
-          <ProtectedRoute role={["ROLE_LOGISTICS", "ROLE_ADMIN"]}>
+          <ProtectedRoute role={["ROLE_LOGISTICS", "ROLE_ADMIN", "ROLE_DIR"]}>
             <Navigate to="/gm" />
           </ProtectedRoute>
         }
@@ -316,12 +316,17 @@ function App() {
             <Route
               path="/"
               element={
-                userDetails &&
-                (userDetails?.role == "ROLE_ADMIN" ||
-                  userDetails?.role == "ROLE_LOGISTICS") ? (
-                  <MainPage />
+                userDetails ? (
+                  userDetails.role === "ROLE_ADMIN" ||
+                  userDetails.role === "ROLE_LOGISTICS" ? (
+                    <MainPage />
+                  ) : userDetails.role === "ROLE_DIR" ? (
+                    <Navigate to="/gm" />
+                  ) : (
+                    <Navigate to="/md/dashboard" />
+                  )
                 ) : (
-                  <Navigate to="/md/dashboard" />
+                  <Navigate to="/login" />
                 )
               }
             />
