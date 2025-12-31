@@ -131,29 +131,106 @@ function gestionDemandeRoutes() {
 
 function gestionMarcheRoutes() {
   return (
-    <Route
-      path="/gm"
-      element={
-        <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
-          <GMMainPage />
-        </ProtectedRoute>
-      }
-    >
-      <Route index element={<Navigate to="tableau-de-bord" replace />} />
+    <>
+      <Route
+        path="/gm"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <GMMainPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="tableau-de-bord" element={<GMDashboardPage />} />
-      <Route path="appelOffres" element={<AOPage />} />
-      <Route path="appelOffres/:id" element={<AOByIdPage />} />
-      <Route path="marches" element={<MarchesPage />} />
-      <Route path="marches/:id" element={<MarchesPerIdPage />} />
-      <Route path="bons-commande" element={<BDPage />} />
-      <Route path="bons-commande/:id" element={<BDPerIdPage />} />
-      <Route path="contrats" element={<ConractPage />} />
-      <Route path="contrats/:id" element={<ContractPerIdPage />} />
-      <Route path="parametrage" element={<ParametrageGMPage />} />
+      <Route
+        path="/gm/appelOffres"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <AOPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/appelOffres/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <AOByIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/marches"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <MarchesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/marches/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <MarchesPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/bons-commande"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <BDPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/bons-commande/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <BDPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/contrats"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <ConractPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/contrats/:id"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <ContractPerIdPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/parametrage"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <ParametrageGMPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gm/tableau-de-bord"
+        element={
+          <ProtectedRoute role={["ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_DIR"]}>
+            <GMDashboardPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="*" element={<Navigate to="tableau-de-bord" replace />} />
-    </Route>
+      <Route
+        path="/gm/*"
+        element={
+          <ProtectedRoute role={["ROLE_LOGISTICS", "ROLE_ADMIN", "ROLE_DIR"]}>
+            <Navigate to="/gm" />
+          </ProtectedRoute>
+        }
+      />
+    </>
   );
 }
 
