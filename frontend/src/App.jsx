@@ -222,7 +222,14 @@ function gestionMarcheRoutes() {
         }
       />
 
-      
+      <Route
+        path="/gm/*"
+        element={
+          <ProtectedRoute role={["ROLE_LOGISTICS", "ROLE_ADMIN", "ROLE_DIR"]}>
+            <Navigate to="/gm" />
+          </ProtectedRoute>
+        }
+      />
     </>
   );
 }
