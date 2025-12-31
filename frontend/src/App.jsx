@@ -318,10 +318,10 @@ function App() {
               element={
                 userDetails ? (
                   userDetails.role === "ROLE_ADMIN" ||
-                  userDetails.role === "ROLE_LOGISTICS" ? (
+                  userDetails.role === "ROLE_LOGISTICS" ||
+                  userDetails.role === "ROLE_DIR"
+                  ? (
                     <MainPage />
-                  ) : userDetails.role === "ROLE_DIR" ? (
-                    <Navigate to="/gm" />
                   ) : (
                     <Navigate to="/md/dashboard" />
                   )
