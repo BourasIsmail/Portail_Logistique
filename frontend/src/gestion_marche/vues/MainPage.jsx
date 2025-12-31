@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuth, getTokenFromCookie } from "@/utils/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -54,6 +55,9 @@ export default function MainPage() {
   return (
     <main className="flex min-h-screen flex-col bg-slate-50">
       <Navbar title="Gestion des marchés" showBackButton={true} />
+
+        <Outlet />
+
 
       <div className="container mx-auto pt-8 pb-12 px-4">
         <div className="max-w-4xl mx-auto">
