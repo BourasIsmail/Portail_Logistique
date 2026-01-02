@@ -46,9 +46,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests((requests)
                 -> requests
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Add this line
-                .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS")
+                .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS", "ROLE_DIR")
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS")
+                .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_INFO", "ROLE_LOGISTICS", "ROLE_DIR")
                 .anyRequest().authenticated());
 //        http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //        http.authenticationProvider(authenticationProvider());

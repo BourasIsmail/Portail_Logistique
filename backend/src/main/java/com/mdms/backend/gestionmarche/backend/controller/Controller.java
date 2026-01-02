@@ -115,7 +115,7 @@ class Controller {
         return ResponseEntity.ok().body(contract);
     }
     @DeleteMapping("delete-contract/{id}")
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_DIR"})
     public ResponseEntity<?> deleteContract(@PathVariable(name = "id") Long id) {
         if(!contratRepository.existsById(id)){
             return ResponseEntity.badRequest().body("contract doesn't exist");
@@ -302,7 +302,7 @@ class Controller {
         return ResponseEntity.ok().body(marche);
     }
     @DeleteMapping("delete-marche/{id}")
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed({"ROLE_ADMIN" , "ROLE_DIR"})
     public ResponseEntity<?> deleteMarche(@PathVariable(name = "id") Long id) {
         if(!marcheRepository.existsById(id)){
             return ResponseEntity.badRequest().body("marche doesn't exist");
@@ -452,7 +452,7 @@ class Controller {
         return ResponseEntity.ok().body(bonCommande);
     }
     @DeleteMapping("delete-bon-commande/{id}")
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_DIR"})
     public ResponseEntity<?> deleteBC(@PathVariable(name = "id") Long id) {
         if(!bonCommandeRepository.existsById(id)){
             return ResponseEntity.badRequest().body("bon commande doesn't exist");
@@ -541,7 +541,7 @@ class Controller {
         return ResponseEntity.ok().body(appelOffre);
     }
     @DeleteMapping("delete-appel-offre/{id}")
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed({"ROLE_ADMIN", "ROLE_DIR"})
     public ResponseEntity<?> deleteAO(@PathVariable(name = "id") Long id) {
         if(!appelOffreRepository.existsById(id)){
             return ResponseEntity.badRequest().body("appel offre doesn't exist");

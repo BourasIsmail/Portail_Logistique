@@ -73,7 +73,7 @@ export default function MainPage() {
           </div>
 
           <div className="flex  justify-center gap-6">
-           {userDetails.role !== "ROLE_ADMIN" && (
+           {userDetails.role !== "ROLE_DIR" && (
             <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
                 <PackageIcon className="w-12 h-12 mx-auto text-slate-700" />
@@ -114,7 +114,7 @@ export default function MainPage() {
                 </Button>
               </CardContent>
             </Card>
-            {userDetails.role !== "ROLE_ADMIN" && (
+            {userDetails.role !== "ROLE_DIR" && (
             <Card className="bg-white shadow-sm transition-shadow border-slate-200/80 flex flex-col w-full sm:w-1/2 md:w-1/3">
               <CardHeader className="text-center">
                 <Car className="w-12 h-12 mx-auto text-slate-700" />
