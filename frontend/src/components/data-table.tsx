@@ -168,7 +168,7 @@ export default function DataTable<T extends { id: number | string }>({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-slate-200/80">
+      <div className="overflow-x-auto overflow-hidden rounded-md border border-slate-200/80">
         <Table className="table-auto">
           <TableHeader className="bg-slate-50">
             <TableRow className="">
