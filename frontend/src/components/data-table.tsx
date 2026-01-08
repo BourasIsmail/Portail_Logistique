@@ -168,19 +168,19 @@ export default function DataTable<T extends { id: number | string }>({
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-md border border-slate-200/80">
-        <Table className="w-full table-auto">
+      <div className="overflow-x-auto overflow-hidden rounded-md border border-slate-200/80">
+        <Table className="mmin-w-full table-auto">
           <TableHeader className="bg-slate-50">
             <TableRow className="">
               {columns.map((column) => (
                 <TableHead
                   key={column.key as string}
-                  className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-600"
+                  className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-600"
                 >
                   {column.header}
                 </TableHead>
               ))}
-              <TableHead className="whitespace-nowrap px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-slate-600">
+              <TableHead className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider text-slate-600">
                 Actions
               </TableHead>
             </TableRow>
@@ -196,18 +196,22 @@ export default function DataTable<T extends { id: number | string }>({
                   {columns.map((column) => (
                     <TableCell
                       key={`${item.id}-${column.key as string}`}
-                      className="whitespace-nowrap px-4 py-3 text-sm text-slate-700"
+                      className="px-2 py-2 text-sm text-slate-700"
                     >
                       {column.render
                         ? column.render(item)
-                        : String((item as Record<string, unknown>)[column.key as string])}
+                        : String(
+                            (item as Record<string, unknown>)[
+                              column.key as string
+                            ]
+                          )}
                     </TableCell>
                   ))}
                   <TableCell
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                     }}
-                    className="whitespace-nowrap px-4 py-3 text-center"
+                    className="px-2 py-2 text-center"
                   >
                     <div className="flex items-center justify-center gap-1">
                       <Button
@@ -224,8 +228,8 @@ export default function DataTable<T extends { id: number | string }>({
                           size="sm"
                           className="h-8 w-8 p-0 text-red-500 hover:bg-red-100 hover:text-red-700"
                           onClick={() => {
-                            setIsDeleteDialogOpen(true)
-                            setItemToDelete(item)
+                            setIsDeleteDialogOpen(true);
+                            setItemToDelete(item);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -237,7 +241,10 @@ export default function DataTable<T extends { id: number | string }>({
               ))
             ) : (
               <TableRow className="">
-                <TableCell colSpan={columns.length + 1} className="py-10 text-center text-slate-500">
+                <TableCell
+                  colSpan={columns.length + 1}
+                  className="py-10 text-center text-slate-500"
+                >
                   Aucun résultat trouvé.
                 </TableCell>
               </TableRow>
@@ -245,7 +252,6 @@ export default function DataTable<T extends { id: number | string }>({
           </TableBody>
         </Table>
       </div>
-
 
       {totalPages > 1 && (
         <Pagination className="">
