@@ -1,11 +1,6 @@
 package com.mdms.backend.gestionmarche.backend.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mdms.backend.gestionmarche.backend.entity.Rubrique;
-import com.mdms.backend.gestionmarche.backend.entity.TypeAO;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 import lombok.Getter;
 import lombok.Setter;
 
